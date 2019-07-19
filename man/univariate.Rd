@@ -2,7 +2,7 @@
 % Please edit documentation in R/univariate.R
 \name{univariate}
 \alias{univariate}
-\title{univariate}
+\title{Univariate Analysis Of Sexual Dimorphism}
 \usage{
 univariate(x, Pop = 1, lower_tail = FALSE, padjust = "none",
   pairwise = FALSE, pairwise_tail = "two")
@@ -39,12 +39,13 @@ Data is entered in a wide format with each row representing a given
   \code{.mu} and \code{.sdev} contain means and standard deviations with
   \code{M} and \code{F} donating males and females respectively. While
   \code{m}&\code{f} are the male and female sample sizes. When more than two
-  populations are tested,\code{p.adjust.methods:
-  c('holm','hochberg','hommel', 'bonferroni','BH','BY','fdr','none')} can be
+  populations are tested, \code{p.adjust.methods:
+  c('holm','hochberg','hommel', 'bonferroni', 'BH','BY','fdr','none')} can be
   used for p value adjustment.
 }
 \examples{
- # Comaprison of femur head diameter in four populations
+ # Comparisons of femur head diameter in four populations
+library(TestDimorph)
 m <- c(150.00, 82.00, 36.00, 34.00)
 f <- c(150.00, 58.00, 34.00, 24.00)
 M.mu <- c(49.39, 48.33, 46.99, 45.20)
@@ -61,7 +62,7 @@ df <- cbind.data.frame(
   F.sdev,
   stringsAsFactors = TRUE
 )
-TestDimorph::univariate(x = df, pairwise = TRUE, padjust = 'bonferroni')
+univariate(x = df, pairwise = TRUE, padjust = 'bonferroni')
 
 }
 \references{

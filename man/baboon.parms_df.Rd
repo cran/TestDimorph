@@ -3,7 +3,7 @@
 \docType{data}
 \name{baboon.parms_df}
 \alias{baboon.parms_df}
-\title{The baboon data collection}
+\title{Summary statistics of baboon data collection-list}
 \format{A data frame with 12 rows and 8 variables \describe{ \item{Trait}{Type
  of apolipoprotein} \item{Sub}{Type of species} \item{M.mu}{Means of
  lipoproteins in different species for males} \item{F.mu}{Means of

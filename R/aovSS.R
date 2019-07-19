@@ -1,4 +1,4 @@
-#' @title aovSS
+#' @title Sex-Specific One-way ANOVA From Summary statistics
 #' @description Calculates sex specific one-way ANOVA followed by \code{Tukey
 #'   HSD} from summary statistics.
 #' @param x Data frame containing summary statistics of both sexes for two or
@@ -16,7 +16,8 @@
 #'   option \code{pairwise} to \code{TRUE}, different pairwise combinations of
 #'   populations can be compared with \code{Tukey HSD} post hoc test.
 #' @examples
-#'   # Comaprisons of femur head diameter in four populations
+#'   # Comparisons of femur head diameter in four populations
+#'   library(TestDimorph)
 #' m <- c(150.00, 82.00, 36.00, 34.00)
 #' f <- c(150.00, 58.00, 34.00, 24.00)
 #' M.mu <- c(49.39, 48.33, 46.99, 45.20)
@@ -33,8 +34,9 @@
 #'   F.sdev,
 #'   stringsAsFactors = TRUE
 #' )
-#' TestDimorph::aovSS(x = df)
+#' aovSS(x = df)
 #'
+#' @rdname aovSS
 #' @export
 #' @importFrom stats TukeyHSD
 #' @importFrom stats rnorm

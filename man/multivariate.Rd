@@ -2,7 +2,7 @@
 % Please edit documentation in R/multivariate.R
 \name{multivariate}
 \alias{multivariate}
-\title{multivariate}
+\title{Multivariate Analysis Of Sexual Dimorphism}
 \usage{
 multivariate(x, R.res = NULL, Trait = 1, Pop = 2,
   univariate = FALSE, padjust = "none", lower_tail = FALSE)
@@ -33,16 +33,16 @@ x]}, otherwise, \code{P[X > x]} for multivariate analysis, Default:
 \code{MANOVA} or \code{ANOVA} table(s).
 }
 \description{
-Multivariate extension of Greene t-test \code{Tg}.
+Multivariate extension of Greene t-test \code{\link{Tg}}.
 }
 \details{
 Data can be entered either as a data frame where the first 2 columns
-  contain traits to be measured \code{Traits} and the populations' names
+  contain traits to be measured \code{Trait} and the populations' names
   \code{Pop} and other columns containing different summary statistics as in
-  \code{baboon.parms_df}. In that case the pooled within correlational matrix
+  \code{\link{baboon.parms_df}}. In that case the pooled within correlational matrix
   \code{R.res} should be entered as an argument. Another acceptable format is
   a list of matrices containing different summary statistics as well as the
-  correlational matrix \code{R.res} as in \code{baboon.parms_list}. By
+  correlational matrix \code{\link{R}} as in \code{\link{baboon.parms_list}}. By
   setting the option \code{univariate} to \code{TRUE}, multiple \code{ANOVA}s
   can be run on each parameter independently with the required p value
   correction \code{padjust}.
@@ -50,9 +50,11 @@ Data can be entered either as a data frame where the first 2 columns
 \examples{
 
 # x is a data frame with seprate correlational matrix
-TestDimorph::multivariate(x = baboon.parms_df, R.res = R)
+library(TestDimorph)
+multivariate(x = baboon.parms_df, R.res = R)
 # x is a list with the correlational matrix included
-TestDimorph::multivariate(baboon.parms_list, univariate = TRUE, padjust = 'bonferroni')
+library(TestDimorph)
+multivariate(baboon.parms_list, univariate = TRUE, padjust = 'bonferroni')
 
 }
 \references{

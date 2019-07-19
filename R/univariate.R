@@ -1,4 +1,4 @@
-#' @title univariate
+#' @title Univariate Analysis Of Sexual Dimorphism
 #' @description Calculation of the significance of the differences in
 #'   interpopulation degree of sexual dimorphism using a modified one-way ANOVA
 #'   which utilizes summary statistics as input.
@@ -19,11 +19,12 @@
 #'   \code{.mu} and \code{.sdev} contain means and standard deviations with
 #'   \code{M} and \code{F} donating males and females respectively. While
 #'   \code{m}&\code{f} are the male and female sample sizes. When more than two
-#'   populations are tested,\code{p.adjust.methods:
-#'   c('holm','hochberg','hommel', 'bonferroni','BH','BY','fdr','none')} can be
+#'   populations are tested, \code{p.adjust.methods:
+#'   c('holm','hochberg','hommel', 'bonferroni', 'BH','BY','fdr','none')} can be
 #'   used for p value adjustment.
 #' @examples
-#'  # Comaprison of femur head diameter in four populations
+#'  # Comparisons of femur head diameter in four populations
+#' library(TestDimorph)
 #' m <- c(150.00, 82.00, 36.00, 34.00)
 #' f <- c(150.00, 58.00, 34.00, 24.00)
 #' M.mu <- c(49.39, 48.33, 46.99, 45.20)
@@ -40,8 +41,9 @@
 #'   F.sdev,
 #'   stringsAsFactors = TRUE
 #' )
-#' TestDimorph::univariate(x = df, pairwise = TRUE, padjust = 'bonferroni')
+#' univariate(x = df, pairwise = TRUE, padjust = 'bonferroni')
 #'
+#' @rdname univariate
 #' @importFrom  stats pf
 #' @importFrom rowr cbind.fill
 #' @export

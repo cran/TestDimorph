@@ -1,4 +1,4 @@
-#' @title Tg
+#' @title Greene t-test of Sexual Dimorphism
 #' @description Calculates the significance of the differences in degree sexual
 #'   dimorphism between two populations using a modified Greene t-test which
 #'   uses summary statistics as input.
@@ -44,6 +44,7 @@
 #'   used for p value adjustment.
 #' @examples
 #'  # Summary data in a data frame
+#' library(TestDimorph)
 #' Pop <- c('Turkish', 'Bulgarian')
 #' m <- c(150.00, 82.00)
 #' f <- c(150.00, 58.00)
@@ -61,29 +62,30 @@
 #'   F.sdev,
 #'   stringsAsFactors = TRUE
 #' )
-#' TestDimorph::Tg(x = df)
+#' Tg(x = df)
 #'
 #' @importFrom stats pt
 #' @importFrom stats p.adjust
 #' @importFrom utils combn
 #' @export
+#' @rdname Tg
 #' @references \insertRef{greene1989comparison}{TestDimorph}
 #'
 #'   \insertRef{timonov2014study}{TestDimorph}
 #'
 #'   \insertRef{gulhan2015new}{TestDimorph}
 #'
-Tg <- function(x = NULL, Pop = 1, m = NULL, m2 = NULL, f = NULL, f2 = NULL, M.mu = NULL, 
-    M.mu2 = NULL, F.mu = NULL, F.mu2 = NULL, M.sdev = NULL, M.sdev2 = NULL, F.sdev = NULL, 
+Tg <- function(x = NULL, Pop = 1, m = NULL, m2 = NULL, f = NULL, f2 = NULL, M.mu = NULL,
+    M.mu2 = NULL, F.mu = NULL, F.mu2 = NULL, M.sdev = NULL, M.sdev2 = NULL, F.sdev = NULL,
     F.sdev2 = NULL, lower_tail = FALSE, tail = "two", padjust = "none") {
     T <- function(m, f, m2, f2, M.mu, F.mu, M.mu2, F.mu2, M.sdev, F.sdev, M.sdev2, F.sdev2) {
-        Tg <- ((M.mu - F.mu) - (M.mu2 - F.mu2))/(sqrt(((((m - 1) * M.sdev^2) + ((f - 
-            1) * F.sdev^2) + ((m2 - 1) * M.sdev2^2) + ((f2 - 1) * F.sdev2^2)))/(m + f + 
+        Tg <- ((M.mu - F.mu) - (M.mu2 - F.mu2))/(sqrt(((((m - 1) * M.sdev^2) + ((f -
+            1) * F.sdev^2) + ((m2 - 1) * M.sdev2^2) + ((f2 - 1) * F.sdev2^2)))/(m + f +
             m2 + f2 - 4)) * sqrt((1/m) + (1/f) + (1/m2) + (1/f2)))
-        
+
         df <- (m + f + m2 + f2 - 4)
-        
-        
+
+
         if (tail == "one") {
             p <- (stats::pt(abs(Tg), df, lower.tail = lower_tail))
         } else {
@@ -102,16 +104,16 @@ Tg <- function(x = NULL, Pop = 1, m = NULL, m2 = NULL, f = NULL, f2 = NULL, M.mu
         x$Pop <- x[, Pop]
         x$Pop <- factor(x$Pop)
         pairs <- utils::combn(x$Pop, 2, simplify = FALSE)
-        
+
         names(pairs) <- sapply(pairs, paste, collapse = "-")
-        
+
         Tg <- sapply(pairs, function(y) {
-            T(m = x[y[1], "m"], f = x[y[1], "f"], m2 = x[y[2], "m"], f2 = x[y[2], "f"], 
-                M.mu = x[y[1], "M.mu"], F.mu = x[y[1], "F.mu"], M.mu2 = x[y[2], "M.mu"], 
-                F.mu2 = x[y[2], "F.mu"], M.sdev = x[y[1], "M.sdev"], F.sdev = x[y[1], 
+            T(m = x[y[1], "m"], f = x[y[1], "f"], m2 = x[y[2], "m"], f2 = x[y[2], "f"],
+                M.mu = x[y[1], "M.mu"], F.mu = x[y[1], "F.mu"], M.mu2 = x[y[2], "M.mu"],
+                F.mu2 = x[y[2], "F.mu"], M.sdev = x[y[1], "M.sdev"], F.sdev = x[y[1],
                   "F.sdev"], M.sdev2 = x[y[2], "M.sdev"], F.sdev2 = x[y[2], "F.sdev"])
         })
-        
+
         output <- as.data.frame(Tg)
         colnames(output) <- c()
         return(output)

@@ -3,7 +3,7 @@
 \docType{data}
 \name{baboon.parms_list}
 \alias{baboon.parms_list}
-\title{The baboon data collection}
+\title{Summary statistics of baboon data collection-data frame}
 \format{A list of 7 matrices. \describe{ \item{R.res}{pooled within group
   correlation matrix} \item{M.mu}{Means of lipoproteins in different species
   for males} \item{F.mu}{Means of lipoproteins in different species for

@@ -2,10 +2,10 @@
 % Please edit documentation in R/pMatrix.R
 \name{pMatrix}
 \alias{pMatrix}
-\title{pMatrix}
+\title{Visualization Of t-Greene Pairwise Comparisons}
 \usage{
 pMatrix(x = NULL, Pop = 1, lower_tail = FALSE, tail = "two",
-  padjust = "none")
+  padjust = "none", plot = FALSE, ...)
 }
 \arguments{
 \item{x}{Data frame containing summary statistics of both sexes for two or
@@ -20,14 +20,21 @@ otherwise, \code{P[X > x]}, Default: FALSE}
 
 \item{padjust}{padjust Method of p value adjustment for multiple comparisons
 following \code{p.adjust.methods}, Default: 'none'}
+
+\item{plot}{Logical;if \code{TRUE} graphical matrix of p-values, Default:
+\code{TRUE}}
+
+\item{...}{additional arguments that can be passed to
+\link[corrplot]{corrplot} function.}
 }
 \value{
-Matrix of p-values for Greene t-test.
+Graphical or numerical matrix of p-values from Greene t-test pairwise
+  comparisons.
 }
 \description{
-Returns a correlational matrix of p-values for the
-  interpopulation degree of sexual dimorphism as measured by Greene t-test
-  which can serve as an input for corrplot visualization.
+Returns a graphical or numerical correlational matrix of
+  p-values for the interpopulation degree of sexual dimorphism as measured by
+  Greene t-test
 }
 \details{
 Data is entered in a wide format with each row representing a given
@@ -40,7 +47,8 @@ Data is entered in a wide format with each row representing a given
   used for p value adjustment.
 }
 \examples{
- # Comaprison of femur head diameter in four populations
+ # Comparisons of femur head diameter in four populations
+library(TestDimorph)
 m <- c(150.00, 82.00, 36.00, 34.00)
 f <- c(150.00, 58.00, 34.00, 24.00)
 M.mu <- c(49.39, 48.33, 46.99, 45.20)
@@ -57,14 +65,11 @@ df <- cbind.data.frame(
   F.sdev,
   stringsAsFactors = TRUE
 )
-q <- TestDimorph::pMatrix(x = df)
-corrplot::corrplot(q,
-  method = 'ellipse', type = 'lower',
-  col = c('#AEB6E5', '#B1A0DB', '#B788CD', '#BC6EB9', '#BC569E', '#B6407D', '#A93154'),
-  is.corr = FALSE, tl.cex = 0.8, tl.col = 'black', p.mat = q, sig.level = 0.05,
-  insig = 'label_sig', pch.cex = 2.5, tl.pos = 'ld', win.asp = 1, tl.srt = 0.1,
-  number.cex = 0.5, na.label = 'NA'
-)
+pMatrix(x = df,plot=TRUE,method = 'ellipse', type = 'lower', col = c('#AEB6E5',
+'#B1A0DB', '#B788CD', '#BC6EB9', '#BC569E', '#B6407D', '#A93154'), is.corr =
+FALSE, tl.cex = 0.8, tl.col = 'black', sig.level = 0.05,insig =
+'label_sig', pch.cex = 2.5, tl.pos = 'ld', win.asp = 1, tl.srt =
+0.1,number.cex = 0.5, na.label = 'NA')
 
 }
 \references{

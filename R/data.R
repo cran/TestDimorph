@@ -1,4 +1,4 @@
-#' The baboon data collection
+#' Summary statistics of baboon data collection-data frame
 #'
 #' A dataset containing summary statistics for low density lipoprotein (LDL) and
 #' apolipoprotein-B (apo-B) levels in 604 baboons measured on two different
@@ -26,7 +26,7 @@
 "baboon.parms_list"
 
 
-#' The baboon data collection
+#' Summary statistics of baboon data collection-list
 #'
 #' A dataset containing summary statistics for low density lipoprotein (LDL) and
 #' apolipoprotein-B (apo-B) levels in 604 baboons measured on two different

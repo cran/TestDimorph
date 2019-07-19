@@ -2,7 +2,7 @@
 % Please edit documentation in R/Tg.R
 \name{Tg}
 \alias{Tg}
-\title{Tg}
+\title{Greene t-test of Sexual Dimorphism}
 \usage{
 Tg(x = NULL, Pop = 1, m = NULL, m2 = NULL, f = NULL, f2 = NULL,
   M.mu = NULL, M.mu2 = NULL, F.mu = NULL, F.mu2 = NULL,
@@ -78,6 +78,7 @@ Summary statistics can be entered directly as arguments in case of
 }
 \examples{
  # Summary data in a data frame
+library(TestDimorph)
 Pop <- c('Turkish', 'Bulgarian')
 m <- c(150.00, 82.00)
 f <- c(150.00, 58.00)
@@ -95,7 +96,7 @@ df <- cbind.data.frame(
   F.sdev,
   stringsAsFactors = TRUE
 )
-TestDimorph::Tg(x = df)
+Tg(x = df)
 
 }
 \references{

@@ -2,7 +2,7 @@
 % Please edit documentation in R/aovSS.R
 \name{aovSS}
 \alias{aovSS}
-\title{aovSS}
+\title{Sex-Specific One-way ANOVA From Summary statistics}
 \usage{
 aovSS(x, Pop = 1, pairwise = TRUE)
 }
@@ -33,7 +33,8 @@ Data is entered in a wide format with each row representing a given
   populations can be compared with \code{Tukey HSD} post hoc test.
 }
 \examples{
-  # Comaprisons of femur head diameter in four populations
+  # Comparisons of femur head diameter in four populations
+  library(TestDimorph)
 m <- c(150.00, 82.00, 36.00, 34.00)
 f <- c(150.00, 58.00, 34.00, 24.00)
 M.mu <- c(49.39, 48.33, 46.99, 45.20)
@@ -50,7 +51,7 @@ df <- cbind.data.frame(
   F.sdev,
   stringsAsFactors = TRUE
 )
-TestDimorph::aovSS(x = df)
+aovSS(x = df)
 
 }
 \references{

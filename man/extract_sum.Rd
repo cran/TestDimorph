@@ -2,7 +2,7 @@
 % Please edit documentation in R/extract_sum.R
 \name{extract_sum}
 \alias{extract_sum}
-\title{extract_sum}
+\title{Summary Statistics Extraction}
 \usage{
 extract_sum(x, Sex = 1, Pop = 2, firstX = 3, test = 1,
   run = TRUE, pairwise = FALSE, padjust = "none",
@@ -14,14 +14,16 @@ extract_sum(x, Sex = 1, Pop = 2, firstX = 3, test = 1,
 \item{Sex}{Number of the column containing gender (\code{M} for male and
 \code{F} for female), Default: \code{1}.}
 
-\item{Pop}{Number of the column containing populations' names, Default: \code{2}.}
+\item{Pop}{Number of the column containing populations' names, Default:
+\code{2}.}
 
 \item{firstX}{Number of the first column containing measured parameters,
 Default: \code{3}.}
 
-\item{test}{\code{1} for Greene t-test \code{Tg}, \code{2} for
-\code{univariate}, \code{3} for sex specific ANOVA \code{aovSS}, \code{4}
-for \code{multivariate} and \code{5} for \code{pMatrix}, Default: \code{1}.}
+\item{test}{\code{1} for Greene t-test \code{\link{Tg}}, \code{2} for
+\code{\link{univariate}}, \code{3} for sex specific ANOVA
+\code{\link{aovSS}}, \code{4} for \code{\link{multivariate}} and \code{5}
+for \code{\link{pMatrix}}, Default: \code{1}.}
 
 \item{run}{Logical;if \code{TRUE} runs the corresponding test after data
 extraction, Default: \code{TRUE}.}
@@ -44,16 +46,19 @@ Input for other functions using raw data.
 Extract summary data needed for other functions from raw data.
 }
 \details{
-Raw data is entered as a data frame with the first two columns
-  containing gender \code{Sex} (\code{M} for male and \code{F} for female)
-  (Default: \code{1}) and populations' names \code{Pop} (Default: \code{2}).
-  Starting from \code{firstX} column (Default: \code{3}), measured parameters
-  are entered each in a separate column.
+Raw data is entered in a data frame similar in format to
+  \code{\link{Howells}} data set. The first two columns contain gender
+  \code{Sex} (\code{M} for male and \code{F} for female) (Default: \code{1})
+  and populations' names \code{Pop} (Default: \code{2}). Starting from
+  \code{firstX} column (Default: \code{3}), measured parameters are entered
+  each in a separate column.
 }
 \examples{
 # for multivariate test
-TestDimorph::extract_sum(Howells)
+library(TestDimorph)
+extract_sum(Howells)
 # for univariate test on a specific parameter
-TestDimorph::extract_sum(Howells, test = 2)
+library(TestDimorph)
+extract_sum(Howells, test = 2)
 
 }

@@ -1,5 +1,5 @@
-#' @title multivariate
-#' @description Multivariate extension of Greene t-test \code{Tg}.
+#' @title Multivariate Analysis Of Sexual Dimorphism
+#' @description Multivariate extension of Greene t-test \code{\link{Tg}}.
 #' @param x Data frame or list containing summary statistics of for multiple
 #'   parameters measured in both sexes in two or more populations.
 #' @param R.res Pooled within correlational matrix, Default: \code{NULL}.
@@ -16,22 +16,25 @@
 #'   \code{FALSE}
 #' @return \code{MANOVA} or \code{ANOVA} table(s).
 #' @details Data can be entered either as a data frame where the first 2 columns
-#'   contain traits to be measured \code{Traits} and the populations' names
+#'   contain traits to be measured \code{Trait} and the populations' names
 #'   \code{Pop} and other columns containing different summary statistics as in
-#'   \code{baboon.parms_df}. In that case the pooled within correlational matrix
+#'   \code{\link{baboon.parms_df}}. In that case the pooled within correlational matrix
 #'   \code{R.res} should be entered as an argument. Another acceptable format is
 #'   a list of matrices containing different summary statistics as well as the
-#'   correlational matrix \code{R.res} as in \code{baboon.parms_list}. By
+#'   correlational matrix \code{\link{R}} as in \code{\link{baboon.parms_list}}. By
 #'   setting the option \code{univariate} to \code{TRUE}, multiple \code{ANOVA}s
 #'   can be run on each parameter independently with the required p value
 #'   correction \code{padjust}.
 #' @examples
 #'
 #' # x is a data frame with seprate correlational matrix
-#' TestDimorph::multivariate(x = baboon.parms_df, R.res = R)
+#' library(TestDimorph)
+#' multivariate(x = baboon.parms_df, R.res = R)
 #' # x is a list with the correlational matrix included
-#' TestDimorph::multivariate(baboon.parms_list, univariate = TRUE, padjust = 'bonferroni')
+#' library(TestDimorph)
+#' multivariate(baboon.parms_list, univariate = TRUE, padjust = 'bonferroni')
 #'
+#' @rdname multivariate
 #' @importFrom stats pf
 #' @importFrom stats p.adjust
 #' @importFrom rowr cbind.fill

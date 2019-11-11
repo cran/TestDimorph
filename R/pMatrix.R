@@ -82,7 +82,7 @@ pMatrix <- function(x = NULL, Pop = 1, lower_tail = FALSE, tail = "two", padjust
         } else {
             p <- (2 * stats::pt(abs(G), df, lower.tail = lower_tail))
         }
-        p <- stats::p.adjust(p = p, method = padjust, n = (nlevels(x$Pop)^2 - nlevels(x$Pop)))
+        p <- stats::p.adjust(p = p, method = padjust, n = ((nlevels(x$Pop)^2 - nlevels(x$Pop))/2))
         return(p)
     }
 

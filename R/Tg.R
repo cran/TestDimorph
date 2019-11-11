@@ -92,7 +92,7 @@ Tg <- function(x = NULL, Pop = 1, m = NULL, m2 = NULL, f = NULL, f2 = NULL, M.mu
             p <- (2 * stats::pt(abs(Tg), df, lower.tail = lower_tail))
         }
         if (!is.null(x)) {
-            p <- stats::p.adjust(p = p, method = padjust, n = nlevels(x$Pop)^2 - nlevels(x$Pop))
+            p <- stats::p.adjust(p = p, method = padjust, n = ((nlevels(x$Pop)^2 - nlevels(x$Pop))/2))
         }
         p <- format.pval(pv = round(p, 4), eps = 0.001)
         return(paste0("t", "(df=", round(df, 1), ")=", round(Tg, 4), "  , P=", p))

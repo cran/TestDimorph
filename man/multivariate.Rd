@@ -4,58 +4,70 @@
 \alias{multivariate}
 \title{Multivariate Analysis Of Sexual Dimorphism}
 \usage{
-multivariate(x, R.res = NULL, Trait = 1, Pop = 2,
-  univariate = FALSE, padjust = "none", lower_tail = FALSE)
+multivariate(
+  x,
+  R.res = NULL,
+  Parms = 1,
+  Pop = 2,
+  es = FALSE,
+  univariate = FALSE,
+  padjust = "none",
+  ...,
+  lower.tail = FALSE,
+  digits = 4
+)
 }
 \arguments{
-\item{x}{Data frame or list containing summary statistics of for multiple
+\item{x}{Tibble/Data frame or list containing summary statistics for multiple
 parameters measured in both sexes in two or more populations.}
 
-\item{R.res}{Pooled within correlational matrix, Default: \code{NULL}.}
+\item{R.res}{Pooled within correlational matrix, Default: NULL}
 
-\item{Trait}{Number of the column containing names of measured traits,
-Default: \code{1}.}
+\item{Parms}{Number of the column containing names of measured parameters,
+Default: 1}
 
-\item{Pop}{Number of the column containing populations' names, Default:
-\code{2}.}
+\item{Pop}{Number of the column containing populations' names, Default: 2}
 
-\item{univariate}{Logical; if \code{TRUE} conducts multiple univariate
-analyses on different parameters separately, Default: \code{FALSE}.}
+\item{es}{Logical; if TRUE effect size is included in the output , Default:
+FALSE}
 
-\item{padjust}{Method of p value adjustment following
-\code{p.adjust.methods}, Default: \code{'none'}}
+\item{univariate}{Logical; if TRUE conducts multiple univariate analyses on
+different parameters separately, Default: FALSE}
 
-\item{lower_tail}{Logical; if \code{TRUE}, probabilities are \code{P[X <=
-x]}, otherwise, \code{P[X > x]} for multivariate analysis, Default:
-\code{FALSE}}
+\item{padjust}{Method of p.value adjustment for multiple comparisons following
+\link{p.adjust.methods}, Default: 'none'}
+
+\item{...}{Additional arguments that could be passed to the \link{univariate}
+function}
+
+\item{lower.tail}{Logical; if TRUE probabilities are \code{P[X <= x]},
+otherwise, \code{P[X > x]}., Default: FALSE}
+
+\item{digits}{Number of significant digits, Default: 4}
 }
 \value{
-\code{MANOVA} or \code{ANOVA} table(s).
+Tibble of MANOVA results
 }
 \description{
-Multivariate extension of Greene t-test \code{\link{Tg}}.
+Multivariate extension of Greene t-test \link{Tg}
 }
 \details{
-Data can be entered either as a data frame where the first 2 columns
-  contain traits to be measured \code{Trait} and the populations' names
-  \code{Pop} and other columns containing different summary statistics as in
-  \code{\link{baboon.parms_df}}. In that case the pooled within correlational matrix
-  \code{R.res} should be entered as an argument. Another acceptable format is
-  a list of matrices containing different summary statistics as well as the
-  correlational matrix \code{\link{R}} as in \code{\link{baboon.parms_list}}. By
-  setting the option \code{univariate} to \code{TRUE}, multiple \code{ANOVA}s
-  can be run on each parameter independently with the required p value
-  correction \code{padjust}.
+Data can be entered either as a tibble/data frame of summary
+statistics as in \link{baboon.parms_df} . In that case the pooled within
+correlational matrix \code{R.res} should be entered as a separate argument as in
+\link{R}. Another acceptable format is a named list of matrices containing
+different summary statistics as well as the correlational matrix as in
+\link{baboon.parms_list}. By setting the option \code{univariate} to \code{TRUE}, multiple
+\code{ANOVA}s can be run on each parameter independently with the required p
+value correction using \link{p.adjust.methods}.
 }
 \examples{
-
-# x is a data frame with seprate correlational matrix
-library(TestDimorph)
-multivariate(x = baboon.parms_df, R.res = R)
-# x is a list with the correlational matrix included
-library(TestDimorph)
-multivariate(baboon.parms_list, univariate = TRUE, padjust = 'bonferroni')
-
+ # x is a data frame with separate correlational matrix
+ library(TestDimorph)
+ multivariate(baboon.parms_df, R.res = R)
+ # x is a list with the correlational matrix included
+ library(TestDimorph)
+ multivariate(baboon.parms_list, univariate = TRUE, padjust = 'bonferroni')
 }
 \references{
 \insertRef{konigsberg1991historical}{TestDimorph}

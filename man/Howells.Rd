@@ -5,13 +5,13 @@
 \alias{Howells}
 \title{The Howells' craniometric data}
 \format{A data frame with 441 rows and 10 variables: \describe{
-  \item{Sex}{'M' for male and 'F' for female} \item{Pop}{Populations' names}
-  \item{GOL}{Glabello occipital length} \item{NOL}{Nasio occipital length}
-  \item{BNL}{Bastion nasion length} \item{BBH}{Basion bregma height}
-  \item{XCB}{Maximum cranial breadth} \item{XFB}{Max frontal breadth}
-  \item{ZYB}{Bizygomatic breadth} \item{AUB}{Biauricular breadth}
+\item{Sex}{'M' for male and 'F' for female} \item{Pop}{Populations' names}
+\item{GOL}{Glabello occipital length} \item{NOL}{Nasio occipital length}
+\item{BNL}{Bastion nasion length} \item{BBH}{Basion bregma height}
+\item{XCB}{Maximum cranial breadth} \item{XFB}{Max frontal breadth}
+\item{ZYB}{Bizygomatic breadth} \item{AUB}{Biauricular breadth}
 
-  }}
+}}
 \usage{
 Howells
 }
@@ -23,10 +23,10 @@ diverse populations.
 \references{
 \insertRef{howells1995s}{TestDimorph}
 
-  \insertRef{howells1989skull}{TestDimorph}
+\insertRef{howells1989skull}{TestDimorph}
 
-  \insertRef{howells1996howells}{TestDimorph}
+\insertRef{howells1996howells}{TestDimorph}
 
-  \insertRef{howells1973cranial}{TestDimorph}
+\insertRef{howells1973cranial}{TestDimorph}
 }
 \keyword{datasets}

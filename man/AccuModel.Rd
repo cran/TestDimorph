@@ -4,23 +4,41 @@
 \alias{AccuModel}
 \title{Evaluation Of Sex-prediction Accuracy}
 \usage{
-AccuModel(f, x, y, byPop = TRUE, method = "lda", cutoff = 0.5,
-  ref. = "F", post. = "M", ...)
+AccuModel(
+  f,
+  x,
+  y,
+  Sex = 1,
+  Pop = 2,
+  byPop = TRUE,
+  method = "lda",
+  plot = FALSE,
+  cutoff = 0.5,
+  ref. = "F",
+  post. = "M",
+  ...
+)
 }
 \arguments{
-\item{f}{Formula in the form \code{groups ~ x1 + x2 + ...}. The grouping
-factor is placed to the left hand side while the numerical measurements are
-placed to the right hand side}
+\item{f}{Formula in the form \code{groups ~ x1 + x2 + ...}. The grouping factor is
+placed to the left hand side while the numerical measurements are placed to
+the right hand side}
 
 \item{x}{Data frame to be fitted to the model}
 
 \item{y}{New data frame to be tested}
 
-\item{byPop}{Logical;if \code{TRUE} returns the accuracy in different
-populations, Default: \code{TRUE}.}
+\item{Sex}{Number of the column containing sex 'M' for male and 'F' for female, Default: 1}
 
-\item{method}{Different methods of modeling see \code{details} ,
-Default:'lda'}
+\item{Pop}{Number of the column containing populations' names, Default: 2}
+
+\item{byPop}{Logical; if TRUE returns the accuracy in different populations of
+the new data frame, Default: TRUE.}
+
+\item{method}{Different methods of modeling see \code{details} , Default:'lda'}
+
+\item{plot}{Logical; if TRUE returns an roc curve for model accuracy, Default:
+FALSE}
 
 \item{cutoff}{cutoff value when using logistic regression, Default: 0.5}
 
@@ -28,26 +46,49 @@ Default:'lda'}
 
 \item{post.}{positive category in the grouping factor, Default: 'M'}
 
-\item{...}{additional arguments that can passed to modeling and
-\link[caret]{confusionMatrix} function.}
+\item{...}{additional arguments that can passed to modeling,
+\link[caret:confusionMatrix]{confusionMatrix} function and roc curve generated
+by \link[plotROC:geom_roc]{geom_roc}}
 }
 \value{
-Accuracy parameters for the tested model
+Visual and numerical accuracy parameters for the tested model
 }
 \description{
-Testing the accuracy of different sex prediction models
-  using the \link[caret]{confusionMatrix} function
+Testing and visualization of the accuracy of different sex
+prediction models using the \link[caret:confusionMatrix]{confusionMatrix} and
+roc curves
 }
 \details{
-Data frames to be entered as input need to be arranged in a similar
-  manner to \code{\link{Howells}} dataset. Methods used for modeling are:
-  \describe{ \item{\code{lda}}{linear discriminant analysis}
-  \item{\code{qda}}{quadratic discriminant analysis}
-  \item{\code{mda}}{mixture discriminant analysis} \item{\code{fda}}{flexible
-  discriminant analysis} \item{\code{rda}}{regularized discriminant analysis}
-  \item{\code{glm}}{binomial logistic regression} }
+Tibble/data frames to be entered as input need to be arranged in a
+similar manner to \link{Howells} dataset. Methods used for modeling are:
+\describe{ \item{\link[MASS:lda]{lda}}{linear discriminant analysis}
+\item{\link[MASS:qda]{qda}}{quadratic discriminant analysis}
+\item{\link[mda:mda]{mda}}{mixture discriminant analysis}
+\item{\link[mda:fda]{fda}}{flexible discriminant analysis}
+\item{\link[klaR:rda]{rda}}{regularized discriminant analysis}
+\item{\link[stats:glm]{glm}}{binomial logistic regression}
+\item{\link[randomForest:randomForest]{raf}}{random forest}}
 }
 \examples{
+#Splitting Howells dataset into training and test datasets
+smp_size <- floor(0.5 * nrow(Howells))
+set.seed(123)
+train_ind <- sample(seq_len(nrow(Howells)), size = smp_size)
+train <- Howells[train_ind, ]
+test <- Howells[-train_ind, ]
 library(TestDimorph)
-AccuModel(Sex~GOL+NOL+BNL,x = Howells,y = Howells,byPop = FALSE,method = "lda")
+AccuModel(
+Sex ~ GOL + NOL + BNL,
+x = train,
+y = test,
+byPop = FALSE,
+method = "lda",
+plot = FALSE
+)
+}
+\seealso{
+\code{\link[MASS]{lda}},\code{\link[MASS]{qda}}
+\code{\link[mda]{mda}},\code{\link[mda]{fda}} \code{\link[klaR]{rda}}
+\code{\link[randomForest]{randomForest}} \code{\link[plotROC]{GeomRoc}}
+\code{\link[caret]{confusionMatrix}}
 }

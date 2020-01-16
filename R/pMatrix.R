@@ -2,110 +2,117 @@
 #' @description Returns a graphical or numerical correlational matrix of
 #'   p-values for the interpopulation degree of sexual dimorphism as measured by
 #'   Greene t-test
-#' @param x Data frame containing summary statistics of both sexes for two or
-#'   more populations, Default: NULL
-#' @param Pop Number of the column containing populations' names, Default: 1
-#' @param lower_tail Logical; if \code{TRUE} probabilities are \code{P[X <= x]},
-#'   otherwise, \code{P[X > x]}, Default: FALSE
-#' @param tail Number of t test tails, Default: 'two'
-#' @param padjust padjust Method of p value adjustment for multiple comparisons
-#'   following \code{p.adjust.methods}, Default: 'none'
-#' @param plot Logical;if \code{TRUE} graphical matrix of p-values, Default:
-#'   \code{TRUE}
+#'@param x Tibble/data frame containing summary statistics, Default: NULL
+#'@param Pop Number of the column containing populations' names, Default: 1
+#'@param plot Logical; if TRUE graphical matrix of p-values, Default: TRUE
+#'@param alternative a character string specifying the alternative hypothesis,
+#'  must be one of "two.sided", "greater" or "less", Default: 'two.sided'
+#'@param padjust Method of p.value adjustment for multiple comparisons following
+#'  [p.adjust.methods], Default: 'none'
 #' @param ... additional arguments that can be passed to
-#'   \link[corrplot]{corrplot} function.
+#'   [corrplot][corrplot::corrplot] or [Tg] functions.
 #' @return Graphical or numerical matrix of p-values from Greene t-test pairwise
 #'   comparisons.
-#' @details Data is entered in a wide format with each row representing a given
-#'   population.\code{Pop}  (first column by default) contains population names,
-#'   \code{.mu} and \code{.sdev} contain means and standard deviations with
-#'   \code{M} and \code{F} donating males and females respectively. While
-#'   \code{m}&\code{f} are the male and female sample sizes.When more than two
-#'   populations are tested,\code{p.adjust.methods:
-#'   c('holm','hochberg','hommel','bonferroni','BH','BY','fdr','none')} can be
-#'   used for p value adjustment.
-#' @examples
-#'  # Comparisons of femur head diameter in four populations
-#' library(TestDimorph)
-#' m <- c(150.00, 82.00, 36.00, 34.00)
-#' f <- c(150.00, 58.00, 34.00, 24.00)
-#' M.mu <- c(49.39, 48.33, 46.99, 45.20)
-#' F.mu <- c(42.91, 42.89, 42.44, 40.90)
-#' M.sdev <- c(3.01, 2.53, 2.47, 2.00)
-#' F.sdev <- c(2.90, 2.84, 2.26, 2.90)
-#' df <- cbind.data.frame(
-#'   Pop = c('Turkish', 'Bulgarian', 'Greek', 'Portuguese '),
-#'   m,
-#'   f,
-#'   M.mu,
-#'   F.mu,
-#'   M.sdev,
-#'   F.sdev,
-#'   stringsAsFactors = TRUE
-#' )
-#' pMatrix(x = df,plot=TRUE,method = 'ellipse', type = 'lower', col = c('#AEB6E5',
-#' '#B1A0DB', '#B788CD', '#BC6EB9', '#BC569E', '#B6407D', '#A93154'), is.corr =
-#' FALSE, tl.cex = 0.8, tl.col = 'black', sig.level = 0.05,insig =
-#' 'label_sig', pch.cex = 2.5, tl.pos = 'ld', win.asp = 1, tl.srt =
-#' 0.1,number.cex = 0.5, na.label = 'NA')
-#'
-#' @rdname pMatrix
+#'   N.B: contrary to the usual corrplots where higher values indicate stronger
+#'   correlation, here lower values indicate significance
+#' @details Data is entered as a tibble/data frame of summary statistics where
+#'   the column containing population names is chosen by position (first by
+#'   default), other columns of summary data should have specific names (case
+#'   sensitive) similar to [baboon.parms_df]
+#' @seealso
+#'  \code{\link[corrplot]{corrplot}}
+#'  \code{\link{TestDimorph-deprecated}}
+#' @name pMatrix-deprecated
+#' @keywords internal
+NULL
+#' @rdname TestDimorph-deprecated
+#' @section \code{pMatrix}:
+#' For \code{pMatrix}, use \code{\link{Tg}}.
 #' @export
 #' @importFrom stats pt
-#' @importFrom stats p.adjust
 #' @importFrom plyr adply
+#' @importFrom tibble is_tibble
 #' @importFrom corrplot corrplot
+#' @importFrom rlang abort
 #'
-#' @references \insertRef{timonov2014study}{TestDimorph}
-#'
-#'   \insertRef{curate2017sex}{TestDimorph}
-#'
-#'   \insertRef{kranioti2009sex}{TestDimorph}
-#'
-#'   \insertRef{gulhan2015new}{TestDimorph}
-#'
-pMatrix <- function(x = NULL, Pop = 1, lower_tail = FALSE, tail = "two", padjust = "none",plot=FALSE,...) {
+pMatrix <- function(x = NULL,
+                    Pop = 1,
+                    plot = FALSE,
+                    padjust = "none",
+                    alternative = "two.sided",
+                    ...) {
+    .Deprecated("Tg")
+    if (!(is.data.frame(x) || tibble::is_tibble(x))) {
+        rlang::abort("x must be a tibble or a dataframe")
+    }
+    if (!all(c("M.mu", "F.mu", "M.sdev", "F.sdev", "m", "f") %in% names(x))) {
+        rlang::abort(
+            "colnames must contain:
+            M.mu= Male mean
+            F.mu=Female mean
+            M.sdev=Male sd
+            F.sdev=Female sd
+            m= Male sample size
+            f=Female sample size
+            N.B: colnames are case sensitive"
+        )
+    }
+    if (!(Pop %in% seq_along(1:ncol(x))))   {
+        rlang::abort("Pop should be number from 1 to ncol(x)")
+
+    }
+    if (!(plot %in% c(TRUE, FALSE)))   {
+        rlang::abort("pairwise should be either TRUE or FALSE")
+
+    }
+    x <- data.frame(x)
     x$Pop <- x[, Pop]
     x$Pop <- factor(x$Pop)
-    T <- function(m, f, m2, f2, M.mu, F.mu, M.mu2, F.mu2, M.sdev, F.sdev, M.sdev2, F.sdev2,
-        Pop = 1, lower_tail = lower_tail, tail = tail, padjust = padjust) {
-        G <- ((M.mu - F.mu) - (M.mu2 - F.mu2))/(sqrt(((((m - 1) * M.sdev^2) + ((f - 1) *
-            F.sdev^2) + ((m2 - 1) * M.sdev2^2) + ((f2 - 1) * F.sdev2^2)))/(m + f + m2 +
-            f2 - 4)) * sqrt((1/m) + (1/f) + (1/m2) + (1/f2)))
-
-        df <- (m + f + m2 + f2 - 4)
-
-
-
-        if (tail == "one") {
-            p <- (stats::pt(abs(G), df, lower.tail = lower_tail))
-        } else {
-            p <- (2 * stats::pt(abs(G), df, lower.tail = lower_tail))
-        }
-        p <- stats::p.adjust(p = p, method = padjust, n = ((nlevels(x$Pop)^2 - nlevels(x$Pop))/2))
-        return(p)
+    if (length(unique(x$Pop)) != length(x$Pop[which(!is.na(x$Pop))])) {
+        rlang::abort("Population names must be unique")
     }
 
-    ss <- function(x = x, y = x) {
-        s <- function(x) {
-            T(m = x[1, "m"], f = x[1, "f"], M.mu = x[1, "M.mu"], F.mu = x[1, "F.mu"],
-                M.sdev = x[1, "M.sdev"], F.sdev = x[1, "F.sdev"], m2 = y[, "m"], f2 = y[,
-                  "f"], M.mu2 = y[, "M.mu"], F.mu2 = y[, "F.mu"], M.sdev2 = y[, "M.sdev"],
-                F.sdev2 = y[, "F.sdev"], padjust = padjust, tail = tail, lower_tail = lower_tail)
-        }
+    pMat <- function(x = x, y = x) {
+        Mat <- plyr::adply(
+            .data = x,
+            .margins = 1,
+            .fun = function(x) {
+                Tg(
+                    m = x[1, "m"],
+                    f = x[1, "f"],
+                    M.mu = x[1, "M.mu"],
+                    F.mu = x[1, "F.mu"],
+                    M.sdev = x[1, "M.sdev"],
+                    F.sdev = x[1, "F.sdev"],
+                    m2 = y[, "m"],
+                    f2 = y[,
+                           "f"],
+                    M.mu2 = y[, "M.mu"],
+                    F.mu2 = y[, "F.mu"],
+                    M.sdev2 = y[, "M.sdev"],
+                    F.sdev2 = y[, "F.sdev"],
+                    N = ((
+                        nlevels(x$Pop) ^ 2 - nlevels(x$Pop)
+                    ) / 2),
+                    padjust = padjust,
+                    alternative = alternative,
+                    ...
+                )$p.value
+            }
+        )
 
-        q <- plyr::adply(.data = x, .margins = 1, .fun = s)
-
-        q <- as.matrix(q[, -(1:ncol(x))])
-        rownames(q) <- levels(x$Pop)
-        colnames(q) <- levels(x$Pop)
-        return(q)
+        Mat <- as.matrix(Mat[, -(1:ncol(x))])
+        rownames(Mat) <- levels(x$Pop)
+        colnames(Mat) <- levels(x$Pop)
+        return(Mat)
     }
-    if (plot==TRUE) {
-       v <- ss(x, x)
-       corrplot::corrplot(corr = v,p.mat =v,...)
+    if (plot == TRUE) {
+        cor <- pMat(x, x)
+        corrplot::corrplot(corr = cor,
+                           p.mat = cor,
+                           ...)
 
-    }else{
-    ss(x, x)
-}
+    } else{
+        pMat(x, x)
+    }
 }

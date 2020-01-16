@@ -5,13 +5,13 @@
 \alias{baboon.parms_list}
 \title{Summary statistics of baboon data collection-data frame}
 \format{A list of 7 matrices. \describe{ \item{R.res}{pooled within group
-  correlation matrix} \item{M.mu}{Means of lipoproteins in different species
-  for males} \item{F.mu}{Means of lipoproteins in different species for
-  females} \item{m}{Male sample sizes} \item{f}{Female sample sizes}
-  \item{M.sdev}{Standard deviations for males} \item{F.sdev}{Standard
-  deviations for females}
+correlation matrix} \item{M.mu}{Means of lipoproteins in different species
+for males} \item{F.mu}{Means of lipoproteins in different species for
+females} \item{m}{Male sample sizes} \item{f}{Female sample sizes}
+\item{M.sdev}{Standard deviations for males} \item{F.sdev}{Standard
+deviations for females}
 
-  }}
+}}
 \usage{
 baboon.parms_list
 }
@@ -25,9 +25,9 @@ animal was measured on each of the two diets.
 }
 \note{
 The baboon data collection were supported by NIH grant HL28972 and NIH
-  contract HV53030 to the Southwest Foundation for Biomedical Research (Now:
-  Texas Biomedical Research Institute), and funds from the Southwest
-  Foundation for Biomedical Research
+contract HV53030 to the Southwest Foundation for Biomedical Research (Now:
+Texas Biomedical Research Institute), and funds from the Southwest
+Foundation for Biomedical Research
 }
 \references{
 \insertRef{konigsberg1991historical}{TestDimorph}

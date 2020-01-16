@@ -2,47 +2,70 @@
 % Please edit documentation in R/RawGen.R
 \name{RawGen}
 \alias{RawGen}
-\title{Raw Data Generation By Truncated Distribution}
+\title{Raw Data Generation By Log-normal Or Truncated Distribution}
 \usage{
-RawGen(v, format = "wide", complete_cases = FALSE)
+RawGen(
+  x,
+  Parms = 1,
+  Pop = 2,
+  R.res = NULL,
+  dist = "trunc",
+  lower = -Inf,
+  upper = Inf,
+  format = "wide",
+  complete_cases = FALSE
+)
 }
 \arguments{
-\item{v}{a data frame or a named list containing summary statistics for
-different parameters}
+\item{x}{Tibble/Data frame or list containing summary statistics for multiple
+parameters measured in both sexes in two or more populations.}
 
-\item{format}{The form of the resultant data frame either : \code{'long'} or
-: \code{'wide'}, Default: \code{'wide'}}
+\item{Parms}{Number of the column containing names of measured parameters,
+Default: 1}
 
-\item{complete_cases}{Logical; if \code{TRUE} rows with missing values will
-be removed, Default: \code{FALSE}}
+\item{Pop}{Number of the column containing populations' names, Default: 2}
+
+\item{R.res}{Pooled within correlational matrix, Default: NULL}
+
+\item{dist}{univariate distribution used for data generation either \code{log} for
+log-normal or \code{trunc} for truncated, Default: 'trunc'}
+
+\item{lower}{vector of lower bounds, Default: -Inf}
+
+\item{upper}{vector of upper bounds, Default: Inf}
+
+\item{format}{form of the resultant tibble either 'long' or 'wide', Default:
+'wide'}
+
+\item{complete_cases}{Logical; if TRUE rows with missing values will be
+removed, Default: FALSE}
+}
+\value{
+tibble of raw data
 }
 \description{
-Generates raw data from summary statistics using left truncated
-  normal distribution
+Generates raw data from summary statistics using
+uni/multivariate log/truncated normal distribution
 }
 \details{
-Data can be entered as a data frame,with \code{Pop} (first column by
-  default) containing population names,\code{Parms} containing names of
-  tested parameter(s),  .mu and .sdev containing means and standard
-  deviations
-  with M and F donating males and females respectively. While m&f are the
-  male and female sample sizes. Data also can be entered as a list of multiple
-  data frames with similar structure but different parameters are entered as
-  names of the list.
+If data generation is desired using multivariate distribution data
+is entered in the form of a list of summary statistics and pooled within
+correlational matrix as in \link{baboon.parms_list}, or the summary statistics
+are entered separately in the form of a data frame/tibble as in
+\link{baboon.parms_df} with a separate correlational matrix as in \link{R}. If data
+frame/tibble is entered without a correlational matrix, data generation is
+carried out using univariate distribution.
+N.B: Transformation of raw summary data to logged data is only possible for
+univariate distribution and if multivariate log-normal distribution is desired
+logged values should be entered directly with \code{dist} set to \code{trunc}.
 }
 \examples{
- # Comparison of two femur parameters in two populations
+ # Data generation using univariate distribution
  library(TestDimorph)
- Pop <- as.factor(rep(c("Bulgarian","Greek"),2))
- Parms <- as.factor(c(rep("MXFL", 2),rep("MLD", 2)))
- m <-c(82.0,36.0,82.00,36.00)
- M.mu <- c(461.80,440.40,27.67,27.74)
- M.sdev <- c(19.9,19.6,2.21,1.79)
- f <- c(58.00,34.0,58.00,34.00)
- F.mu <- c(411.70,409.80,24.89,26.69)
- F.sdev <- c(23.2,21.4,1.78,2.42)
- df <- cbind.data.frame(Pop,Parms,m,M.mu,M.sdev,f,F.mu,F.sdev)
- RawGen(df)
+ RawGen(baboon.parms_df)
+ # Data generation using multivariate distribution
+ library(TestDimorph)
+ RawGen(baboon.parms_list)
 }
 \references{
 \insertRef{HUSSEIN2019}{TestDimorph}

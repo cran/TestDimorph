@@ -4,61 +4,46 @@
 \alias{extract_sum}
 \title{Summary Statistics Extraction}
 \usage{
-extract_sum(x, Sex = 1, Pop = 2, firstX = 3, test = 1,
-  run = TRUE, pairwise = FALSE, padjust = "none",
-  lower_tail = FALSE, pairwise_tail = "two")
+extract_sum(x, Sex = 1, Pop = 2, firstX = 3, test = 1, run = TRUE, ...)
 }
 \arguments{
-\item{x}{Data frame containing raw data.}
+\item{x}{Tibble/data frame containing raw data.}
 
-\item{Sex}{Number of the column containing gender (\code{M} for male and
-\code{F} for female), Default: \code{1}.}
+\item{Sex}{Number of the column containing sex 'M' for male and 'F' for female, Default: 1}
 
-\item{Pop}{Number of the column containing populations' names, Default:
-\code{2}.}
+\item{Pop}{Number of the column containing populations' names, Default: 2}
 
-\item{firstX}{Number of the first column containing measured parameters,
-Default: \code{3}.}
+\item{firstX}{Number of column containing measured parameters (First of
+multiple in case of multivariate analysis), Default: 3}
 
-\item{test}{\code{1} for Greene t-test \code{\link{Tg}}, \code{2} for
-\code{\link{univariate}}, \code{3} for sex specific ANOVA
-\code{\link{aovSS}}, \code{4} for \code{\link{multivariate}} and \code{5}
-for \code{\link{pMatrix}}, Default: \code{1}.}
+\item{test}{\code{1} for Greene t-test \link{Tg}, \code{2} for \link{univariate}, \code{3} for sex
+specific ANOVA \link{aovSS}, and \code{4} for \link{multivariate},
+Default: 1}
 
-\item{run}{Logical;if \code{TRUE} runs the corresponding test after data
-extraction, Default: \code{TRUE}.}
+\item{run}{Logical; if TRUE runs the corresponding test after data
+extraction, Default: TRUE}
 
-\item{pairwise}{Logical;if TRUE runs multiple comparisons after multi or
-univariate analysis, Default: FALSE.}
-
-\item{padjust}{Method of p value adjustment for multiple comparisons
-following \code{p.adjust.methods}, Default: \code{'none'}.}
-
-\item{lower_tail}{Logical; if TRUE probabilities are \code{P[X <= x]},
-otherwise, \code{P[X > x]}, Default: \code{FALSE}.}
-
-\item{pairwise_tail}{Number of t-test tails, Default: \code{'two'}.}
+\item{...}{Additional arguments that could be passed to the test of choice}
 }
 \value{
-Input for other functions using raw data.
+Input for other functions.
 }
 \description{
 Extract summary data needed for other functions from raw data.
 }
 \details{
-Raw data is entered in a data frame similar in format to
-  \code{\link{Howells}} data set. The first two columns contain gender
-  \code{Sex} (\code{M} for male and \code{F} for female) (Default: \code{1})
-  and populations' names \code{Pop} (Default: \code{2}). Starting from
-  \code{firstX} column (Default: \code{3}), measured parameters are entered
-  each in a separate column.
+Raw data is entered in a wide format tibble/data frame similar to
+\link{Howells} data set. The first two columns contain sex \code{Sex} (\code{M} for
+male and \code{F} for female) (Default: \code{1}) and populations' names \code{Pop}
+(Default: \code{2}). Starting from \code{firstX} column (Default: \code{3}), measured
+parameters are entered each in a separate column.
 }
 \examples{
 # for multivariate test
 library(TestDimorph)
-extract_sum(Howells)
+extract_sum(Howells,test=4)
 # for univariate test on a specific parameter
 library(TestDimorph)
-extract_sum(Howells, test = 2)
+extract_sum(Howells, test = 2,firstX = 4)
 
 }

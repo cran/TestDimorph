@@ -4,33 +4,51 @@
 \alias{aovSS}
 \title{Sex-Specific One-way ANOVA From Summary statistics}
 \usage{
-aovSS(x, Pop = 1, pairwise = TRUE)
+aovSS(
+  x,
+  Pop = 1,
+  pairwise = TRUE,
+  letters = FALSE,
+  es = FALSE,
+  digits = 4,
+  method = "hsd",
+  sig.level = 0.05
+)
 }
 \arguments{
-\item{x}{Data frame containing summary statistics of both sexes for two or
-more populations.}
+\item{x}{Tibble/data frame containing summary statistics, Default: NULL}
 
-\item{Pop}{Number of the column containing populations' names, Default:
-\code{1}}
+\item{Pop}{Number of the column containing populations' names, Default: 1}
 
-\item{pairwise}{Logical; if \code{TRUE} runs multiple pairwise comparisons on
-different populations using \code{Tukey HSD}, Default: \code{TRUE}}
+\item{pairwise}{Logical; if TRUE runs multiple pairwise comparisons on
+different populations using post hoc test of choice, Default: TRUE}
+
+\item{letters}{Logical; if TRUE returns letters for pairwise comparisons where
+significantly different populations are given different letters, Default:
+FALSE'}
+
+\item{es}{Logical; if TRUE effect size is included in the output , Default:
+FALSE}
+
+\item{digits}{Number of significant digits, Default: 4}
+
+\item{method}{Type of post hoc test implemented by \link{PostHocTest}, Default:
+'hsd'}
+
+\item{sig.level}{Critical p.value, Default: 0.05}
 }
 \value{
-Sex specific ANOVA tables and pairwise comparisons.
+Sex specific ANOVA tables and pairwise comparisons in tidy format.
 }
 \description{
-Calculates sex specific one-way ANOVA followed by \code{Tukey
-  HSD} from summary statistics.
+Calculates sex specific one-way ANOVA followed by from summary
+statistics.
 }
 \details{
-Data is entered in a wide format with each row representing a given
-  population.\code{Pop}  (first column by default) contains population names,
-  \code{.mu} and \code{.sdev} contain means and standard deviations with
-  \code{M} and \code{F} donating males and females respectively. While
-  \code{m}&\code{f} are the male and female sample sizes.By setting the
-  option \code{pairwise} to \code{TRUE}, different pairwise combinations of
-  populations can be compared with \code{Tukey HSD} post hoc test.
+Data is entered as a tibble/data frame of summary statistics where
+the column containing population names is chosen by position (first by
+default), other columns of summary data should have specific names (case
+sensitive) similar to \link{baboon.parms_df}
 }
 \examples{
   # Comparisons of femur head diameter in four populations
@@ -52,14 +70,7 @@ df <- cbind.data.frame(
   stringsAsFactors = TRUE
 )
 aovSS(x = df)
-
 }
-\references{
-\insertRef{timonov2014study}{TestDimorph}
-
-  \insertRef{curate2017sex}{TestDimorph}
-
-  \insertRef{kranioti2009sex}{TestDimorph}
-
-  \insertRef{gulhan2015new}{TestDimorph}
+\seealso{
+\code{\link[DescTools]{PostHocTest}}
 }

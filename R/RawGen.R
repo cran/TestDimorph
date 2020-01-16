@@ -1,230 +1,359 @@
-#' @title Raw Data Generation By Truncated Distribution
-#' @description Generates raw data from summary statistics using left truncated
-#'   normal distribution
-#' @param v a data frame or a named list containing summary statistics for
-#'   different parameters
-#' @param format The form of the resultant data frame either : \code{'long'} or
-#'   : \code{'wide'}, Default: \code{'wide'}
-#' @param complete_cases Logical; if \code{TRUE} rows with missing values will
-#'   be removed, Default: \code{FALSE}
-#' @details Data can be entered as a data frame,with \code{Pop} (first column by
-#'   default) containing population names,\code{Parms} containing names of
-#'   tested parameter(s),  .mu and .sdev containing means and standard
-#'   deviations
-#'   with M and F donating males and females respectively. While m&f are the
-#'   male and female sample sizes. Data also can be entered as a list of multiple
-#'   data frames with similar structure but different parameters are entered as
-#'   names of the list.
+#' @title Raw Data Generation By Log-normal Or Truncated Distribution
+#' @description  Generates raw data from summary statistics using
+#'   uni/multivariate log/truncated normal distribution
+#' @inheritParams multivariate
+#' @param dist univariate distribution used for data generation either `log` for
+#'   log-normal or `trunc` for truncated, Default: 'trunc'
+#' @param lower vector of lower bounds, Default: -Inf
+#' @param upper vector of upper bounds, Default: Inf
+#' @param format form of the resultant tibble either 'long' or 'wide', Default:
+#'   'wide'
+#' @param complete_cases Logical; if TRUE rows with missing values will be
+#'   removed, Default: FALSE
+#' @return tibble of raw data
+#' @details If data generation is desired using multivariate distribution data
+#'   is entered in the form of a list of summary statistics and pooled within
+#'   correlational matrix as in [baboon.parms_list], or the summary statistics
+#'   are entered separately in the form of a data frame/tibble as in
+#'   [baboon.parms_df] with a separate correlational matrix as in [R]. If data
+#'   frame/tibble is entered without a correlational matrix, data generation is
+#'   carried out using univariate distribution.
+#'   N.B: Transformation of raw summary data to logged data is only possible for
+#'   univariate distribution and if multivariate log-normal distribution is desired
+#'   logged values should be entered directly with `dist` set to `trunc`.
 #' @examples
-#'  # Comparison of two femur parameters in two populations
+#'  # Data generation using univariate distribution
 #'  library(TestDimorph)
-#'  Pop <- as.factor(rep(c("Bulgarian","Greek"),2))
-#'  Parms <- as.factor(c(rep("MXFL", 2),rep("MLD", 2)))
-#'  m <-c(82.0,36.0,82.00,36.00)
-#'  M.mu <- c(461.80,440.40,27.67,27.74)
-#'  M.sdev <- c(19.9,19.6,2.21,1.79)
-#'  f <- c(58.00,34.0,58.00,34.00)
-#'  F.mu <- c(411.70,409.80,24.89,26.69)
-#'  F.sdev <- c(23.2,21.4,1.78,2.42)
-#'  df <- cbind.data.frame(Pop,Parms,m,M.mu,M.sdev,f,F.mu,F.sdev)
-#'  RawGen(df)
-#' @export
+#'  RawGen(baboon.parms_df)
+#'  # Data generation using multivariate distribution
+#'  library(TestDimorph)
+#'  RawGen(baboon.parms_list)
 #' @rdname RawGen
-#'
-#' @references \insertRef{HUSSEIN2019}{TestDimorph}
-#'
+#' @export
+#' @importFrom purrr map
 #' @importFrom truncnorm rtruncnorm
-#' @importFrom plyr alply
 #' @importFrom stringr str_split
-#' @importFrom rowr cbind.fill
-#' @importFrom stats complete.cases
-#' @importFrom utils head
-#' @importFrom purrr map_df
-#'
-RawGen <-
-  function(v,
-           format = "wide",
-           complete_cases = FALSE) {
-    u <- function(x) {
+#' @importFrom tibble as_tibble is_tibble
+#' @importFrom rlang abort
+#' @importFrom tidyr drop_na
+#' @importFrom reshape2 melt
+#' @importFrom tmvtnorm rtmvnorm
+#' @importFrom stats rlnorm
+#' @references \insertRef{HUSSEIN2019}{TestDimorph}
+RawGen <- function(x,
+                   Parms = 1,
+                   Pop = 2,
+                   R.res = NULL,
+                   dist = "trunc",
+                   lower = -Inf,
+                   upper = Inf,
+                   format = "wide",
+                   complete_cases = FALSE)
+{
+  if (!(is.list(x) || is.data.frame(x) || tibble::is_tibble(x))) {
+    rlang::abort("x must be a list a dataframe or a tibble")
+  }
+  if (!(dist %in% c("log", "trunc")))   {
+    rlang::abort("distribution should be one of `log` or `trunc`")
 
-      x <- x[order(x$Pop), ]
-      x$Pop <- ordered(x$Pop)
-      t <- function(x) {
-        truncnorm::rtruncnorm(
-          n = x$m[1],
-          a = 0,
-          b = Inf,
-          mean = x$M.mu[1],
-          sd = x$M.sdev[1]
-        )
+  }
+  if (!(format %in% c("wide", "long")))   {
+    rlang::abort("format should be one of `wide` or `long`")
 
-      }
-      t2 <- function(x) {
-        truncnorm::rtruncnorm(
-          n = x$f[1],
-          a = 0,
-          b = Inf,
-          mean = x$F.mu[1],
-          sd = x$F.sdev[1]
-        )
+  }
+  if (!(complete_cases %in% c(TRUE, FALSE)))   {
+    rlang::abort("complete_cases should be either TRUE or FALSE")
 
-      }
-      q <- function(x) {
-        data.frame(x)
-      }
-
-      v <- plyr::alply (.data = x,
-                        .margins = 1,
-                        .fun = t)
-      v2 <- plyr::alply (.data = x,
-                         .margins = 1,
-                         .fun = t2)
-
-      o <- sapply(v, data.frame)
-
-      o2 <- sapply(v2, data.frame)
-
-      names(o) <- levels(x$Pop)[1:length(o)]
-
-      names(o2) <- levels(x$Pop) [1:length(o)]
-
-      M <- plyr::adply(.data = o,
-                       .margins = 1,
-                       .fun = q)
-      F <- plyr::adply(.data = o2,
-                       .margins = 1,
-                       .fun = q)
-      r <- nrow(M)
-      r2 <- nrow(F)
-      Sex1 <- cbind(rep("M", r))
-      Sex2 <- cbind(rep("F", r2))
-      Sex <- rbind(Sex1, Sex2)
-      n <- rbind.data.frame(M, F)
-      h <- cbind.data.frame(Sex, n)
-      colnames(h) <- c("Sex", "Pop", "No")
-      return(h)
-    }
-    if (is.data.frame (v)) {
-      v$Pop <- droplevels(v$Pop)
-      if(is.null(v$Parms)){
-        return(u(v))
-      }else{
-        v$Parms <- droplevels(v$Parms)
-        v$Parms <- ordered(v$Parms)
-        v <- by(v, v$Parms, list)
-      }
-    }
-    if (is.null(names(v))) {
-      names(v) <- c(1:length(v))
-
-    }
-
-    n <- lapply(v, u)
-    if (length(v)==1) {
-      n <-as.data.frame(n)
-      colnames(n) <-c("Sex", "Pop", "No")
-      return(n)
-    }
-
-    q <- function(x) {
-      h <- rep(names(v)[1], nrow(x))
-      cbind(x, "Parms" = h)
-
-    }
-
-    G <- lapply(n, q)
-    B <- lapply(G, data.frame)
-    A <- do.call(rbind.data.frame, B)
-    e <-
-      stringr::str_split(
-        string = as.character(rownames(A)),
-        pattern = "\\.",
-        n = 2,
-        simplify = TRUE
+  }
+  mult <- function(y,
+                   format,
+                   complete_cases,
+                   dist = dist,
+                   lower = lower,
+                   upper = upper) {
+    if (dist == "log")   {
+      rlang::abort(
+        "Transformation of raw summary data to logged data is only possible for univariate distribution"
       )
+    }
+    R <- y$R.res
+    m <- y$m
+    f <- y$f
+    M <- y$M.mu
+    F <- y$F.mu
+    M.sdev <- y$M.sdev
+    F.sdev <- y$F.sdev
+    traits <- colnames(M)
+    n.t <- length(traits)
+    pops <- row.names(M)
+    n.pops <- length(pops)
+    Sex <-
+      rep(rep(c("M", "F"), n.pops), times = as.vector(rbind(m, f)))
+    Pop <- rep(pops, times = m + f)
+    X <- matrix(NA, nrow = sum(m) + sum(f), ncol = n.t)
+    start <- 0
+    stop <- 0
+    for (i in 1:n.pops) {
+      start <- stop + 1
+      S <- diag(M.sdev[i, ])
+      V <- S %*% R %*% S
+      stop <- stop + m[i]
+      X[start:stop,] <-
+        tmvtnorm::rtmvnorm(
+          n = m[i],
+          mean = M[i,],
+          sigma = V,
+          lower = rep(lower, n.t),
+          upper = rep(upper, n.t)
+        )
+      start <- stop + 1
+      S <- diag(F.sdev[i, ])
+      V <- S %*% R %*% S
+      stop <- stop + f[i]
+      X[start:stop,] <-
+        tmvtnorm::rtmvnorm(
+          n = f[i],
+          mean = F[i,],
+          sigma = V,
+          lower = rep(lower, n.t),
+          upper = rep(upper, n.t)
+        )
+    }
+    colnames(X) <- traits
+    X <- data.frame(Sex, Pop, X)
 
-    A$Parms <- as.factor(e[, 1])
-    rownames(A) <- NULL
-
-    if (format == "long") {
-      if (nlevels(A$Parms)==1) {
-        A$Parms <- NULL
-        return(A)
-
-      }else{
-        return(A)
+    if (format == "wide") {
+      if (complete_cases == TRUE) {
+        return(tidyr::drop_na(X))
+      } else{
+        return(tibble::as_tibble(X))
       }
     } else{
-      zz <- function(A) {
-        Female <- function(A) {
-          M <-
-            head(sort(c(as.numeric(
-              table(A$Sex == "F")
-            )[2]), decreasing = TRUE), 1)
-
-          SexM <- rep("F", M)
-
-          M2 <-
-            rowr::cbind.fill(A$No[which(A$Sex == "F")], fill = NA)
-
-          cbind("Sex" = SexM, M2)
-        }
-        Male <- function(A) {
-          M <-
-            head(sort(c(as.numeric(
-              table(A$Sex == "M")
-            )[2]), decreasing = TRUE), 1)
-
-          SexM <- rep("M", M)
-
-          M2 <-
-            rowr::cbind.fill(A$No[which(A$Sex == "M")], fill = NA)
-
-          cbind("Sex" = SexM, M2)
-        }
+      tibble::as_tibble(reshape2::melt(
+        X,
+        id = c("Sex", "Pop"),
+        variable = "Parms",
+        na.rm = complete_cases
+      ))
 
 
-        vvv <- by(data = A,
-                  INDICES = A$Parms,
-                  FUN = Male)
-        M <- do.call(rowr::cbind.fill, c(vvv, list(fill = NA)))
-        vvv2 <- by(data = A,
-                   INDICES = A$Parms,
-                   FUN = Female)
-        F <- do.call(rowr::cbind.fill, c(vvv2, list(fill = NA)))
-        M <- M[, seq(2, ncol(M), by = 2)]
-
-        M <- as.data.frame(apply(M, 2, as.numeric))
-        M$Sex <- as.factor(rep("M", nrow(M)))
-        F <- F[, seq(2, ncol(F), by = 2)]
-        F <- as.data.frame(apply(F, 2, as.numeric))
-        F$Sex <- as.factor(rep("F", nrow(F)))
-
-        j <- rbind(M, F)
-
-        return(j)
-
-      }
-
-      q <- by(data = A,
-              INDICES = A$Pop,
-              FUN = zz)
-
-      q <- purrr::map_df(.x = q,
-                         .f = ~ as.data.frame(.x),
-                         .id = "Pop")
-      q$Pop <- as.factor(q$Pop)
-      levels(q$Pop) <- levels(A$Pop)
-      col_idx <- grep("Sex", names(q))
-      q <- q[, c(col_idx, (1:ncol(q))[-col_idx])]
-      colnames(q)[3:ncol(q)] <- levels(A$Parms)
-
-
-      if (complete_cases == TRUE) {
-        return(q[complete.cases(q),])
-
-      } else{
-        return(q)
-      }
     }
   }
+  if (is.data.frame(x) || tibble::is_tibble(x)) {
+    if (!all(c("M.mu", "F.mu", "M.sdev", "F.sdev", "m", "f") %in% names(x))) {
+      rlang::abort(
+        "colnames must contain:
+            M.mu= Male mean
+            F.mu=Female mean
+            M.sdev=Male sd
+            F.sdev=Female sd
+            m= Male sample size
+            f=Female sample size
+            N.B: colnames are case sensitive"
+      )
+    }
+    if (!(Parms %in% seq_along(1:ncol(x))))   {
+      rlang::abort("Parms should be number from 1 to ncol(x)")
+
+    }
+    if (!(Pop %in% seq_along(1:ncol(x))))   {
+      rlang::abort("Pop should be number from 1 to ncol(x)")
+
+    }
+    if (is.null(R.res)) {
+      x <- data.frame(x)
+      x$Pop <- x[, Pop]
+      x$Pop <- factor(x$Pop)
+      x$Parms <- x[, Parms]
+      x$Parms <- factor(x$Parms)
+      M <- function(x) {
+        df <- by(x, list(x$Parms), list)
+        if (dist == "log") {
+          df <- do.call(cbind_fill, c(lapply(
+            purrr::map(df, function(x) {
+              rlnorm(
+                n = x$m[1],
+                meanlog = log(x$M.mu ^ 2 / sqrt(x$M.sdev ^ 2 + x$M.mu ^ 2)),
+                sdlog = sqrt(log(1 + (
+                  x$M.sdev ^ 2 / x$M.mu ^ 2
+                )))
+              )
+            }), as.data.frame
+          )))
+        } else{
+          df <- do.call(cbind_fill, c(lapply(
+            purrr::map(df, function(x) {
+              truncnorm::rtruncnorm(
+                n = x$m[1],
+                a = lower,
+                b = upper,
+                mean = x$M.mu[1],
+                sd = x$M.sdev[1]
+              )
+            }), as.data.frame
+          )))
+        }
+        colnames(df) <- levels(x$Parms)
+        return(df)
+      }
+      male <- do.call(rbind, by(x, x$Pop, M))
+      male$Pop <-
+        as.factor(stringr::str_split(
+          rownames(male),
+          pattern = "\\.",
+          n = 2,
+          simplify = T
+        )[, 1])
+      male$Sex <- as.factor(rep("M", nrow(male)))
+      male <-
+        male[, c(ncol(male), ncol(male) - 1, 1:nlevels(x$Parms))]
+
+      F <- function(x) {
+        df <- by(x, list(x$Parms), list)
+        if (dist == "log") {
+          df <-
+            do.call(cbind_fill, c(lapply(
+              purrr::map(df, function(x) {
+                rlnorm(
+                  n = x$f[1],
+                  meanlog = log(x$F.mu ^ 2 / sqrt(x$F.sdev ^ 2 + x$F.mu ^ 2)),
+                  sdlog = sqrt(log(1 + (
+                    x$F.sdev ^ 2 / x$F.mu ^ 2
+                  )))
+                )
+              }), as.data.frame
+            )))
+        } else{
+          df <-
+            do.call(cbind_fill, c(lapply(
+              purrr::map(df, function(x) {
+                truncnorm::rtruncnorm(
+                  n = x$f[1],
+                  a = lower,
+                  b = upper,
+                  mean = x$F.mu[1],
+                  sd = x$F.sdev[1]
+                )
+              }), as.data.frame
+            )))
+        }
+        colnames(df) <- levels(x$Parms)
+        return(df)
+      }
+      female <- do.call(rbind, by(x, x$Pop, F))
+      female$Pop <-
+        as.factor(stringr::str_split(
+          rownames(female),
+          pattern = "\\.",
+          n = 2,
+          simplify = TRUE
+        )[, 1])
+      female$Sex <- as.factor(rep("F", nrow(female)))
+      female <-
+        female[, c(ncol(female) , ncol(female) - 1, 1:nlevels(x$Parms))]
+      wide <- tibble::as_tibble(rbind.data.frame(male, female))
+      if (format == "wide") {
+        if (complete_cases == TRUE) {
+          return(tidyr::drop_na(wide))
+        } else{
+          return(wide)
+        }
+      }
+      if (format == "long") {
+        long <- tibble::as_tibble(reshape2::melt(
+          wide,
+          id = c("Sex", "Pop"),
+          variable = "Parms",
+          na.rm = complete_cases
+        ))
+
+        return(long)
+      }
+    }
+    if (!is.null(R.res)) {
+      if (!is.matrix(R.res)) {
+        rlang::abort("R.res must be a matrix")
+
+      }
+      x <- data.frame(x)
+      R <- R.res
+      i <- list(levels(x[, Pop]), levels(x[, Parms]))
+      M <-
+        matrix(
+          data = x$M.mu,
+          nrow = nlevels(x[, Pop]),
+          ncol = nlevels(x[, Parms]),
+          dimnames = i
+        )
+      F <-
+        matrix(
+          data = x$F.mu,
+          nrow = nlevels(x[, Pop]),
+          ncol = nlevels(x[, Parms]),
+          dimnames = i
+        )
+      nM <- as.vector(x$m)[1:nlevels(x[, Pop])]
+      nF <- as.vector(x$f)[1:nlevels(x[, Pop])]
+      nM <- nM[!is.na(nM)]
+      nF <- nF[!is.na(nF)]
+      M.sd <-
+        matrix(
+          data = x$M.sdev,
+          nrow = nlevels(x[, Pop]),
+          ncol = nlevels(x[,
+                           Parms]),
+          dimnames = i
+        )
+      F.sd <-
+        matrix(
+          data = x$F.sdev,
+          nrow = nlevels(x[, Pop]),
+          ncol = nlevels(x[,
+                           Parms]),
+          dimnames = i
+        )
+      x <-
+        list(
+          R.res = R,
+          M.mu = M,
+          F.mu = F,
+          m = nM,
+          f = nF,
+          M.sdev = M.sd,
+          F.sdev = F.sd
+        )
+      mult(
+        y = x,
+        format = format,
+        complete_cases = complete_cases,
+        dist = dist,
+        lower = lower,
+        upper = upper
+      )
+    }
+  }
+  if (!(is.data.frame(x) || tibble::is_tibble(x))) {
+    if (!all(c("M.mu", "F.mu", "M.sdev", "F.sdev", "m", "f", "R.res") %in% names(x))) {
+      rlang::abort(
+        "List should have the following named matricies:
+            M.mu= Male mean
+            F.mu=Female mean
+            M.sdev=Male sd
+            F.sdev=Female sd
+            m= Male sample size
+            f=Female sample size
+            R.res=Pooled within correlational matrix
+            N.B: names are case sensitive"
+      )
+    }
+    mult(
+      y = x,
+      format = format,
+      complete_cases = complete_cases,
+      dist = dist,
+      lower = lower,
+      upper = upper
+    )
+
+  }
+}

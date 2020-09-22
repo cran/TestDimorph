@@ -20,6 +20,7 @@
 #' @importFrom stats pchisq
 #' @importFrom tibble is_tibble rownames_to_column
 #' @importFrom utils combn
+#' @keywords internal
 van_Vark <- function(x, Sex = 1, Pop = 2, N = 3, W, q = 2, plot = TRUE) {
   if (!(is.data.frame(x) || tibble::is_tibble(x))) {
     stop("x  should be a tibble or a dataframe")

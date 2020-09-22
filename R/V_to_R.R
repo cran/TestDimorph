@@ -9,6 +9,7 @@
 #' }
 #' }
 #' @rdname V_to_R
+#' @keywords internal
 
 V_to_R <- function(V) {
   # Returns a correlation matrix from a variance-covariance matrix

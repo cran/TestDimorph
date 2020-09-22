@@ -10,7 +10,7 @@
 #' }
 #' }
 #' @rdname to_params
-#' @export
+#' @keywords internal
 
 to_params <- function(x) {
   V <- x$V

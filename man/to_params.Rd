@@ -25,3 +25,4 @@ if (interactive()) {
 }
 }
 }
+\keyword{internal}

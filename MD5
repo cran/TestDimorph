@@ -1,6 +1,6 @@
-4cdc15780a23e1807099945288e9a5e4 *DESCRIPTION
+b7ba73c2a5ad9b2ea654c1d3ef29bb56 *DESCRIPTION
 937ef31d232d4ff2cbb3da8032635c99 *NAMESPACE
-6e2191105a7bf0304ad5176d8eab43d4 *NEWS.md
+465616ce5f9c47cde426d6a29d8adbc7 *NEWS.md
 8e3978bfe8e2b71840c0ccfdbb5cdc75 *R/AccuModel.R
 f881fd4b07cad0f2c0ca583113866fcc *R/RawGen.R
 da86de3317fbc930d1c6a480fd4c2f3f *R/TestDimorph-deprecated.R
@@ -21,7 +21,7 @@ e0d67229f5cabd002e0122d4195a6cc3 *R/index_D.R
 af8a606d08121e6b5dc6c87616e09900 *R/to_symm_diag.R
 5d606e06e69908d907bf3ddda7eae636 *R/univariate.R
 24ed5d4761a6403aa2ca7b9b978aec53 *R/van_Vark.R
-5f6f0c9b85a09db972108cea1df6b253 *README.md
+51f4b597be6054c299328e5c77be86b9 *README.md
 8aa2dc78caf4b235610b7935cd427bea *data/Howells.rda
 b730951463698f7e80121b30dd0cbe0e *data/R.rda
 a66e8db6f23995b581c9dbc61c8db9e8 *data/baboon.parms_df.rda

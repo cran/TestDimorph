@@ -14,6 +14,7 @@ AccuModel <-
            y = NULL,
            method = "lda",
            res_method = "repeatedcv",
+           prior = NULL,
            p = 0.75,
            nf = 10,
            nr = 3,
@@ -24,9 +25,10 @@ AccuModel <-
            ref. = "F",
            post. = "M",
            ...) {
-    .Deprecated("accu_model")
-    # First data.frame preparation --------------------------------------------------------
-
+    if (!identical(Sys.getenv("TESTTHAT"), "true")) {
+      .Deprecated("accu_model")
+    }
+    prob <- NULL
     if (!(is.data.frame(x))) {
       stop("x and y should be dataframes")
     }
@@ -42,9 +44,11 @@ AccuModel <-
     if (!(Sex %in% seq_along(x))) {
       stop("Sex should be a number from 1 to ncol(x)")
     }
-    x <- data.frame(x)
+    x <- x %>%
+      drop_na() %>%
+      as.data.frame()
     x$Sex <- x[, Sex]
-    x$Sex <- as.factor(x$Sex)
+    x$Sex <- factor(x$Sex, levels = c(ref., post.))
     if (is.null(Pop)) {
       x$Pop <- as.factor(rep("pop_1", nrow(x)))
     } else {
@@ -55,8 +59,6 @@ AccuModel <-
       x$Pop <- factor(x$Pop)
       x <- dplyr::arrange(x, x$Pop, x$Sex)
     }
-
-    # Cross validation --------------------------------------------------------
     if (is.null(y)) {
       x <- x %>% mutate(id = row_number())
       z <- x
@@ -68,6 +70,7 @@ AccuModel <-
 
 
       train.control <- caret::trainControl(
+        classProbs = TRUE,
         method = res_method,
         number = nf,
         repeats = nr
@@ -79,7 +82,10 @@ AccuModel <-
         trControl = train.control
       )
       preds <-
-        data.frame("id" = test.data$id, "class" = predict(model, test.data))
+        data.frame(
+          "id" = test.data$id, "class" = predict(model, test.data),
+          "prob" = predict(model, test.data, type = "prob")[, 2]
+        )
       df <-
         dplyr::full_join(data.frame("id" = test.data$id, "Sex" = test.data$Sex),
           preds,
@@ -90,8 +96,6 @@ AccuModel <-
           by =
             "id"
         )
-
-      # Second data.frame preparation -------------------------------------------
     } else {
       if (!(is.data.frame(y))) {
         stop("x and y should be dataframes")
@@ -101,7 +105,9 @@ AccuModel <-
         stop("Sex should be number from 1 or ncol(y)")
       }
 
-      y <- data.frame(y)
+      y <- y %>%
+        drop_na() %>%
+        as.data.frame()
       y$Sex <- y[, Sex]
       y$Sex <- factor(y$Sex)
       if (is.null(Pop)) {
@@ -130,18 +136,26 @@ AccuModel <-
         (!(levels(y$Sex) %in% c("M", "F")))) {
         stop("Sex column should be a factor with only 2 levels `M` and `F`")
       }
-
-      # Modeling ----------------------------------------------------------------
-
+      train.control <- caret::trainControl(
+        classProbs = TRUE,
+        method = res_method,
+        number = nf,
+        repeats = nr
+      )
       model <- caret::train(f,
         data = x,
-        method = method
+        method = method,
+        trControl = train.control
       )
-      preds <- stats::predict(model, newdata = y)
+      preds <- cbind.data.frame(
+        class = predict(model, newdata = y),
+        prob = predict(model, newdata = y, type = "prob")[, 2]
+      )
 
       df <- data.frame(
         "Sex" = y$Sex,
-        "class" = preds,
+        "class" = preds$class,
+        "prob" = preds$prob,
         "Pop" = y$Pop,
         stringsAsFactors = TRUE
       )
@@ -156,22 +170,24 @@ AccuModel <-
         }
       )
 
-      # ROC curve and confusion matrix ------------------------------------------
       df$Sex <- as.numeric(df$Sex)
       df$class <- as.numeric(df$class)
 
+
+      cutpoint <- cutpointr::cutpointr(
+        data = df,
+        x = prob,
+        class = Sex,
+        subgroup = Pop,
+        pos_class = 2,
+        neg_class = 1,
+        silent = TRUE, method = cutpointr::maximize_metric,
+        metric = cutpointr::sum_sens_spec
+      )
+
+
       roc <-
-        cutpointr::plot_roc(
-          cutpointr::cutpointr(
-            data = df,
-            x = class,
-            class = Sex,
-            subgroup = Pop,
-            pos_class = 2,
-            neg_class = 1,
-            silent = TRUE
-          )
-        ) +
+        cutpointr::plot_roc(cutpoint) +
         theme(legend.title = ggplot2::element_blank()) + labs(title = NULL, subtitle = NULL)
       conf <-
         lapply(list,
@@ -181,26 +197,30 @@ AccuModel <-
 
           ...
         )
+      cutpoint <- cbind.data.frame(cutpoint[, 1], cutpoint[, 3])
+      names(cutpoint) <- c("populations", "cutpoint")
       if (isTRUE(plot)) {
-        list(roc, conf)
+        list(cutpoint = cutpoint, conf, roc)
       } else {
-        conf
+        list(cutpoint = cutpoint, conf)
       }
     } else {
       xtab <- table(df$class, df$Sex, dnn = c("Prediction", "Reference"))
+      df$Sex <- factor(df$Sex, levels = c(ref., post.))
       df$Sex <- as.numeric(df$Sex)
       df$class <- as.numeric(df$class)
+
+      cutpoint <- cutpointr::cutpointr(
+        data = df,
+        x = prob,
+        class = Sex,
+        pos_class = 2,
+        neg_class = 1,
+        silent = TRUE, method = cutpointr::maximize_metric,
+        metric = cutpointr::sum_sens_spec
+      )
       roc <-
-        cutpointr::plot_roc(
-          cutpointr::cutpointr(
-            data = df,
-            x = class,
-            class = Sex,
-            pos_class = 2,
-            neg_class = 1,
-            silent = TRUE
-          )
-        ) +
+        cutpointr::plot_roc(cutpoint) +
         theme(legend.title = ggplot2::element_blank()) + labs(title = NULL, subtitle = NULL)
       conf <-
         caret::confusionMatrix(
@@ -210,11 +230,11 @@ AccuModel <-
           dnn = c("Prediction", "Reference"),
           ...
         )
-
+      cutpoint <- pull(cutpoint, 2)
       if (isTRUE(plot)) {
-        list(roc, conf)
+        list(cutpoint = round(cutpoint, 4), conf, roc)
       } else {
-        conf
+        list(cutpoint = round(cutpoint, 4), conf)
       }
     }
   }

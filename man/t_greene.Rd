@@ -7,14 +7,14 @@
 t_greene(
   x,
   Pop = 1,
-  es = FALSE,
+  es = "none",
   plot = FALSE,
   ...,
   alternative = c("two.sided", "less", "greater"),
-  padjust = p.adjust.methods,
+  padjust = "none",
   letters = FALSE,
   digits = 4,
-  sig.level = 0.05
+  CI = 0.95
 )
 }
 \arguments{
@@ -22,19 +22,19 @@ t_greene(
 
 \item{Pop}{Number of the column containing populations' names, Default: 1}
 
-\item{es}{Logical; if TRUE effect size is included in the output , Default:
-FALSE}
+\item{es}{Type of effect size either "d" for Cohen's d,"g" for Hedge's g
+or "none" , Default:"none".}
 
 \item{plot}{Logical; if TRUE graphical matrix of p values, Default: FALSE}
 
 \item{...}{additional arguments that can be passed to
-\link[corrplot:corrplot]{corrplot} function.}
+[corrplot][corrplot::corrplot] function.}
 
 \item{alternative}{a character string specifying the alternative
 hypothesis, must be one of "two.sided", "greater" or "less".}
 
 \item{padjust}{Method of p.value adjustment for multiple comparisons
-following \link{p.adjust.methods}}
+following \link[stats]{p.adjust.methods}  Default: "none".}
 
 \item{letters}{Logical; if TRUE returns letters for pairwise comparisons
 where significantly different populations are given different letters,
@@ -42,10 +42,10 @@ Default: FALSE'}
 
 \item{digits}{Number of significant digits, Default: 4}
 
-\item{sig.level}{Critical p.value, Default: 0.05}
+\item{CI}{confidence interval coverage takes value from 0 to 1, Default: 0.95.}
 }
 \value{
-Tibble of t.test results
+data frame of t.test results
 }
 \description{
 Calculation and visualization of the differences in degree
@@ -59,7 +59,6 @@ columns of summary data should have specific names (case sensitive) similar
 to \link{baboon.parms_df}
 }
 \examples{
-\donttest{
 # Comparisons of femur head diameter in four populations
 library(TestDimorph)
 df <- data.frame(
@@ -98,8 +97,7 @@ t_greene(
   na.label = "NA"
 )
 }
-}
 \seealso{
-\code{\link[multcompView:multcompLetters]{multcompView::multcompLetters()}}
-\code{\link[corrplot:corrplot]{corrplot::corrplot()}}
+[multcompView::multcompLetters()]
+[corrplot::corrplot()]
 }

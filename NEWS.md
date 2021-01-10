@@ -1,12 +1,24 @@
+# TestDimorph 0.4.0
+
+* A major update.
+* New functions:`van_var`, `Hedges_g`,`MI_index` and `D_index`.
+* `univariate` and `multivariate` functions report different types of ANOVA and MANOVA.
+* effect sizes are reported with confidence intervals.
+* added 3 new datasets.
+* added a list `models` of the supported models for `accu_model` function.
+
+# TestDimorph 0.3.6
+
+* Minor fixes-no user visible changes.
+
 # TestDimorph 0.3.5
 
 * Maintainer email changed.
 
-
 # TestDimorph 0.3.3
 
 * The package has been re-written and optimized with fewer dependencies.
-* new function names with snake case letters are introduced
+* New function names with snake case letters are introduced
 * Function names written in camel case letters are deprecated
 * `accu_model` function now can do cross-validation using different models supported by `caret` package.
 

@@ -3,34 +3,27 @@
 \docType{data}
 \name{baboon.parms_df}
 \alias{baboon.parms_df}
-\title{Summary statistics of baboon data collection list A dataset containing
-summary statistics for low density lipoprotein (LDL) and apolipoprotein B
-(apo B) levels in 604 baboons measured on two different diets: a basal diet
-'chow' and a high cholesterol, saturated fat diet 'pink' (HCSF). The
-baboons were classified into one of three subspecies (Papio hamadryas
-anubis, P.h. cynocephalus, or anubistcynocephalus hybrid). Each animal was
-measured on each of the two diets.}
+\title{data frame format for the baboon.parms_df for multivariate analysis}
 \format{
 A data frame with 12 rows and 8 variables \describe{
-\item{Trait}{Type of apolipoprotein} \item{Sub}{Type of species}
+\item{Trait}{Apolipoprotein B and LDL on two diets} \item{Sub}{Type of species}
 \item{M.mu}{Means of lipoproteins in different species for males}
 \item{F.mu}{Means of lipoproteins in different species for females}
 \item{m}{Male sample sizes} \item{f}{Female sample sizes}
 \item{M.sdev}{Standard deviations for males} \item{F.sdev}{Standard
 deviations for females}
 
-}
+ }
 }
 \usage{
 baboon.parms_df
 }
 \description{
-Summary statistics of baboon data collection list A dataset containing
-summary statistics for low density lipoprotein (LDL) and apolipoprotein B
-(apo B) levels in 604 baboons measured on two different diets: a basal diet
-'chow' and a high cholesterol, saturated fat diet 'pink' (HCSF). The
+A dataset containing summary statistics for low density lipoprotein (LDL) and
+apolipoprotein B (apo B) levels in 604 baboons measured on two different diets:
+a basal diet basal' and a high cholesterol, saturated fat diet (HCSF). The
 baboons were classified into one of three subspecies (Papio hamadryas
-anubis, P.h. cynocephalus, or anubistcynocephalus hybrid). Each animal was
+anubis, P.h. cynocephalus, or anubis). Each animal was
 measured on each of the two diets.
 }
 \note{
@@ -40,7 +33,8 @@ NIH contract HV53030 to the Southwest Foundation for Biomedical Research
 Foundation for Biomedical Research
 }
 \references{
-Konigsberg LW (1991). \emph{An historical note on the t-test for differences in sexual dimorphism
-between populations.}. American journal of physical anthropology, 84(1), 93–96.
+Konigsberg LW (1991). An historical note on the t-test for differences in
+sexual dimorphism between populations. American journal of physical
+anthropology, 84(1), 93–96.
 }
 \keyword{datasets}

@@ -7,17 +7,17 @@
 multi_raw(x, format, complete_cases, dist, lower, upper)
 }
 \arguments{
-\item{x}{Tibble/Data frame or list containing summary statistics for
+\item{x}{Data frame or list containing summary statistics for
 multiple parameters measured in both sexes in two or more populations.}
 
-\item{format}{form of the resultant tibble either 'long' or 'wide',
+\item{format}{form of the resultant data frame either 'long' or 'wide',
 Default: 'wide'}
 
 \item{complete_cases}{Logical; if TRUE rows with missing values will be
 removed, Default: FALSE}
 
-\item{dist}{univariate distribution used for data generation either \code{log}
-for log normal or \code{truncated} for truncated, Default: 'truncated'}
+\item{dist}{univariate distribution used for data generation either `log`
+for log normal or `truncated` for truncated distribution, Default: 'truncated'}
 
 \item{lower}{vector of lower bounds, Default: -Inf}
 

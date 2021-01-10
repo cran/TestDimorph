@@ -17,11 +17,13 @@ female, Default: 1}
 \item{firstX}{Number of column containing measured parameters (First of
 multiple in case of multivariate analysis), Default: 3}
 
-\item{test}{\code{1} for Greene t test \link{t_greene}, \code{2} for \link{univariate}, \code{3} for
-sex specific ANOVA \link{aov_ss}, and \code{4} for \link{multivariate}, Default: 1}
+\item{test}{`1` for Greene t test \link{t_greene}, `2` for
+\link{univariate}, `3` for sex specific ANOVA \link{aov_ss},
+`4` for \link{multivariate}, and `5`  for \link{van_vark},
+Default: 1}
 
 \item{run}{Logical; if TRUE runs the corresponding test after data
-extraction, Default: TRUE}
+extraction, Default:TRUE}
 
 \item{...}{Additional arguments that could be passed to the test of choice}
 }
@@ -33,18 +35,16 @@ Extract summary data needed for other functions from raw data.
 }
 \details{
 Raw data is entered in a wide format data frame similar to
-\link{Howells} data set. The first two columns contain sex \code{Sex} (\code{M} for male
-and \code{F} for female) (Default: \code{1}) and populations' names \code{Pop} (Default:
-\code{2}). Starting from \code{firstX} column (Default: \code{3}), measured parameters are
-entered each in a separate column.
+\link{Howells} data set. The first two columns contain sex `Sex`
+(`M` for male and `F` for female) (Default: `1`) and populations' names `Pop`
+(Default:`2`). Starting from `firstX` column (Default: `3`), measured
+parameters are entered each in a separate column.
 }
 \examples{
-\donttest{
 # for multivariate test
 library(TestDimorph)
 extract_sum(Howells, test = 4)
 # for univariate test on a specific parameter
 library(TestDimorph)
 extract_sum(Howells, test = 2, firstX = 4)
-}
 }

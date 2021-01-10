@@ -22,30 +22,29 @@ devtools::install_github("bassam-abulnoor/TestDimorph")
 
 ## Data entry
 
-The input can be in the form of wide format **raw data** or **summary statistics** where each row represents measurements of a single individual or population. In order to be recognized by the functions, columns need to have a specific name (case sensitive):
+The input can be in the form of wide format **raw data** or **summary statistics** where each row represents measurements of a single individual or population. In order to be recognized by the functions, columns need to have specific names (case sensitive):
 
 
-1. **Sex** : Either **M** for male or **F** for female (*Raw data*)
-2. **Pop** : Populations of the measured individuals (*Summary/Raw data*)
-3. **Parms** : Measured numerical parameters for multivariate analysis and raw data generation (*Summary*)
-4. **m** : Male sample size (*Summary*)
-5. **f** :Female sample size (*Summary*)
-6. **M.mu**: Male mean (*Summary*)
-7. **F.mu** :Female mean (*Summary*)
-8. **M.sdev** : Male standard deviation (*Summary*)
-9. **F.sdev** :Female standard deviation (*Summary*)
+1. **Sex** : either **M** for male or **F** for female (*Raw data*)
+2. **Pop** : studied populations (*Summary/Raw data*)
+3. **Trait** : studied traits or parameters (*Summary*)
+4. **m** : male sample size (*Summary*)
+5. **f** : female sample size (*Summary*)
+6. **M.mu**: male mean (*Summary*)
+7. **F.mu** : female mean (*Summary*)
+8. **M.sdev** : male standard deviation (*Summary*)
+9. **F.sdev** : female standard deviation (*Summary*)
 
 **N.B**
 
-* All non numerical values need to be entered as factors.
-* The list and the data frame formats for the `multivariate` and `RawGen` functions can be be found in the attached data sets under the names `baboon.parms_list` and `baboon.parms_df` respectively.
-* In the input of most of the functions, columns are referred to by number to avoid confusion.
+* All non numerical values need to be factors.
+* The list and the data frame formats for the `multivariate` and `RawGen` functions input, can be be found in the attached data sets under the names `baboon.parms_list` and `baboon.parms_df` respectively.
 
-## Examples
+## Examples of data entry
 
 #### Summary statistics for univariate analysis
 
-##### Comparison of femur head diameters in two populations
+##### Comparison of maximal femur length and mediolateral diameter in mid-shaft
 
 
 |    Pop    |  m  | M.mu  | M.sdev |  f  | F.mu  | F.sdev |
@@ -57,7 +56,7 @@ The input can be in the form of wide format **raw data** or **summary statistics
 
 #### Summary statistics for multivariate analysis and raw data generation
 
-##### Comparison of femur head diameters in two populations
+##### Comparison of maximal femur length and mediolateral diameter in mid-shaft
 
 
 |    Pop    | Parms |  m  |  M.mu  | M.sdev |  f  |  F.mu  | F.sdev |
@@ -81,4 +80,13 @@ The input can be in the form of wide format **raw data** or **summary statistics
 |  F  | EGYPT | 174 | 172 | 93  | 123 | 140 | 118 | 121 | 114 |
 
 
+#### Summary statistics for van_vark function
 
+##### Howells summary data
+
+| Trait |  Pop  |   M.mu   |  m |   F.mu   |  f |
+|:-----:|:-----:|:--------:|:--:|:--------:|:--:|
+|  GOL  | EGYPT | 185.6207 | 58 | 175.5849 | 53 |
+|  GOL  | NORSE | 188.4727 | 55 | 179.9818 | 55 |
+|  NOL  | EGYPT |  183.569 | 58 | 175.0377 | 53 |
+|  NOL  | NORSE | 186.1818 | 55 | 178.6909 | 55 |

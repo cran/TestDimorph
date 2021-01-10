@@ -6,7 +6,7 @@
 #' pairwise comparisons. N.B: contrary to the usual corrplots where higher
 #' values indicate stronger correlation, here lower values indicate
 #' significance
-#' @details Data is entered as a tibble/data frame of summary statistics where
+#' @details Data is entered as a data frame of summary statistics where
 #' the column containing population names is chosen by position (first by
 #' default), other columns of summary data should have specific names (case
 #' sensitive) similar to [baboon.parms_df]
@@ -25,11 +25,13 @@ pMatrix <- function(x,
                     Pop = 1,
                     plot = FALSE,
                     padjust = p.adjust.methods,
-                    sig.level = 0.05,
+                    CI = 0.95,
                     digits = 4,
                     alternative = c("two.sided", "less", "greater"),
                     ...) {
-  .Deprecated("t_greene")
+  if (!identical(Sys.getenv("TESTTHAT"), "true")) {
+    .Deprecated("t_greene")
+  }
   if (!(is.data.frame(x))) {
     stop("x should be a dataframe")
   }
@@ -54,7 +56,9 @@ pMatrix <- function(x,
   if (!is.logical(plot)) {
     stop("pairwise should be either TRUE or FALSE")
   }
-  x <- data.frame(x)
+  x <- x %>%
+    drop_na() %>%
+    as.data.frame()
   x$Pop <- x[, Pop]
   x$Pop <- factor(x$Pop)
   levels(x$Pop) <- sort(levels(x$Pop))
@@ -89,9 +93,9 @@ pMatrix <- function(x,
         N = ((nlevels(x$Pop)^2 - nlevels(x$Pop)) / 2),
         padjust = padjust,
         alternative = alternative,
-        sig.level = sig.level,
+        CI = CI,
         digits = digits,
-        es = FALSE
+        es = "none"
       )$p.value
   }
 
@@ -101,6 +105,7 @@ pMatrix <- function(x,
       corr = mat,
       p.mat = mat,
       is.corr = FALSE,
+      sig.level = 1 - CI,
       ...
     )
   } else {

@@ -1,7 +1,11 @@
+# TestDimorph 0.4.1
+
+* Fixed a bug in multivarite raw data generation.
+
 # TestDimorph 0.4.0
 
 * A major update.
-* New functions:`van_var`, `Hedges_g`,`MI_index` and `D_index`.
+* New functions:`van_vark`, `Hedges_g`,`MI_index` and `D_index`.
 * `univariate` and `multivariate` functions report different types of ANOVA and MANOVA.
 * effect sizes are reported with confidence intervals.
 * added 3 new datasets.

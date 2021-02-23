@@ -48,7 +48,7 @@ not reporting an effect size, Default:"none".}
 different parameters separately, Default: FALSE}
 
 \item{padjust}{Method of p.value adjustment for multiple comparisons
-following \link[stats]{p.adjust.methods}  Default: "none".}
+following \link[stats]{p.adjust}  Default: "none".}
 
 \item{...}{Additional arguments that could be passed to \link{univariate}}
 

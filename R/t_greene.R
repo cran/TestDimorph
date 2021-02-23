@@ -12,7 +12,7 @@
 #' @param alternative a character string specifying the alternative
 #' hypothesis, must be one of "two.sided", "greater" or "less".
 #' @param padjust Method of p.value adjustment for multiple comparisons
-#' following \link[stats]{p.adjust.methods}  Default: "none".
+#' following \link[stats]{p.adjust}  Default: "none".
 #' @param letters Logical; if TRUE returns letters for pairwise comparisons
 #' where significantly different populations are given different letters,
 #' Default: FALSE'

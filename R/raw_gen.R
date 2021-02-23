@@ -33,7 +33,6 @@
 #' @export
 #' @importFrom truncnorm rtruncnorm
 #' @importFrom tidyr drop_na
-#' @importFrom tmvtnorm rtmvnorm
 #' @importFrom stats rlnorm
 
 raw_gen <- function(x,
@@ -79,9 +78,9 @@ raw_gen <- function(x,
         drop_na() %>%
         as.data.frame()
       x$Pop <- x[, Pop]
-      x$Pop <- factor(x$Pop)
+      x$Pop <- factor(x$Pop, levels = unique(x$Pop))
       x$Trait <- x[, Trait]
-      x$Trait <- factor(x$Trait)
+      x$Trait <- factor(x$Trait, levels = unique(x$Trait))
 
       # Data generation --------------------------------------------------
 
@@ -164,6 +163,7 @@ raw_gen <- function(x,
       # Joining both datasets ---------------------------------------------------
 
       wide <- rbind.data.frame(male, female)
+      rownames(wide) <- NULL
       if (format == "wide") {
         if (isTRUE(complete_cases)) {
           return(tidyr::drop_na(wide))
@@ -220,9 +220,8 @@ raw_gen <- function(x,
       x = x,
       format = format,
       complete_cases = complete_cases,
-      dist = dist,
-      lower = lower,
-      upper = upper
+      upper = upper,
+      lower = lower
     )
   }
 }

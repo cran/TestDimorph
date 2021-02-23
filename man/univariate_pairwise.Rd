@@ -12,7 +12,7 @@ univariate_pairwise(x, out, padjust, digits, lower.tail, ...)
 \item{out}{output of multivariate function}
 
 \item{padjust}{Method of p.value adjustment for multiple comparisons
-following \link[stats]{p.adjust.methods}  Default: "none".}
+following \link[stats]{p.adjust}  Default: "none".}
 
 \item{digits}{Number of significant digits, Default: 4}
 

@@ -4,7 +4,7 @@
 \alias{multi_raw}
 \title{multivariate data generation}
 \usage{
-multi_raw(x, format, complete_cases, dist, lower, upper)
+multi_raw(x, format, complete_cases, upper, lower)
 }
 \arguments{
 \item{x}{Data frame or list containing summary statistics for
@@ -16,12 +16,9 @@ Default: 'wide'}
 \item{complete_cases}{Logical; if TRUE rows with missing values will be
 removed, Default: FALSE}
 
-\item{dist}{univariate distribution used for data generation either `log`
-for log normal or `truncated` for truncated distribution, Default: 'truncated'}
+\item{upper}{vector of upper bounds, Default: Inf}
 
 \item{lower}{vector of lower bounds, Default: -Inf}
-
-\item{upper}{vector of upper bounds, Default: Inf}
 }
 \description{
 multivariate data generation helper function

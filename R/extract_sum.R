@@ -64,7 +64,7 @@ extract_sum <-
       stop("Sex column should be a factor with only 2 levels `M` and `F`")
     }
     if (!(test %in% 1:5)) {
-      stop("Test can only be be from 1 to 5")
+      stop("Test can only be a number from 1 to 5")
     }
     if (test == 4) {
       x <- as.data.frame.list(x)
@@ -78,6 +78,8 @@ extract_sum <-
       V <- pooled_cov(as.matrix(X), ina)
       D <- diag(1 / sqrt(diag(V)))
       R.res <- D %*% V %*% D
+      colnames(R.res) <- Trait.names
+      rownames(R.res) <- Trait.names
       M.mu <-
         x %>%
         filter(Sex == "M") %>%

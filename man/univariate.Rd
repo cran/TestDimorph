@@ -36,7 +36,7 @@ squared or "none", Default:"none".}
 different populations using \link{t_greene} Default: FALSE}
 
 \item{padjust}{Method of p.value adjustment for multiple comparisons
-following \link[stats]{p.adjust.methods}  Default: "none".}
+following \link[stats]{p.adjust}  Default: "none".}
 
 \item{...}{Additional arguments that could be passed to the \link{t_greene}
 function}

@@ -104,6 +104,12 @@
 #' \link{Howells}
 #'
 "Howells_summary"
+#' List format of \link{Howells_summary} for multivariate analysis
+#'
+#' @format A list of 7 matrices with structure similar to \link{baboon.parms_list}
+#'
+"Howells_summary_list"
+
 #' Pooled within group correlation matrix for Howells' data
 #' @format A 8*8 numerical matrix
 "Howells_R"

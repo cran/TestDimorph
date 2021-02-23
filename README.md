@@ -59,7 +59,7 @@ The input can be in the form of wide format **raw data** or **summary statistics
 ##### Comparison of maximal femur length and mediolateral diameter in mid-shaft
 
 
-|    Pop    | Parms |  m  |  M.mu  | M.sdev |  f  |  F.mu  | F.sdev |
+|    Pop    | Trait |  m  |  M.mu  | M.sdev |  f  |  F.mu  | F.sdev |
 | :-------: | :---: | :-: | :----: | :----: | :-: | :----: | :----: |
 | Bulgarian | MXFL  | 82  | 461.80 | 19.90  | 58  | 411.70 | 23.20  |
 |   Greek   | MXFL  | 36  | 440.40 | 19.60  | 34  | 409.80 | 21.40  |

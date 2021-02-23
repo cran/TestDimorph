@@ -28,8 +28,7 @@ RawGen <- function(x,
   if (!is.logical(complete_cases)) {
     stop("complete_cases should be either TRUE or FALSE")
   }
-  # univariate data generation ----------------------------------------------
-
+  # univariate data generation
   if (is.data.frame(x)) {
     if (!all(c("M.mu", "F.mu", "M.sdev", "F.sdev", "m", "f") %in% names(x))) {
       stop(
@@ -54,11 +53,11 @@ RawGen <- function(x,
         drop_na() %>%
         as.data.frame()
       x$Pop <- x[, Pop]
-      x$Pop <- factor(x$Pop)
+      x$Pop <- factor(x$Pop, levels = unique(x$Pop))
       x$Trait <- x[, Trait]
-      x$Trait <- factor(x$Trait)
+      x$Trait <- factor(x$Trait, levels = unique(x$Trait))
 
-      # Data generation --------------------------------------------------
+  # Data generation
 
       if (dist == "log") {
         message("Data generation was done using univariate log distribution")
@@ -136,9 +135,9 @@ RawGen <- function(x,
       female <-
         female[, c(ncol(female), ncol(female) - 1, seq(nlevels(x$Trait)))]
 
-      # Joining both datasets ---------------------------------------------------
-
+      # Joining both datasets
       wide <- rbind.data.frame(male, female)
+      rownames(wide) <- NULL
       if (format == "wide") {
         if (isTRUE(complete_cases)) {
           return(tidyr::drop_na(wide))
@@ -159,8 +158,7 @@ RawGen <- function(x,
       }
     }
 
-    # multivariate generation with data.frame and correlation matrix -----------
-
+    # multivariate generation with data.frame and correlation matrix
     if (!is.null(R.res)) {
       if (!is.matrix(R.res)) {
         stop("R.res should be a matrix")
@@ -174,7 +172,7 @@ RawGen <- function(x,
     }
   }
 
-  # multivariate data generation with list input -------------------------------------
+  # multivariate data generation with list input
 
   if (!(is.data.frame(x))) {
     if (!all(c("M.mu", "F.mu", "M.sdev", "F.sdev", "m", "f", "R.res") %in% names(x))) {
@@ -195,7 +193,6 @@ RawGen <- function(x,
       x = x,
       format = format,
       complete_cases = complete_cases,
-      dist = dist,
       lower = lower,
       upper = upper
     )

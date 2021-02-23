@@ -142,65 +142,61 @@ t_test <-
 #' @title multivariate data generation
 #' @description multivariate data generation helper function
 #' @inheritParams raw_gen
+#' @importFrom tmvtnorm rtmvnorm
 #' @keywords internal
 multi_raw <- function(x,
                       format,
                       complete_cases,
-                      dist,
-                      lower,
-                      upper) {
-  if (dist == "log") {
-    stop(
-      "Transformation of raw summary data to logged data is only possible for
-      univariate distribution"
-    )
-  }
+                      upper,
+                      lower) {
   R <- x$R.res
   m <- x$m
   f <- x$f
-  m_mean <- x$M.mu
-  f_mean <- x$F.mu
+  M.mu <- x$M.mu
+  F.mu <- x$F.mu
   M.sdev <- x$M.sdev
   F.sdev <- x$F.sdev
-  traits <- colnames(m_mean)
-  n.t <- length(traits)
-  pops <- row.names(m_mean)
-  n.pops <- length(pops)
-  Sex <-
-    rep(rep(c("M", "F"), n.pops), times = as.vector(rbind(m, f)))
-  Pop <- rep(pops, times = m + f)
-  X <- matrix(NA, nrow = sum(m) + sum(f), ncol = n.t)
-  start <- 0
-  stop <- 0
-  for (i in 1:n.pops) {
-    start <- stop + 1
+  Sex_M <- rep("M", sum(m))
+  Pop_M <- rep(rownames(M.mu), m)
+  Sex_F <- rep("F", sum(f))
+  Pop_F <- rep(rownames(F.mu), f)
+  male <- function(i) {
     S <- diag(M.sdev[i, ])
     V <- S %*% R %*% S
-    stop <- stop + m[i]
-    X[start:stop, ] <-
-      tmvtnorm::rtmvnorm(
-        n = m[i],
-        mean = m_mean[i, ],
-        sigma = V,
-        lower = rep(lower, n.t),
-        upper = rep(upper, n.t)
-      )
-    start <- stop + 1
+    tmvtnorm::rtmvnorm(
+      n = m[i],
+      mean = M.mu[i, ],
+      sigma = V,
+      lower = rep(lower,
+                  length(M.mu[i, ])),
+      upper = rep(upper, length(M.mu[i, ]))
+    )
+
+  }
+  male <- Vectorize(male, "i", SIMPLIFY = FALSE)
+  male <- male(seq_along(m))
+  male <- do.call(rbind, male)
+  male <- cbind.data.frame(Sex_M, Pop_M, male)
+  colnames(male) <- c("Sex", "Pop", colnames(M.mu))
+  female <- function(i) {
     S <- diag(F.sdev[i, ])
     V <- S %*% R %*% S
-    stop <- stop + f[i]
-    X[start:stop, ] <-
-      tmvtnorm::rtmvnorm(
-        n = f[i],
-        mean = f_mean[i, ],
-        sigma = V,
-        lower = rep(lower, n.t),
-        upper = rep(upper, n.t)
-      )
-  }
-  colnames(X) <- traits
-  X <- data.frame(Sex, Pop, X)
+    tmvtnorm::rtmvnorm(
+      n = f[i],
+      mean = F.mu[i, ],
+      sigma = V,
+      lower = rep(lower,
+                  length(F.mu[i, ])),
+      upper = rep(upper, length(F.mu[i, ]))
+    )
 
+  }
+  female <- Vectorize(female, "i", SIMPLIFY = FALSE)
+  female <- female(seq_along(f))
+  female <- do.call(rbind, female)
+  female <- cbind.data.frame(Sex_F, Pop_F, female)
+  colnames(female) <- c("Sex", "Pop", colnames(F.mu))
+  X <- rbind.data.frame(male, female)
   if (format == "wide") {
     if (isTRUE(complete_cases)) {
       return(tidyr::drop_na(X))
@@ -210,10 +206,10 @@ multi_raw <- function(x,
   } else {
     pivot_longer(
       data = X,
-      cols = -c("Sex", "Pop"),
+      cols = 3:ncol(X),
       names_to = "Parms",
       values_drop_na = complete_cases
-    )
+    ) %>% as.data.frame()
   }
 }
 
@@ -226,7 +222,10 @@ multi_raw <- function(x,
 dataframe2list <- function(x, R.res, Trait, Pop) {
   x <- x %>%
     rename("Pop" = Pop, "Trait" = Trait) %>%
-    mutate(Pop = factor(.data$Pop), Trait = factor(.data$Trait)) %>%
+    mutate(Pop = factor(.data$Pop, levels = unique(.data$Pop)), Trait = factor(
+      .data$Trait,
+      levels = unique(.data$Trait)
+    )) %>%
     as.data.frame()
   x$Pop <- droplevels(x$Pop)
   x$Trait <- droplevels(x$Trait)

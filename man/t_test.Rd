@@ -58,7 +58,7 @@ Default: NULL}
 Default: NULL}
 
 \item{padjust}{Method of p.value adjustment for multiple comparisons
-following \link[stats]{p.adjust.methods}  Default: "none".}
+following \link[stats]{p.adjust}  Default: "none".}
 
 \item{N}{Number of pairwise comparisons for [p.adjust.methods], if left
 `NULL` it will follow the formula `n(n 1)/2` where `n` is the number of

@@ -6,9 +6,9 @@
 #' @param Pop Number of the column containing populations' names, Default: 2
 #' @param firstX Number of column containing measured parameters (First of
 #' multiple in case of multivariate analysis), Default: 3
-#' @param test `1` for Greene t test \link{t_greene}, `2` for
-#' \link{univariate}, `3` for sex specific ANOVA \link{aov_ss},
-#' `4` for \link{multivariate}, and `5`  for \link{van_vark},
+#' @param test `tg` for Greene t test \link{t_greene}, `uni` for
+#' \link{univariate}, `aov` for sex specific ANOVA \link{aov_ss},
+#' `multi` for \link{multivariate}, and `van`  for \link{van_vark},
 #' Default: 1
 #' @param run Logical; if TRUE runs the corresponding test after data
 #' extraction, Default:TRUE
@@ -21,11 +21,11 @@
 #' parameters are entered each in a separate column.
 #' @examples
 #' # for multivariate test
-#' library(TestDimorph)
-#' extract_sum(Howells, test = 4)
+#' \dontrun{
+#' extract_sum(Howells, test = "multi")
 #' # for univariate test on a specific parameter
-#' library(TestDimorph)
-#' extract_sum(Howells, test = 2, firstX = 4)
+#' extract_sum(Howells, test = "uni", firstX = 4)
+#' }
 #' @rdname extract_sum
 #' @export
 #' @import dplyr
@@ -35,7 +35,7 @@ extract_sum <-
            Sex = 1,
            Pop = 2,
            firstX = 3,
-           test = 1,
+           test = "tg",
            run = TRUE,
            ...) {
     if (!(is.data.frame(x))) {
@@ -56,6 +56,15 @@ extract_sum <-
     if (!is.logical(run)) {
       stop("run should be either TRUE or FALSE")
     }
+    if (test %in% c("multi", "van")) {
+      if (!all(sapply(x[firstX:ncol(x)], is.numeric))) {
+        stop("All selected parameters should be numeric")
+      }
+    } else {
+      if (!is.numeric(x[[firstX]])) {
+        stop("The selected parameter should be numeric")
+      }
+    }
     x$Pop <- x[, Pop]
     x$Sex <- x[, Sex]
     x$Pop <- factor(x$Pop)
@@ -63,10 +72,10 @@ extract_sum <-
     if (length(unique(x$Sex)) != 2) {
       stop("Sex column should be a factor with only 2 levels `M` and `F`")
     }
-    if (!(test %in% 1:5)) {
-      stop("Test can only be a number from 1 to 5")
-    }
-    if (test == 4) {
+    test <- match.arg(test, choices = c("tg", "uni", "aov", "multi", "van"))
+    if (test == "multi") {
+      nam <- paste(colnames(x)[firstX:ncol(x)], collapse = ",")
+      message("The parameters used are ", nam)
       x <- as.data.frame.list(x)
       sex <- as.numeric(x[, Sex]) - 1
       pop <- as.numeric(x[, Pop])
@@ -110,7 +119,7 @@ extract_sum <-
 
       F.sdev <-
         matrix(NA, nrow = N.pops, ncol = NCOL(x) - firstX + 1)
-      for (i in 1:N.pops) {
+      for (i in seq_len(N.pops)) {
         F.sdev[i, ] <- apply(X[ina == i, ], 2, stats::sd)
       }
 
@@ -119,7 +128,7 @@ extract_sum <-
 
       M.sdev <-
         matrix(NA, nrow = N.pops, ncol = NCOL(x) - firstX + 1)
-      for (i in 1:N.pops) {
+      for (i in seq_len(N.pops)) {
         M.sdev[i, ] <- apply(X[ina == N.pops + i, ], 2, stats::sd)
       }
 
@@ -163,21 +172,24 @@ extract_sum <-
           f = length
         ))
       df <- dplyr::full_join(M, F, by = "Pop")
-      if (test == 2) {
+      if (test == "uni") {
+        message("The parameter used is ", colnames(x)[firstX])
         if (isTRUE(run)) {
           return(univariate(x = df, Pop = 1, ...))
         } else {
           return(df)
         }
       }
-      if (test == 3) {
+      if (test == "aov") {
+        message("The parameter used is ", colnames(x)[firstX])
         if (isTRUE(run)) {
           return(aov_ss(x = df, Pop = 1, ...))
         } else {
           return(df)
         }
       }
-      if (test == 1) {
+      if (test == "tg") {
+        message("The parameter used is ", colnames(x)[firstX])
         if (isTRUE(run)) {
           return(t_greene(x = df, Pop = 1, ...))
         } else {
@@ -185,14 +197,29 @@ extract_sum <-
         }
       }
     }
-    if (test == 5) {
+    if (test == "van") {
+      nam <- paste(colnames(x)[firstX:ncol(x)], collapse = ",")
+      message("The parameters used are ", nam)
       if (isTRUE(run)) {
-        dat <- Van_vark_raw(x = x, Pop = Pop, Sex = Sex, firstX = firstX, ...)
+        dat <-
+          Van_vark_raw(
+            x = x,
+            Pop = Pop,
+            Sex = Sex,
+            firstX = firstX,
+            ...
+          )
         x <- dat$x
         W <- dat$W
         van_vark(x = x, W = W, ...)
       } else {
-        return(Van_vark_raw(x = x, Pop = Pop, Sex = Sex, firstX = firstX, ...))
+        return(Van_vark_raw(
+          x = x,
+          Pop = Pop,
+          Sex = Sex,
+          firstX = firstX,
+          ...
+        ))
       }
     }
   }

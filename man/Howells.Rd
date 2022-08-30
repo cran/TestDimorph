@@ -40,5 +40,8 @@ vol. 82, pp. 108. Cambridge, Mass.: Peabody Museum.
 Howells, W. W. (1973). Cranial Variation in Man: A Study by Multivariate
 Analysis of Patterns of Difference Among Recent Human Populations (Vol. 67).
 Cambridge, MA: Peabody Museum of Archaeology and Ethnology.
+
+Howells, W. W. (1996). Notes and Comments: Howells' craniometric data on the
+internet. American Journal of Physical Anthropology, 101(3), 441-442
 }
 \keyword{datasets}

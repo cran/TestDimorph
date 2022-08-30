@@ -14,11 +14,6 @@ You can install the released version of TestDimorph from [CRAN](https://CRAN.R-p
 ``` r
 install.packages("TestDimorph")
 ```
-or the development version from GitHub:
-
-``` r
-devtools::install_github("bassam-abulnoor/TestDimorph")
-```
 
 ## Data entry
 

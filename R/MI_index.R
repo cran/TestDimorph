@@ -1,10 +1,12 @@
 #' @title Mixture Index ("MI")
 #' @description Ipina and Durand's (2010) mixture intersection (MI) measure of
-#' sexual dimorphism.  This measure is an overlap coefficient where the sum of
-#'  the frequency of males and the frequency of females equals 1.0.  Ipina and
-#'  Durand (2010) also define a normal intersection (NI) measure which is the
-#'  overlap coefficient of two normal distributions, equivalent to Inman and
-#'  Bradley's (1989) overlap coefficient
+#' sexual dimorphism. This measure is an overlap coefficient where the sum of
+#' the frequency of males and the frequency of females equals 1.0. Ipina and
+#' Durand (2010) also define a normal intersection (NI) measure which is the
+#' overlap coefficient of two normal distributions (each integrating to 1.0),
+#' equivalent to Inman and Bradley's (1989) "overlap coefficient." As a result
+#' of this rescaling, the "MI" and "NI" plots will appear identical save for
+#' the scale on the y-axis.
 #' @details see \link{D_index} for bootstrap method.
 #' @inheritParams D_index
 #' @param p.f proportion of sample that is female (if p.f>0 then
@@ -16,12 +18,12 @@
 #' @return returns a table of Ipina and Durand's (2010) mixture index ("MI")
 #' for different traits with graphical representation.
 #' @examples
-#' library(TestDimorph)
-#' data("Cremains_measurements")
-#' # plot and test of significance
+#' # plot and calculation of MI
 #' MI_index(Cremains_measurements[1, ], plot = TRUE)
 #' #' #NI index
 #' MI_index(Cremains_measurements[1, ], index_type = "NI")
+#' 1 - D_index(Cremains_measurements[1, ])$D
+#'
 #' \dontrun{
 #' # confidence interval was bootstrapping
 #' MI_index(Cremains_measurements[1, ], rand = FALSE, B = 1000)
@@ -42,8 +44,16 @@
 #' @importFrom utils flush.console
 #' @export
 
-MI_index <- function(x, plot = FALSE, Trait = 1, B = NULL, CI = 0.95,
-                     p.f = 0, index_type = "MI", rand = TRUE, digits = 4) {
+MI_index <- function(x,
+                     plot = FALSE,
+                     Trait = 1,
+                     B = NULL,
+                     verbose=FALSE,
+                     CI = 0.95,
+                     p.f = 0,
+                     index_type = "MI",
+                     rand = TRUE,
+                     digits = 4) {
   index_type <- match.arg(index_type, choices = c("MI", "NI"))
   if (!(is.data.frame(x))) {
     stop("x should be a dataframe")
@@ -84,7 +94,12 @@ MI_index <- function(x, plot = FALSE, Trait = 1, B = NULL, CI = 0.95,
   if (!is.numeric(p.f)) {
     stop("p.f should be a number")
   }
-
+  if (!is.numeric(B) && !is.null(B)) {
+    stop("B should be a number from 1 to Inf")
+  }
+  if (is.numeric(B) && B < 1) {
+    stop("B should be a number from 1 to Inf")
+  }
   if (is.null(CI) && !is.null(B)) {
     warning("confidence level is not spicified")
   }
@@ -99,7 +114,7 @@ MI_index <- function(x, plot = FALSE, Trait = 1, B = NULL, CI = 0.95,
     drop_na() %>%
     as.data.frame()
   x$Trait <- x[, Trait]
-  x$Trait <- factor(x$Trait, levels = x$Trait)
+  x$Trait <- factor(x$Trait, levels = unique(x$Trait))
   x$Trait <- droplevels(x$Trait)
   m <- x$m
   M.mu <- x$M.mu
@@ -111,9 +126,7 @@ MI_index <- function(x, plot = FALSE, Trait = 1, B = NULL, CI = 0.95,
   if (p.f == 0) {
     p.f <- f / (f + m)
     p.m <- 1 - p.f
-  }
-
-  else {
+  } else {
     p.m <- 1 - p.f
   }
 
@@ -130,58 +143,86 @@ MI_index <- function(x, plot = FALSE, Trait = 1, B = NULL, CI = 0.95,
     F.mu <- x$F.mu[i]
     F.sdev <- x$F.sdev[i]
     Trait <- x$Trait[i]
-    left <- min(c(qnorm(0.000001, F.mu, F.sdev), qnorm(0.000001, M.mu, M.sdev)))
-    right <- max(c(qnorm(0.999999, F.mu, F.sdev), qnorm(0.999999, M.mu, M.sdev)))
+    left <-
+      min(c(
+        qnorm(0.000001, F.mu, F.sdev),
+        qnorm(0.000001, M.mu, M.sdev)
+      ))
+    right <-
+      max(c(
+        qnorm(0.999999, F.mu, F.sdev),
+        qnorm(0.999999, M.mu, M.sdev)
+      ))
 
-    ID <- function(x) min(c(p.f * dnorm(x, F.mu, F.sdev), p.m * dnorm(x, M.mu, M.sdev)))
+    ID <-
+      function(x)
+        min(c(p.f * dnorm(x, F.mu, F.sdev), p.m * dnorm(x, M.mu, M.sdev)))
 
     MI <- round(integrate(Vectorize(ID), left, right)$val, 4)
     z <- seq(left, right, 0.01)
     trait <- rep(Trait, length(z))
-    dn_male <- p.m * dnorm(z, as.numeric(na.omit(M.mu)), as.numeric(na.omit(
-      M.sdev
-    ))) %>% as.data.frame()
+    dn_male <-
+      p.m * dnorm(z, as.numeric(na.omit(M.mu)), as.numeric(na.omit(M.sdev))) %>% as.data.frame()
     dn_overlap <- vector(mode = "numeric", length = length(z))
-    for (k in 1:length(z)) {
+    for (k in seq_along(z)) {
       dn_overlap[k] <- ID(z[k])
     }
-    dn_overlap <- cbind.data.frame(z = z, dn = dn_overlap, sex = rep("MI", length(dn_overlap)))
-    dn_male <- cbind.data.frame(z = z, dn = dn_male, sex = rep("M", nrow(dn_male)))
-    dn_female <- p.f * dnorm(z, as.numeric(na.omit(F.mu)), as.numeric(na.omit(
-      F.sdev
-    ))) %>% as.data.frame()
-    dn_female <- cbind.data.frame(z = z, dn = dn_female, sex = rep("F", nrow(dn_female)))
+    dn_overlap <-
+      cbind.data.frame(z = z,
+                       dn = dn_overlap,
+                       sex = rep("MI", length(dn_overlap)))
+    dn_male <-
+      cbind.data.frame(z = z,
+                       dn = dn_male,
+                       sex = rep("M", nrow(dn_male)))
+    dn_female <-
+      p.f * dnorm(z, as.numeric(na.omit(F.mu)), as.numeric(na.omit(F.sdev))) %>% as.data.frame()
+    dn_female <-
+      cbind.data.frame(z = z,
+                       dn = dn_female,
+                       sex = rep("F", nrow(dn_female)))
     names(dn_overlap) <- names(dn_male)
     df <- rbind.data.frame(dn_male, dn_female, dn_overlap)
     names(df) <- c("z", "dn", "sex")
     df <- cbind.data.frame(trait = trait, df)
     if (!is.null(CI) && !is.null(B)) {
       sto_boot <- rep(NA, B)
-      for (j in 1:B) {
+      for (i in seq_len(B)) {
         males <- rnorm(m, M.mu, M.sdev)
         females <- rnorm(f, F.mu, F.sdev)
         M.mu_boot <- mean(males)
         M.sdev_boot <- sd(males)
         F.mu_boot <- mean(females)
         F.sdev_boot <- sd(females)
-        left_boot <- min(c(qnorm(0.000001, F.mu_boot, F.sdev_boot), qnorm(
-          0.000001, M.mu_boot,
-          M.sdev_boot
-        )))
-        right_boot <- max(c(qnorm(0.999999, F.mu_boot, F.sdev_boot), qnorm(
-          0.999999, M.mu_boot,
-          M.sdev_boot
-        )))
+        left_boot <-
+          min(c(
+            qnorm(0.000001, F.mu_boot, F.sdev_boot),
+            qnorm(0.000001, M.mu_boot,
+                  M.sdev_boot)
+          ))
+        right_boot <-
+          max(c(
+            qnorm(0.999999, F.mu_boot, F.sdev_boot),
+            qnorm(0.999999, M.mu_boot,
+                  M.sdev_boot)
+          ))
         ID_boot <- function(x) {
-          min(c(p.f * dnorm(x, F.mu_boot, F.sdev_boot), p.m * dnorm(
-            x,
-            M.mu_boot, M.sdev_boot
-          )))
+          min(c(
+            p.f * dnorm(x, F.mu_boot, F.sdev_boot),
+            p.m * dnorm(x,
+                        M.mu_boot, M.sdev_boot)
+          ))
         }
-        MI_boot <- round(integrate(Vectorize(ID_boot), left_boot, right_boot)$val, 4)
-        sto_boot[j] <- MI_boot
-        cat(paste("\r", i, " of ", B, "bootstraps"))
-        flush.console()
+        MI_boot <-
+          round(integrate(Vectorize(ID_boot), left_boot, right_boot)$val, 4)
+        sto_boot[i] <- MI_boot
+        if (isTRUE(verbose)) {
+          cat(paste("\r", i, " of ", B, "bootstraps"))
+          flush.console()
+        }
+      }
+      if (isTRUE(verbose)) {
+        cat("\nI'm all done\n")
       }
       half_CI <- CI / 2
       bot <- 0.5 - half_CI
@@ -203,11 +244,16 @@ MI_index <- function(x, plot = FALSE, Trait = 1, B = NULL, CI = 0.95,
     IM_list <- list(MI, df = df)
     IM_list
   }
-  vec_Ipina_Durand <- Vectorize(Ipina_Durand, vectorize.args = "i", SIMPLIFY = F)
+  vec_Ipina_Durand <-
+    Vectorize(Ipina_Durand,
+              vectorize.args = "i",
+              SIMPLIFY = F)
   all_list <- vec_Ipina_Durand(i = seq_len(nrow(x)))
-  IM_list <- lapply(all_list, function(x) x[[1]])
+  IM_list <- lapply(all_list, function(x)
+    x[[1]])
   names(IM_list) <- levels(x$Trait)
-  df <- lapply(all_list, function(x) x[[2]])
+  df <- lapply(all_list, function(x)
+    x[[2]])
   df <- do.call(rbind.data.frame, df)
   IM_df <- do.call(rbind, IM_list)
   fill_list <- list(
@@ -227,24 +273,24 @@ MI_index <- function(x, plot = FALSE, Trait = 1, B = NULL, CI = 0.95,
     y = .data$dn,
     color = .data$sex
   )) +
-    geom_polygon(aes(
-      fill =
-        .data$sex
-    ), size = 1) +
+    geom_polygon(aes(fill =
+                       .data$sex), size = 1) +
     scale +
     scale2 +
     geom_density(stat = "identity") +
-    facet_wrap(~trait, scales = "free") +
+    facet_wrap( ~ trait, scales = "free") +
     ylab("Density") +
     xlab("x") +
     theme(legend.title = element_blank()) +
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
-    theme(legend.position = "none")
+    theme(legend.position = "none") +
+    theme(aspect.ratio = 1)
   IM_df <- rown_col(as.data.frame(IM_df), var = "Trait")
   IM_df <- IM_df %>% mutate(across(-1, round, digits))
   if (isTRUE(plot)) {
-    list(index = as.data.frame(IM_df), plot = p)
+    plot(p)
+    as.data.frame(IM_df)
   } else {
     as.data.frame(IM_df)
   }

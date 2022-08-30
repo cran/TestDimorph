@@ -13,4 +13,7 @@ baboon.parms_R
 \description{
 Pooled within group correlation matrix for baboon data
 }
+\seealso{
+\link{baboon.parms_list}
+}
 \keyword{datasets}

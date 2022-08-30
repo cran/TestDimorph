@@ -1,34 +1,28 @@
-#' @title Raw Data Generation By Log-normal Or Truncated Distribution
+#' @title Raw Data Generation By Normal Or Truncated Normal Distribution
 #' @description Generates raw data from summary statistics using
-#' uni/multivariate log/truncated normal distribution
+#' uni/multivariate truncated normal distribution
 #' @inheritParams multivariate
-#' @param dist univariate distribution used for data generation either `log`
-#' for log normal or `truncated` for truncated distribution, Default: 'truncated'
-#' @param lower vector of lower bounds, Default: -Inf
-#' @param upper vector of upper bounds, Default: Inf
-#' @param format form of the resultant data frame either 'long' or 'wide',
-#' Default: 'wide'
-#' @param complete_cases Logical; if TRUE rows with missing values will be
-#' removed, Default: FALSE
+#' @param lower scalar of lower bounds, Default: -Inf
+#' @param upper scalar of upper bounds, Default: Inf
+#' @param verbose Logical; if TRUE displays a message with the method used for
+#'   generation , Default: FALSE
 #' @return a data frame of raw data
 #' @details If data generation is desired using multivariate distribution data
 #' is entered in the form of a list of summary statistics and pooled within
-#' correlational matrix as in \link{baboon.parms_list}, or the summary
+#' correlation matrix as in \link{baboon.parms_list}, or the summary
 #'  statistics are entered separately in the form of a data frame as in
-#' \link{baboon.parms_df} with a separate correlational matrix as in
-#' \link{baboon.parms_R}. If data frame is entered without a correlational
+#' \link{baboon.parms_df} with a separate correlation matrix as in
+#' \link{baboon.parms_R}. If data frame is entered without a correlation
 #' matrix, data generation is carried out using univariate distribution.
-#' N.B: Transformation of raw summary data to logged data is only possible
-#' for univariate distribution and if multivariate log normal distribution
-#' is desired logged values should be entered directly with `dist` set to
-#' `truncated`.
 #' @examples
-#' # Data generation using univariate distribution
-#' library(TestDimorph)
-#' raw_gen(baboon.parms_df)
+#' # Data generation using univariate distributions
+#' raw_gen(baboon.parms_df, lower = 0)
+#'
+#' # another univariate example
+#' raw_gen(Cremains_measurements[1, ])[, -2]
+#'
 #' # Data generation using multivariate distribution
-#' library(TestDimorph)
-#' raw_gen(baboon.parms_list)
+#' raw_gen(baboon.parms_list, lower = 0)
 #' @rdname raw_gen
 #' @export
 #' @importFrom truncnorm rtruncnorm
@@ -39,19 +33,20 @@ raw_gen <- function(x,
                     Trait = 1,
                     Pop = 2,
                     R.res = NULL,
-                    dist = c("truncated", "log"),
                     lower = -Inf,
                     upper = Inf,
-                    format = c("wide", "long"),
-                    complete_cases = FALSE) {
+                    verbose = FALSE) {
+  warning("The user should be aware that this function assumes that for
+            univariate generated data the within sex/population variables are
+            normally distributed and truncated if `lower` and/or `upper` are
+            changed from their defaults. For multivariate generated data the
+            within sex/population correlation matrices are all assumed to be
+            equal and again truncated if `lower` and/or `upper` are changed
+            from their defaults.")
   if (!(is.list(x) || is.data.frame(x))) {
     stop("x should be a list or a dataframe")
   }
-  dist <- match.arg(dist, choices = c("truncated", "log"))
-  format <- match.arg(format, choices = c("wide", "long"))
-  if (!is.logical(complete_cases)) {
-    stop("complete_cases should be either TRUE or FALSE")
-  }
+
   # univariate data generation ----------------------------------------------
 
   if (is.data.frame(x)) {
@@ -84,47 +79,29 @@ raw_gen <- function(x,
 
       # Data generation --------------------------------------------------
 
-      if (dist == "log") {
-        message("Data generation was done using univariate log distribution")
-        gen_m <- function(x) {
-          rlnorm(
-            n = x$m[1],
-            meanlog = log(x$M.mu^2 / sqrt(x$M.sdev^2 + x$M.mu^2)),
-            sdlog = sqrt(log(1 + (
-              x$M.sdev^2 / x$M.mu^2
-            )))
-          )
-        }
-        gen_f <- function(x) {
-          rlnorm(
-            n = x$f[1],
-            meanlog = log(x$F.mu^2 / sqrt(x$F.sdev^2 + x$F.mu^2)),
-            sdlog = sqrt(log(1 + (
-              x$F.sdev^2 / x$F.mu^2
-            )))
-          )
-        }
-      } else {
+
+      if (isTRUE(verbose)) {
         message("Data generation was done using univariate truncated distribution")
-        gen_m <- function(x) {
-          truncnorm::rtruncnorm(
-            n = x$m[1],
-            a = lower,
-            b = upper,
-            mean = x$M.mu[1],
-            sd = x$M.sdev[1]
-          )
-        }
-        gen_f <- function(x) {
-          truncnorm::rtruncnorm(
-            n = x$f[1],
-            a = lower,
-            b = upper,
-            mean = x$F.mu[1],
-            sd = x$F.sdev[1]
-          )
-        }
       }
+      gen_m <- function(x) {
+        truncnorm::rtruncnorm(
+          n = x$m[1],
+          a = lower,
+          b = upper,
+          mean = x$M.mu[1],
+          sd = x$M.sdev[1]
+        )
+      }
+      gen_f <- function(x) {
+        truncnorm::rtruncnorm(
+          n = x$f[1],
+          a = lower,
+          b = upper,
+          mean = x$F.mu[1],
+          sd = x$F.sdev[1]
+        )
+      }
+
       m_function <- function(x) {
         df <- by(x, list(x$Trait), list)
         df <- lapply(df, gen_m)
@@ -164,24 +141,7 @@ raw_gen <- function(x,
 
       wide <- rbind.data.frame(male, female)
       rownames(wide) <- NULL
-      if (format == "wide") {
-        if (isTRUE(complete_cases)) {
-          return(tidyr::drop_na(wide))
-        } else {
-          return(wide)
-        }
-      }
-      if (format == "long") {
-        long <-
-          pivot_longer(
-            data = wide,
-            cols = -c("Sex", "Pop"),
-            names_to = "Trait",
-            values_drop_na = complete_cases
-          )
-
-        return(long)
-      }
+      return(wide)
     }
 
     # multivariate generation with data.frame and correlation matrix -----------
@@ -211,15 +171,15 @@ raw_gen <- function(x,
             F.sdev=Female sd
             m= Male sample size
             f=Female sample size
-            R.res=Pooled within correlational matrix
+            R.res=Pooled within correlation matrix
             N.B: names are case sensitive"
       )
     }
-    message("Data generation was done using multivariate truncated distribution")
+    if (isTRUE(verbose)) {
+      message("Data generation was done using multivariate truncated distribution")
+    }
     multi_raw(
       x = x,
-      format = format,
-      complete_cases = complete_cases,
       upper = upper,
       lower = lower
     )

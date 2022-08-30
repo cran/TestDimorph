@@ -15,7 +15,6 @@ univariate(
   ...,
   lower.tail = FALSE,
   CI = 0.95,
-  N = NULL,
   digits = 4
 )
 }
@@ -29,8 +28,8 @@ univariate(
 \item{interact_anova}{Logical; if TRUE calculates interaction effect,
 Default: TRUE.}
 
-\item{es_anova}{Type of effect size either "f" for f squared,"eta" for eta
-squared or "none", Default:"none".}
+\item{es_anova}{Type of effect size either "f2" for f squared,"eta2" for eta
+squared, "omega2" for omega squared or "none", Default:"none".}
 
 \item{pairwise}{Logical; if TRUE runs multiple pairwise comparisons on
 different populations using \link{t_greene} Default: FALSE}
@@ -46,14 +45,10 @@ otherwise, `P[X > x]`., Default: FALSE}
 
 \item{CI}{confidence interval coverage takes value from 0 to 1, Default: 0.95.}
 
-\item{N}{Number of pairwise comparisons for [p.adjust.methods], if left
-`NULL` it will follow the formula `n(n 1)/2` where `n` is the number of
-populations , Default: NULL}
-
 \item{digits}{Number of significant digits, Default: 4}
 }
 \value{
-ANOVA tale.
+ANOVA table.
 }
 \description{
 Calculation and visualization of the differences in degree
@@ -67,17 +62,33 @@ default), other columns of summary data should have specific names (case
 sensitive) similar to \link{baboon.parms_df}
 }
 \examples{
-# Comparisons of femur head diameter in four populations
-library(TestDimorph)
-df <-
-  data.frame(
-    Pop = c("Turkish", "Bulgarian", "Greek", "Portuguese "),
-    m = c(150.00, 82.00, 36.00, 34.00),
-    M.mu = c(49.39, 48.33, 46.99, 45.20),
-    M.sdev = c(3.01, 2.53, 2.47, 2.00),
-    f = c(150.00, 58.00, 34.00, 24.00),
-    F.mu = c(42.91, 42.89, 42.44, 40.90),
-    F.sdev = c(2.90, 2.84, 2.26, 2.90)
-  )
-univariate(df, pairwise = TRUE, padjust = "bonferroni")
+#'
+# See Tables 6 and 8 and from Fidler and Thompson (2001).
+# The “eta2” and “omega2” CIs match those in Table 8.
+# See “FT” dataset for Fidler and Thompson (2001) reference
+
+# acquiring summary data
+FT_sum <- extract_sum(FT, test = "uni", run = FALSE)
+# univariate analysis on summary data
+univariate(FT_sum, CI = 0.90, es_anova = "eta2", digits = 5)
+univariate(FT_sum, CI = 0.90, es_anova = "omega2", digits = 5)
+
+
+# Reproduces Table 2 from Shaw and Mitchell-Olds (1993) using their Table 1.
+# See “SMO” dataset for Shaw and Mitchell-Olds (1993) reference
+# Note that Table 2 residual df is incorrectly given as 6,
+# but is correctly given as 7 in Hector et al. (2010)
+
+# acquiring summary data
+univ_SMO <- extract_sum(SMO, test = "uni", run = FALSE)
+# univariate analysis on summary data
+print(univariate(univ_SMO, type_anova = "I")[[1]])
+print(univariate(univ_SMO, type_anova = "II"))
+univariate(univ_SMO, type_anova = "III")
+
+}
+\references{
+Hector, Andy, Stefanie Von Felten, and Bernhard Schmid. "Analysis of variance
+  with unbalanced data: an update for ecology & evolution." Journal of animal
+  ecology 79.2 (2010): 308-316.
 }

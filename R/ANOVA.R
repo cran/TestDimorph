@@ -4,8 +4,8 @@
 #' ANOVA type I for main effects
 #'
 #' @inheritParams univariate
-#'
 #' @keywords internal
+#' @noRd
 anova_main_I <- function(x, es_aov, digits, CI, lower.tail) {
   M <- x$M.mu
   F <- x$F.mu
@@ -64,14 +64,19 @@ anova_main_I <- function(x, es_aov, digits, CI, lower.tail) {
   F <- c(round(F, digits), NA)
   prob <- round(prob, digits)
   prob[3] <- NA
-  eff <- switch(es_aov, f = cohen_f, eta = eta, none = eta)
+  eff <- switch(es_aov,
+    f2 = cohen_f,
+    eta2 = eta,
+    omega2 = omega,
+    none = eta
+  )
   for (i in 1:2) {
     eff_all[i, ] <- as.matrix(eff_CI(
-      f = F[i], CI = CI, eff = eff[i], df1 = Df[i],
+      f = F[i], SS = SS, CI = CI, eff = eff[i], df1 = Df[i],
       df2 = Df[3], es_type = es_aov
     ))
-    lower [i] <- eff_all[i, 2]
-    upper [i] <- eff_all[i, 3]
+    lower[i] <- eff_all[i, 2]
+    upper[i] <- eff_all[i, 3]
   }
   term <- c("Sex", "Pop", "Residuals")
   sto <- cbind_fill(
@@ -118,16 +123,21 @@ anova_main_I <- function(x, es_aov, digits, CI, lower.tail) {
   F <- c(round(F, digits), NA)
   prob <- round(prob, digits)
   prob[3] <- NA
-  eff <- switch(es_aov, f = cohen_f, eta = eta, none = eta)
+  eff <- switch(es_aov,
+    f2 = cohen_f,
+    eta2 = eta,
+    omega2 = omega,
+    none = eta
+  )
 
 
   for (i in 1:2) {
     eff_all[i, ] <- as.matrix(eff_CI(
-      f = F[i], CI = CI, eff = eff[i], df1 = Df[i],
+      f = F[i], SS = SS, CI = CI, eff = eff[i], df1 = Df[i],
       df2 = Df[3], es_type = es_aov
     ))
-    lower [i] <- eff_all[i, 2]
-    upper [i] <- eff_all[i, 3]
+    lower[i] <- eff_all[i, 2]
+    upper[i] <- eff_all[i, 3]
   }
 
 
@@ -155,9 +165,8 @@ anova_main_I <- function(x, es_aov, digits, CI, lower.tail) {
 #' ANOVA type II for main effects
 #'
 #' @inheritParams univariate
-#'
 #' @keywords internal
-#'
+#' @noRd
 anova_main_II <- function(x, es_aov, digits, CI, lower.tail) {
   M <- x$M.mu
   F <- x$F.mu
@@ -209,14 +218,19 @@ anova_main_II <- function(x, es_aov, digits, CI, lower.tail) {
   F <- c(round(F, digits), NA)
   prob <- round(prob, digits)
   prob[3] <- NA
-  eff <- switch(es_aov, f = cohen_f, eta = eta, none = eta)
+  eff <- switch(es_aov,
+    f2 = cohen_f,
+    eta2 = eta,
+    omega2 = omega,
+    none = eta
+  )
   for (i in 1:2) {
     eff_all[i, ] <- as.matrix(eff_CI(
-      f = F[i], CI = CI, eff = eff[i], df1 = Df[i],
+      f = F[i], SS = SS, CI = CI, eff = eff[i], df1 = Df[i],
       df2 = Df[3], es_type = es_aov
     ))
-    lower [i] <- eff_all[i, 2]
-    upper [i] <- eff_all[i, 3]
+    lower[i] <- eff_all[i, 2]
+    upper[i] <- eff_all[i, 3]
   }
   term <- c("Sex", "Pop", "Residuals")
   sto <- cbind_fill(
@@ -242,9 +256,8 @@ anova_main_II <- function(x, es_aov, digits, CI, lower.tail) {
 #' ANOVA type I
 #'
 #' @inheritParams univariate
-#'
 #' @keywords internal
-#'
+#' @noRd
 anova_I <- function(x, es_aov, digits, CI, lower.tail) {
   M <- x$M.mu
   F <- x$F.mu
@@ -301,16 +314,21 @@ anova_I <- function(x, es_aov, digits, CI, lower.tail) {
   prob <- round(prob, digits)
   prob[4] <- NA
 
-  eff <- switch(es_aov, f = cohen_f, eta = eta, none = eta)
+  eff <- switch(es_aov,
+    f2 = cohen_f,
+    eta2 = eta,
+    omega2 = omega,
+    none = eta
+  )
 
 
   for (i in 1:3) {
     eff_all[i, ] <- as.matrix(eff_CI(
-      f = F[i], CI = CI, eff = eff[i], df1 = Df[i],
+      f = F[i], SS = SS, CI = CI, eff = eff[i], df1 = Df[i],
       df2 = Df[4], es_type = es_aov
     ))
-    lower [i] <- eff_all[i, 2]
-    upper [i] <- eff_all[i, 3]
+    lower[i] <- eff_all[i, 2]
+    upper[i] <- eff_all[i, 3]
   }
 
   term <- c("Sex", "Pop", "Sex*Pop", "Residuals")
@@ -360,16 +378,21 @@ anova_I <- function(x, es_aov, digits, CI, lower.tail) {
   prob <- round(prob, digits)
   prob[4] <- NA
 
-  eff <- switch(es_aov, f = cohen_f, eta = eta, none = eta)
+  eff <- switch(es_aov,
+    f2 = cohen_f,
+    eta2 = eta,
+    omega2 = omega,
+    none = eta
+  )
 
 
   for (i in 1:3) {
     eff_all[i, ] <- as.matrix(eff_CI(
-      f = F[i], CI = CI, eff = eff[i], df1 = Df[i],
+      f = F[i], SS = SS, CI = CI, eff = eff[i], df1 = Df[i],
       df2 = Df[4], es_type = es_aov
     ))
-    lower [i] <- eff_all[i, 2]
-    upper [i] <- eff_all[i, 3]
+    lower[i] <- eff_all[i, 2]
+    upper[i] <- eff_all[i, 3]
   }
 
   term <- c("Pop", "Sex", "Sex*Pop", "Residuals")
@@ -397,9 +420,8 @@ anova_I <- function(x, es_aov, digits, CI, lower.tail) {
 #' ANOVA type II
 #'
 #' @inheritParams univariate
-#'
 #' @keywords internal
-#'
+#' @noRd
 anova_II <- function(x, es_aov, digits, CI, lower.tail) {
   M <- x$M.mu
   F <- x$F.mu
@@ -456,16 +478,21 @@ anova_II <- function(x, es_aov, digits, CI, lower.tail) {
   prob <- round(prob, digits)
   prob[4] <- NA
 
-  eff <- switch(es_aov, f = cohen_f, eta = eta, none = eta)
+  eff <- switch(es_aov,
+    f2 = cohen_f,
+    eta2 = eta,
+    omega2 = omega,
+    none = eta
+  )
 
 
   for (i in 1:3) {
     eff_all[i, ] <- as.matrix(eff_CI(
-      f = F[i], CI = CI, eff = eff[i],
+      f = F[i], SS = SS, CI = CI, eff = eff[i],
       df1 = Df[i], df2 = Df[4], es_type = es_aov
     ))
-    lower [i] <- eff_all[i, 2]
-    upper [i] <- eff_all[i, 3]
+    lower[i] <- eff_all[i, 2]
+    upper[i] <- eff_all[i, 3]
   }
 
   term <- c("Sex", "Pop", "Sex*Pop", "Residuals")
@@ -492,9 +519,8 @@ anova_II <- function(x, es_aov, digits, CI, lower.tail) {
 #' ANOVA type III
 #'
 #' @inheritParams univariate
-#'
 #' @keywords internal
-#'
+#' @noRd
 anova_III <- function(x, es_aov, digits, CI, lower.tail) {
   M <- x$M.mu
   F <- x$F.mu
@@ -594,16 +620,21 @@ anova_III <- function(x, es_aov, digits, CI, lower.tail) {
   prob <- round(prob, digits)
   prob[4] <- NA
 
-  eff <- switch(es_aov, f = cohen_f, eta = eta, none = eta)
+  eff <- switch(es_aov,
+    f2 = cohen_f,
+    eta2 = eta,
+    omega2 = omega,
+    none = eta
+  )
 
 
   for (i in 1:3) {
     eff_all[i, ] <- as.matrix(eff_CI(
-      f = F[i], CI = CI, eff = eff[i],
+      f = F[i], SS = SS, CI = CI, eff = eff[i],
       df1 = Df[i], df2 = Df[4], es_type = es_aov
     ))
-    lower [i] <- eff_all[i, 2]
-    upper [i] <- eff_all[i, 3]
+    lower[i] <- eff_all[i, 2]
+    upper[i] <- eff_all[i, 3]
   }
 
   term <- c("Sex", "Pop", "Sex*Pop", "Residuals")

@@ -6,11 +6,14 @@
 #'   functions to develop various tests of sexual dimorphism in any two
 #'   populations A and B.
 #' @inheritParams multivariate
-#' @param x Data frame of means and sample sizes for different populations.
-#' @param Trait number of column containing names of traits Default: 1.
-#' @param W Pooled within-group variance-covariance matrix
+#' @param x A Data frame of means and sample sizes for different populations or
+#' a list of the summary data frame with Pooled within-group variance-covariance
+#' matrix.
+#' @param W Pooled within-group variance-covariance matrix supplied if x is a
+#' dataframe , Default:NULL
 #' @param q Number of canonical variates to retain for chi square test, Default:
 #'   2
+#' @param Trait number of column containing names of traits Default: 1.
 #' @param plot Logical; if TRUE returns a graphical representation of dimorphism
 #'   differences, Default: TRUE
 #' @return The output includes a two-dimensional plot that illustrate the
@@ -20,8 +23,8 @@
 #' @details Input is a data frame of means and sample sizes similar to
 #'   \link{Howells_summary} with the same naming conventions used throughout the
 #'   functions but with the standard deviation columns removed.
+#' @note For plot labels to be fully visualized, maximizing image size is advised.
 #' @examples
-#' library(TestDimorph)
 #' # selecting means and sample sizes
 #' van_vark_data <- Howells_summary[!endsWith(
 #'   x = names(Howells_summary),
@@ -30,9 +33,9 @@
 #' # running the function
 #' van_vark(van_vark_data, Howells_V)
 #' @rdname van_vark
-#' @references van Vark, G. N., et al. (1989). van Vark, G. N., et al. "Some
-#' multivariate tests for differences in sexual dimorphism between human
-#' populations." Annals of human biology 16.4: 301-310.
+#' @references Van Vark, G. N., et al. "Some multivariate tests for differences
+#' in sexual dimorphism between human populations." Annals of human biology
+#' 16.4 (1989): 301-310.
 #' @import ggplot2
 #' @import dplyr
 #' @importFrom tidyr pivot_longer pivot_wider
@@ -40,13 +43,40 @@
 #' @importFrom utils combn
 #' @export
 van_vark <- function(x,
-                     W,
+                     W = NULL,
                      q = 2,
                      Trait = 1,
                      Pop = 2,
                      plot = TRUE,
                      lower.tail = FALSE,
                      digits = 4) {
+  if (!(is.list(x) || is.data.frame(x))) {
+    stop("x should be a list or a dataframe")
+  }
+  if (is.data.frame(x) && is.null(W)) {
+    stop("If x is a data frame W should be supplied")
+  }
+  if (is.data.frame(x) && !is.matrix(W)) {
+    stop("W should be a matrix")
+  }
+  if (is.list(x) && !is.data.frame(x)) {
+    if (!all(c("W", "x") %in% names(x))) {
+      stop(
+        "If x is a list it should contain:
+            W= Pooled within-group variance-covariance matrix.
+            x=Data frame of means and sample sizes for different populations.
+            N.B: names are case sensitive"
+      )
+    }
+    if (!is.data.frame(x$x)) {
+      stop("x should be a dataframe")
+    }
+    if (!is.matrix(x$W)) {
+      stop("W should be a matrix")
+    }
+    W <- x$W
+    x <- x$x
+  }
   if (!(Trait %in% seq_along(x))) {
     stop("Trait should be number from 1 to ncol(x)")
   }
@@ -57,7 +87,7 @@ van_vark <- function(x,
     stop("plot should be either TRUE or FALSE")
   }
   if (q == 1 && isTRUE(plot)) {
-    warning("plot can't be produced if q=1")
+    warning("plot can't be produced if q = 1")
   }
   Sex <- NULL
   x <- x %>%
@@ -106,24 +136,25 @@ van_vark <- function(x,
     select(!contains("mu"))
   x <-
     full_join(means, size, by = c("Trait", "Pop", "Sex")) %>%
-    pivot_wider(
-      names_from = Trait, values_from = .data$no
-    ) %>%
+    pivot_wider(names_from = Trait, values_from = .data$no) %>%
     mutate(Sex = factor(.data$Sex, levels = c("F", "M"))) %>%
     as.data.frame()
   p <- NCOL(x) - 3
   g <- NROW(x)
   Rank <- min(c(g - 1, p))
+  message()
   if (q > Rank) {
     q <- Rank
-    warning("q has been decreased to match the matrix rank")
+    warning("q has been decreased to (", Rank, ") match the matrix rank")
+  } else {
+    message("The maximum possible value of q is (", Rank, ").")
   }
 
   calc.B0 <- function() {
     y <- x[, -c(1:3)]
     G.mean <- apply(y, 2, mean)
     B0 <- matrix(0, ncol = p, nrow = p)
-    for (i in 1:g)
+    for (i in seq_len(g))
     {
       d <- as.numeric(y[i, ]) - G.mean
       B0 <- B0 + (d %*% t(d))
@@ -134,14 +165,14 @@ van_vark <- function(x,
 
   B0 <- calc.B0()
   eig.struc <- eigen(solve(W) %*% B0)
-  e.vecs <- Re(eig.struc$vec[, 1:Rank])
+  e.vecs <- Re(eig.struc$vec[, seq_len(Rank)])
   e.vecs <-
     e.vecs / (rep(1, p) %o% sqrt(diag(t(e.vecs) %*% W %*% e.vecs)))
 
   Center <- diag(g) - 1 / g
   y <- x[, -c(1:3)]
   X <- Center %*% as.matrix(y)
-  CVs <- X %*% e.vecs[, 1:min(c(q, Rank))]
+  CVs <- X %*% e.vecs[, seq_len(min(c(q, Rank)))]
   CVs <- data.frame(CVs)
   names(CVs) <- paste0("x", seq_along(CVs))
   CVs <-
@@ -160,7 +191,8 @@ van_vark <- function(x,
   if (means[means$Sex == "F", "x1"] > means[means$Sex == "M", "x1"]) {
     CVs$x1 <- CVs$x1 * -1
   }
-  if (q > 1 && means[means$Sex == "F", "x2"] > means[means$Sex == "M", "x2"]) {
+  if (q > 1 &&
+    means[means$Sex == "F", "x2"] > means[means$Sex == "M", "x2"]) {
     CVs$x2 <- CVs$x2 * -1
   }
   pairs <- utils::combn(levels(x$Pop), 2, simplify = FALSE)
@@ -171,16 +203,16 @@ van_vark <- function(x,
 
   chi <- function(i) {
     q1_M <- as.numeric(subset(CVs, Pop == pairs[1, i] &
-      Sex == "M", 1:q)[1:q])
+      Sex == "M", seq_len(q))[seq_len(q)])
     q1_F <-
       as.numeric(subset(CVs, Pop == pairs[1, i] &
-        Sex == "F", 1:q)[1:q])
+        Sex == "F", seq_len(q))[seq_len(q)])
     q2_M <-
       as.numeric(subset(CVs, Pop == pairs[2, i] &
-        Sex == "M", 1:q)[1:q])
+        Sex == "M", seq_len(q))[seq_len(q)])
     q2_F <-
       as.numeric(subset(CVs, Pop == pairs[2, i] &
-        Sex == "F", 1:q)[1:q])
+        Sex == "F", seq_len(q))[seq_len(q)])
     N1_M <- as.numeric(subset(x, Pop == pairs[1, i] &
       Sex == "M", 3)[1])
     N1_F <- as.numeric(subset(x, Pop == pairs[1, i] &
@@ -196,7 +228,7 @@ van_vark <- function(x,
       as.numeric(t(dif) %*% dif) / (1 / N1_F + 1 / N1_M + 1 / N2_F + 1 / N2_M)
 
     X2 <- round(X2, digits)
-    DF <- min(c(q, Rank))
+    DF <- q
     p <-
       round(pchisq(X2, DF, lower.tail = lower.tail), digits)
     out <- data.frame(
@@ -207,10 +239,10 @@ van_vark <- function(x,
     out <- out %>% mutate(signif = with(
       .data,
       case_when(
-        p > 0.05 ~ "ns",
+        p >= 0.05 ~ "ns",
         p < 0.05 & p > 0.01 ~ "*",
-        p < 0.01 & p > 0.001 ~ "**",
-        p < 0.001 ~ "***"
+        p <= 0.01 & p > 0.001 ~ "**",
+        p <= 0.001 ~ "***"
       )
     ))
 
@@ -286,12 +318,20 @@ van_vark <- function(x,
         "line1", "line2", "point1", "point2",
         "female", "male"
       )
-    q_plot <- ggplot(CVs, aes(
-      x = .data$x1,
-      y = .data$x2,
-      color = .data$Sex,
-      fill = .data$Sex
-    )) +
+    x_all <- as.numeric(c(CVs$x1, CVs$x2))
+    min_a <- min(x_all) - 1
+    max_a <- 1 + max(x_all)
+    q_plot <- ggplot(
+      CVs,
+      aes(
+        x = .data$x1,
+        y = .data$x2,
+        color = .data$Sex,
+        fill = .data$Sex
+      )
+    ) +
+      scale_x_continuous(limits = c(min_a, max_a)) +
+      scale_y_continuous(limits = c(min_a, max_a)) +
       geom_segment(
         aes(
           xend = .data$point1,
@@ -312,20 +352,35 @@ van_vark <- function(x,
       geom_point(aes(
         x = .data$line1,
         y = .data$line2
-      ), color = "red", na.rm = TRUE) +
+      ),
+      color = "red",
+      na.rm = TRUE
+      ) +
       geom_text(
         na.rm = TRUE,
-        aes(x = .data$point1, y = .data$point2, label = .data$male),
-        nudge_y = 0.2,
+        aes(
+          x = .data$point1,
+          y = .data$point2,
+          label = .data$male
+        ),
+        nudge_y = 0.05,
+        vjust = "inward",
+        hjust = "inward",
         color = "blue",
         check_overlap = TRUE
       ) +
       geom_text(
-        aes(x = .data$line1, y = .data$line2, label = .data$female),
+        aes(
+          x = .data$line1,
+          y = .data$line2,
+          label = .data$female
+        ),
         check_overlap = TRUE,
         color = "red",
         na.rm = TRUE,
-        nudge_y = 0.2
+        nudge_y = 0.05,
+        vjust = "inward",
+        hjust = "inward"
       ) +
       scale_color_manual(values = c("red", "blue")) +
       scale_fill_manual(values = c(
@@ -340,7 +395,8 @@ van_vark <- function(x,
       ylab("Second Canonical Axis") +
       theme_minimal() +
       theme(legend.title = element_blank())
-    list(pairs_df, q_plot)
+    plot(q_plot)
+    pairs_df
   } else {
     pairs_df
   }

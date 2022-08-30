@@ -1,16 +1,15 @@
 #' List format for the baboon.parms_df for multivariate analysis
 #'
-#' @format A list of 7 matrices.
+#' @format A list of 5 matrices (R.res, M.mu, F.mu, M.sdev, and F.sdev) and
+#' two vectors (m and f)
 #' \describe{ \item{R.res}{pooled within group
 #' correlation matrix}
-#' \item{M.mu}{Means of lipoproteins in different species
-#' for males}
-#' \item{F.mu}{Means of lipoproteins in different species for
-#' females}
+#' \item{M.mu}{Means of LDL and apo B in different sub-species for males}
+#' \item{F.mu}{Means of LDL and apo B in different sub-species for females}
 #' \item{m}{Male sample sizes} \item{f}{Female sample sizes}
 #' \item{M.sdev}{Standard deviations for males} \item{F.sdev}{Standard
 #' deviations for females} }
-#'
+#' @seealso \link{baboon.parms_df}
 "baboon.parms_list"
 
 
@@ -19,15 +18,15 @@
 #'
 #' @description  A dataset containing summary statistics for low density lipoprotein (LDL) and
 #' apolipoprotein B (apo B) levels in 604 baboons measured on two different diets:
-#' a basal diet basal' and a high cholesterol, saturated fat diet (HCSF). The
-#' baboons were classified into one of three subspecies (Papio hamadryas
-#' anubis, P.h. cynocephalus, or anubis). Each animal was
+#' a basal diet and a high cholesterol, saturated fat diet. The baboons were
+#' classified into one of two subspecies and a hybrid of the two subspecies
+#' (Papio hamadryas anubis, P.h. cynocephalus, or hybrid). Each animal was
 #' measured on each of the two diets.
 #'
 #' @format A data frame with 12 rows and 8 variables \describe{
-#' \item{Trait}{Apolipoprotein B and LDL on two diets} \item{Sub}{Type of species}
-#' \item{M.mu}{Means of lipoproteins in different species for males}
-#' \item{F.mu}{Means of lipoproteins in different species for females}
+#' \item{Trait}{Apolipoprotein B and LDL on two diets} \item{Sub}{Sub-species or hybrid}
+#' \item{M.mu}{Means of LDL and apo B in different sub-species for males}
+#' \item{F.mu}{Means of LDL and apo B in different sub-species for females}
 #' \item{m}{Male sample sizes} \item{f}{Female sample sizes}
 #' \item{M.sdev}{Standard deviations for males} \item{F.sdev}{Standard
 #' deviations for females}
@@ -49,6 +48,7 @@
 
 #' Pooled within group correlation matrix for baboon data
 #' @format A 4*4 numerical matrix
+#' @seealso \link{baboon.parms_list}
 "baboon.parms_R"
 
 #' The Howells' craniometric data
@@ -84,11 +84,14 @@
 #' Howells, W. W. (1973). Cranial Variation in Man: A Study by Multivariate
 #' Analysis of Patterns of Difference Among Recent Human Populations (Vol. 67).
 #' Cambridge, MA: Peabody Museum of Archaeology and Ethnology.
+#'
+#' Howells, W. W. (1996). Notes and Comments: Howells' craniometric data on the
+#' internet. American Journal of Physical Anthropology, 101(3), 441-442
 "Howells"
 
 #' Summary of the Howells' craniometric data
 #'
-#' Summary statistics of the the Howells' data subset.
+#' Summary statistics of the Howells' data subset.
 #'
 #' @format A data frame with 32 rows and 8 variables:
 #' \describe{
@@ -106,7 +109,8 @@
 "Howells_summary"
 #' List format of \link{Howells_summary} for multivariate analysis
 #'
-#' @format A list of 7 matrices with structure similar to \link{baboon.parms_list}
+#' @format A list of 5 matrices (R.res, M.mu, F.mu, M.sdev, and F.sdev) and
+#' two vectors (m and f) with structure similar to \link{baboon.parms_list}
 #'
 "Howells_summary_list"
 
@@ -115,6 +119,7 @@
 "Howells_R"
 #' Pooled within-group variance-covariance matrix for Howells' data
 #' @format A 8*8 numerical matrix
+#' @seealso \link{Howells}
 "Howells_V"
 
 #' Measurements from calcined postcranial materials.
@@ -143,9 +148,10 @@
 
 #' Australia
 #'
-#' Raw data from Joseph Birdsell's 1938 survey of Australian Aborigines
-#'  The data is from two regions (B1 and B19), see Gilligan and Bulbeck (2007)
-#'  for a map of the regions.
+#' Raw data from Joseph Birdsell's 1938 survey. The data is from two regions
+#' (B1 and B19), see Gilligan and Bulbeck (2007) for a map of the regions.
+#' Data downloaded from Dr. Peter Brown's website:
+#' \url{https://www.peterbrown-palaeoanthropology.net/resource.html}
 #'
 #'
 #' @format A data frame with 94 rows and 9 variables:
@@ -164,7 +170,7 @@
 #' @references
 #'
 #' Gilligan, I., & Bulbeck, D. (2007). Environment and morphology in Australian
-#' Aborigines: A re<U+2010>analysis of the Birdsell database. American Journal of Physical
+#' Aborigines: A re-analysis of the Birdsell database. American Journal of Physical
 #' Anthropology, 134(1), 75-91.
 #'
 "Australia"
@@ -194,6 +200,35 @@
 #'
 "NHANES_1999"
 
-#' List of accu_model supported models
-#' @format A list of length 20.
-"models"
+#' Heuristic data
+#' @description Heuristic data from Fidler and Thompson (2001)
+#' @format A data frame with 24 rows and 3 variables:
+#'  \describe{
+#' \item{Sex}{'M' for male and 'F' for female}
+#' \item{Pop}{Populations' names}
+#' \item{x}{Dependent variable}
+#'   }
+#' @references
+#'
+#' Fidler, Fiona, and Bruce Thompson. "Computing correct confidence intervals
+#' for ANOVA fixed-and random-effects effect sizes." Educational and
+#' Psychological Measurement 61.4 (2001): 575-604.
+#'
+
+"FT"
+
+#' Hypothetical set of unbalanced data
+#' @description Example data set from Shaw and Mitchell-Olds (1993)
+#' @format A data frame with 11 rows and 3 variables:
+#'  \describe{
+#' \item{Sex}{'M' for male and 'F' for female}
+#' \item{Pop}{Populations' names}
+#' \item{x}{Dependent variable}
+#'   }
+#' @references
+#'
+#' Shaw, Ruth G., and Thomas Mitchell-Olds. "ANOVA for unbalanced data: an overview.
+#' " Ecology 74.6 (1993): 1638-1645.
+#'
+
+"SMO"

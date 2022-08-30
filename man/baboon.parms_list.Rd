@@ -5,13 +5,12 @@
 \alias{baboon.parms_list}
 \title{List format for the baboon.parms_df for multivariate analysis}
 \format{
-A list of 7 matrices.
+A list of 5 matrices (R.res, M.mu, F.mu, M.sdev, and F.sdev) and
+two vectors (m and f)
 \describe{ \item{R.res}{pooled within group
 correlation matrix}
-\item{M.mu}{Means of lipoproteins in different species
-for males}
-\item{F.mu}{Means of lipoproteins in different species for
-females}
+\item{M.mu}{Means of LDL and apo B in different sub-species for males}
+\item{F.mu}{Means of LDL and apo B in different sub-species for females}
 \item{m}{Male sample sizes} \item{f}{Female sample sizes}
 \item{M.sdev}{Standard deviations for males} \item{F.sdev}{Standard
 deviations for females} }
@@ -21,5 +20,8 @@ baboon.parms_list
 }
 \description{
 List format for the baboon.parms_df for multivariate analysis
+}
+\seealso{
+\link{baboon.parms_df}
 }
 \keyword{datasets}

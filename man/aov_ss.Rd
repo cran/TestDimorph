@@ -20,14 +20,14 @@ aov_ss(
 \item{Pop}{Number of the column containing populations' names, Default: 1}
 
 \item{pairwise}{Logical; if TRUE runs multiple pairwise comparisons on
-different populations using Tukey's post hoc test, Default: TRUE}
+different populations using Tukey-Kramer's post hoc test, Default: TRUE}
 
 \item{letters}{Logical; if TRUE returns letters for pairwise comparisons
 where significantly different populations are given different letters,
 Default: FALSE'}
 
-\item{es_anova}{Type of effect size either "f" for f squared,"eta" for eta
-squared or "none", Default:"none".}
+\item{es_anova}{Type of effect size either "f2" for f squared,"eta2" for eta
+squared, "omega2" for omega squared or "none", Default:"none".}
 
 \item{digits}{Number of significant digits, Default: 4}
 
@@ -47,9 +47,8 @@ sensitive) similar to \link{baboon.parms_df}
 }
 \examples{
 # Comparisons of femur head diameter in four populations
-library(TestDimorph)
 df <- data.frame(
-  Pop = c("Turkish", "Bulgarian", "Greek", "Portuguese "),
+  Pop = c("Turkish", "Bulgarian", "Greek", "Portuguese"),
   m = c(150.00, 82.00, 36.00, 34.00),
   f = c(150.00, 58.00, 34.00, 24.00),
   M.mu = c(49.39, 48.33, 46.99, 45.20),
@@ -58,4 +57,22 @@ df <- data.frame(
   F.sdev = c(2.90, 2.84, 2.26, 2.90)
 )
 aov_ss(x = df)
+}
+\references{
+#For the femur head diameter data
+
+  F. Curate, C. Umbelino, A. Perinha, C. Nogueira, A.M. Silva, E.
+  Cunha, Sex determination from the femur in Portuguese populations with
+  classical and machinelearning classifiers, J. Forensic Leg. Med. (2017) ,
+  doi:http://dx.doi.org/10.1016/j. jflm.2017.08.011.
+
+  O. Gulhan, Skeletal Sexing Standards of Human Remains in Turkey (PhD thesis), Cranfield
+  University, 2017 [Dataset].
+
+  P. Timonov, A. Fasova, D. Radoinova, A.Alexandrov, D. Delev, A study of sexual dimorphism
+  in the femur among contemporary Bulgarian population, Euras. J. Anthropol. 5 (2014) 46–53.
+
+  E.F. Kranioti, N. Vorniotakis, C. Galiatsou, M.Y. Iscan , M.
+  Michalodimitrakis, Sex identification and software development using
+  digital femoral head radiographs, Forensic Sci. Int. 189 (2009) 113.e1–7.
 }

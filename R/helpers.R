@@ -24,6 +24,7 @@
 #' populations , Default: NULL
 #' @inheritParams t_greene
 #' @keywords internal
+#' @noRd
 t_test <-
   function(m,
            f,
@@ -37,23 +38,17 @@ t_test <-
            F.sdev,
            M.sdev2,
            F.sdev2,
-           padjust = padjust,
-           N,
            digits,
            CI,
-           alternative,
-           es) {
+           alternative) {
     if (CI < 0 ||
       CI > 1 || !is.numeric(CI)) {
       stop("CI should be a number between 0 and 1")
     }
     CI <- 1 - CI
-    es <-
-      match.arg(es, choices = c("none", "d", "g"))
+
     alternative <-
       match.arg(alternative, choices = c("two.sided", "less", "greater"))
-    padjust <-
-      match.arg(padjust, choices = p.adjust.methods)
     df <- (m + f + m2 + f2 - 4)
     sd_pooled <-
       sqrt(((((m - 1) * M.sdev^2) + ((f - 1) * F.sdev^2) + ((m2 - 1) *
@@ -62,19 +57,6 @@ t_test <-
     mean_diff <- ((M.mu - F.mu) - (M.mu2 - F.mu2))
     tg <-
       mean_diff / (sd_pooled * sqrt((1 / m) + (1 / f) + (1 / m2) + (1 / f2)))
-    d <- abs(2 * tg / sqrt(df))
-    var_d <-
-      (m + f + m2 + f2) / ((m + f) * (m2 + f2)) + (d^2) / (2 * (m + f + m2 + f2))
-    j <- 1 - (3 / (4 * df - 1))
-    g <- j * d
-    var_g <- j^2 * var_d
-    if (es == "d") {
-      eff <- d
-      var_eff <- var_d
-    } else {
-      eff <- g
-      var_eff <- var_g
-    }
     if (alternative == "two.sided") {
       crit <- stats::qt(p = (1 - (CI / 2)), df = df)
     } else {
@@ -84,57 +66,34 @@ t_test <-
       mean_diff + (abs(crit) * sd_pooled * sqrt(sum(1 / m, 1 / f, 1 / m2, 1 / f2)))
     lower <-
       mean_diff - (abs(crit) * sd_pooled * sqrt(sum(1 / m, 1 / f, 1 / m2, 1 / f2)))
-    upper_eff <- eff + crit * sqrt(var_eff)
-    lower_eff <- eff - crit * sqrt(var_eff)
-    p <- switch(
-      alternative,
+    if (alternative == "less") {
+      lower <- -Inf
+    }
+    if (alternative == "greater") {
+      upper <- Inf
+    }
+    p <- switch(alternative,
       less = stats::pt(abs(tg), df, lower.tail = TRUE),
       greater = stats::pt(abs(tg), df, lower.tail = FALSE),
       two.sided = 2 * stats::pt(abs(tg), df, lower.tail = FALSE)
     )
-
-    if (!is.null(N)) {
-      p <-
-        padjust_n(
-          p = p,
-          method = padjust,
-          n = N
-        )
-    }
     signif <-
       case_when(
-        p > 0.05 ~ "ns",
+        p >= 0.05 ~ "ns",
         p < 0.05 & p > 0.01 ~ "*",
-        p < 0.01 & p > 0.001 ~ "**",
-        p < 0.001 ~ "***"
+        p <= 0.01 & p > 0.001 ~ "**",
+        p <= 0.001 ~ "***"
       )
 
-    if (es != "none") {
-      out <- data.frame(
-        "df" = round(df, digits),
-        "mean.diff" = round(mean_diff, digits),
-        "conf.low" = round(lower, digits),
-        "conf.high" = round(upper, digits),
-        "statistic" = round(tg, digits),
-        "p.value" = round(p, digits),
-        "signif" = signif,
-        round(eff, digits),
-        "conf.es.low" = round(lower_eff, digits),
-        "conf.es.high" = round(upper_eff, digits)
-      )
-      names(out)[8] <- es
-      return(out)
-    } else {
-      data.frame(
-        "df" = round(df, digits),
-        "mean.diff" = round(mean_diff, digits),
-        "conf.low" = round(lower, digits),
-        "conf.high" = round(upper, digits),
-        "statistic" = round(tg, digits),
-        "p.value" = round(p, digits),
-        "signif" = signif
-      )
-    }
+    data.frame(
+      "df" = round(df, digits),
+      "mean.diff" = round(mean_diff, digits),
+      "conf.low" = round(lower, digits),
+      "conf.high" = round(upper, digits),
+      "statistic" = round(tg, digits),
+      "p.value" = round(p, digits),
+      "signif" = signif
+    )
   }
 
 # multi_raw ---------------------------------------------------------------
@@ -144,9 +103,8 @@ t_test <-
 #' @inheritParams raw_gen
 #' @importFrom tmvtnorm rtmvnorm
 #' @keywords internal
+#' @noRd
 multi_raw <- function(x,
-                      format,
-                      complete_cases,
                       upper,
                       lower) {
   R <- x$R.res
@@ -167,11 +125,12 @@ multi_raw <- function(x,
       n = m[i],
       mean = M.mu[i, ],
       sigma = V,
-      lower = rep(lower,
-                  length(M.mu[i, ])),
+      lower = rep(
+        lower,
+        length(M.mu[i, ])
+      ),
       upper = rep(upper, length(M.mu[i, ]))
     )
-
   }
   male <- Vectorize(male, "i", SIMPLIFY = FALSE)
   male <- male(seq_along(m))
@@ -185,11 +144,12 @@ multi_raw <- function(x,
       n = f[i],
       mean = F.mu[i, ],
       sigma = V,
-      lower = rep(lower,
-                  length(F.mu[i, ])),
+      lower = rep(
+        lower,
+        length(F.mu[i, ])
+      ),
       upper = rep(upper, length(F.mu[i, ]))
     )
-
   }
   female <- Vectorize(female, "i", SIMPLIFY = FALSE)
   female <- female(seq_along(f))
@@ -197,20 +157,8 @@ multi_raw <- function(x,
   female <- cbind.data.frame(Sex_F, Pop_F, female)
   colnames(female) <- c("Sex", "Pop", colnames(F.mu))
   X <- rbind.data.frame(male, female)
-  if (format == "wide") {
-    if (isTRUE(complete_cases)) {
-      return(tidyr::drop_na(X))
-    } else {
-      return(X)
-    }
-  } else {
-    pivot_longer(
-      data = X,
-      cols = 3:ncol(X),
-      names_to = "Parms",
-      values_drop_na = complete_cases
-    ) %>% as.data.frame()
-  }
+
+  return(X)
 }
 
 # dataframe2list ----------------------------------------------------------
@@ -219,6 +167,7 @@ multi_raw <- function(x,
 #' @description helper function for multivariate analysis
 #' @inheritParams multivariate
 #' @keywords internal
+#' @noRd
 dataframe2list <- function(x, R.res, Trait, Pop) {
   x <- x %>%
     rename("Pop" = Pop, "Trait" = Trait) %>%
@@ -226,56 +175,33 @@ dataframe2list <- function(x, R.res, Trait, Pop) {
       .data$Trait,
       levels = unique(.data$Trait)
     )) %>%
-    as.data.frame()
+    arrange(Trait, Pop)
   x$Pop <- droplevels(x$Pop)
   x$Trait <- droplevels(x$Trait)
   R <- R.res
+  m <- as.vector(x$m)[seq(nlevels(x$Pop))]
+  f <- as.vector(x$f)[seq(nlevels(x$Pop))]
+  m <- m[!is.na(m)]
+  f <- f[!is.na(f)]
+  names(m) <- levels(x$Pop)
+  names(f) <- levels(x$Pop)
   name_mat <- list(levels(x$Pop), levels(x$Trait))
+  nlevels(x$Trait) -> ncl
+  nlevels(x$Pop) -> nr
   z <- arrange(x, Trait, Pop)
-  m_mean <-
+  x <- x %>% select(-c(Pop, Trait, m, f))
+  colnames(x) -> names_x
+  x <- lapply(x, function(y) {
     matrix(
-      data = x$M.mu,
-      nrow = nlevels(x$Pop),
-      ncol = nlevels(x$Trait),
+      data = y,
+      nrow = nr,
+      ncol = ncl,
       dimnames = name_mat
     )
-  f_mean <-
-    matrix(
-      data = x$F.mu,
-      nrow = nlevels(x$Pop),
-      ncol = nlevels(x$Trait),
-      dimnames = name_mat
-    )
-  nM <- as.vector(x$m)[seq(nlevels(x$Pop))]
-  nF <- as.vector(x$f)[seq(nlevels(x$Pop))]
-  nM <- nM[!is.na(nM)]
-  nF <- nF[!is.na(nF)]
-  M.sd <-
-    matrix(
-      data = x$M.sdev,
-      nrow = nlevels(x$Pop),
-      ncol = nlevels(x$Trait),
-      dimnames = name_mat
-    )
-  F.sd <-
-    matrix(
-      data = x$F.sdev,
-      nrow = nlevels(x$Pop),
-      ncol = nlevels(x$Trait),
-      dimnames = name_mat
-    )
-  x <-
-    list(
-      z = z,
-      R.res = R,
-      M.mu = m_mean,
-      F.mu = f_mean,
-      m = nM,
-      f = nF,
-      M.sdev = M.sd,
-      F.sdev = F.sd
-    )
-  x
+  })
+  names(x) <- names_x
+  y <- list(z = z, R.res = R, m = m, f = f)
+  c(y, x)
 }
 
 # cbind_fill --------------------------------------------------------------
@@ -284,6 +210,7 @@ dataframe2list <- function(x, R.res, Trait, Pop) {
 #' @description cbind columns with unequal length with naming
 #' @param ... columns with unequal length
 #' @keywords internal
+#' @noRd
 cbind_fill <- function(...) {
   nm <- list(...)
   nm <- lapply(nm, as.matrix)
@@ -307,13 +234,14 @@ cbind_fill2 <- function(...) {
   }))
 }
 
-# anov_es -----------------------------------------------------------------
+# anova_es -----------------------------------------------------------------
 
 #' @title anova_es
 #' @param x ANOVA model
 #' @inheritParams univariate
 #' @keywords internal
 #' @importFrom dplyr case_when
+#' @noRd
 anova_es <- function(x,
                      es_anova = es_anova,
                      digits = digits,
@@ -327,10 +255,10 @@ anova_es <- function(x,
   f <- summary(x)[[1]][[4]][1]
   p <- summary(x)[[1]][[5]][1]
   signif <- dplyr::case_when(
-    p > 0.05 ~ "ns",
+    p >= 0.05 ~ "ns",
     p < 0.05 & p > 0.01 ~ "*",
-    p < 0.01 & p > 0.001 ~ "**",
-    p < 0.001 ~ "***"
+    p <= 0.01 & p > 0.001 ~ "**",
+    p <= 0.001 ~ "***"
   )
   ss <- summary(x)[[1]][, 2]
   SST <- sum(ss)
@@ -342,12 +270,14 @@ anova_es <- function(x,
   cohen_squared <- (eta) / (1 - eta)
   if (es_anova != "none") {
     eff <- switch(es_anova,
-      f = cohen_squared,
-      eta = eta
+      f2 = cohen_squared,
+      eta2 = eta,
+      omega2 = omega
     )
     eff <-
       eff_CI(
         f = f,
+        SS = ss,
         CI = CI,
         eff = eff,
         df1 = df1,
@@ -394,9 +324,9 @@ anova_es <- function(x,
 #' @param method method of adjustment, Default: p.adjust.methods
 #' @param n number of pairwise comparisons, Default: length(p)
 #' @description doesn't return an error when n >= lp
-#' @rdname padjust_n
 #' @importFrom stats p.adjust.methods setNames
 #' @keywords internal
+#' @noRd
 padjust_n <- function(p, method = p.adjust.methods, n = length(p)) {
   method <- match.arg(method)
   if (method == "fdr") {
@@ -416,8 +346,7 @@ padjust_n <- function(p, method = p.adjust.methods, n = length(p)) {
   if (n == 2 && method == "hommel") {
     method <- "hochberg"
   }
-  p0[nna] <- switch(
-    method,
+  p0[nna] <- switch(method,
     bonferroni = pmin(1, n * p),
     holm = {
       i <- seq_len(lp)
@@ -479,6 +408,7 @@ padjust_n <- function(p, method = p.adjust.methods, n = length(p)) {
 #' @param x A matrix with continuous data
 #' @param ina A numerical vector indicating the groups
 #' @keywords internal
+#' @noRd
 pooled_cov <- function(x, ina) {
   Morpho::covW(x, as.factor(ina))
 }
@@ -497,7 +427,8 @@ pooled_cov <- function(x, ina) {
 #' @param N sum of df
 #' @param es_type type of effect size
 #' @keywords internal
-eff_CI <- function(f, CI, eff, df1, df2, es_type = "eta") {
+#' @noRd
+eff_CI <- function(f, CI, SS, eff, df1, df2, es_type = "eta2") {
   get_NCP <- function(F, df.1, df.2, CI) {
     # From the FORTRAN code in:
     # Guirguis, G. H. (1990). A note on computing the noncentrality
@@ -588,11 +519,26 @@ eff_CI <- function(f, CI, eff, df1, df2, es_type = "eta") {
     cbind.data.frame(lower_eff = lower_eff, upper_eff = upper_eff)
   }
 
+  omega_squared <- function(f, SS, CI, eff, df1, df2) {
+    eta <- eta_squared(f, CI, eff, df1, df2)
+    lower_eta <- eta[1]
+    upper_eta <- eta[2]
+    sostot <- sum(SS)
+    sosb_L <- sostot * lower_eta
+    msw_L <- (sostot - sosb_L) / df2
+    lower_eff <- (sosb_L - (df1 * msw_L)) / (sostot + msw_L)
 
+    sosb_U <- sostot * upper_eta
+    msw_U <- (sostot - sosb_U) / df2
+    upper_eff <- (sosb_U - (df1 * msw_U)) / (sostot + msw_U)
+
+    cbind.data.frame(lower_eff = lower_eff, upper_eff = upper_eff)
+  }
   out <- switch(es_type,
     none = eta_squared(f, CI, eff, df1, df2),
-    eta = eta_squared(f, CI, eff, df1, df2),
-    f = f_squared(f, CI, eff, df1, df2)
+    eta2 = eta_squared(f, CI, eff, df1, df2),
+    f2 = f_squared(f, CI, eff, df1, df2),
+    omega2 = omega_squared(f, SS, CI, eff, df1, df2)
   )
 
   cbind.data.frame(
@@ -608,12 +554,13 @@ eff_CI <- function(f, CI, eff, df1, df2, es_type = "eta") {
 #' @description runs van_vark function on raw data
 #' @inheritParams extract_sum
 #' @keywords internal
+#' @noRd
 Van_vark_raw <- function(x, Sex, Pop, firstX, ...) {
   vec_sum <- function(x, i) {
     x$Pop <- factor(x$Pop, levels = unique(x$Pop))
     cbind.data.frame(
       Trait = rep(names(x)[i], nlevels(x$Pop)),
-      extract_sum(x, run = FALSE, firstX = i, Sex = Sex, Pop = Pop, test = 1)
+      suppressMessages(extract_sum(x, run = FALSE, firstX = i, Sex = Sex, Pop = Pop, test = "tg"))
     )
   }
   vec_sum <-
@@ -641,113 +588,98 @@ Van_vark_raw <- function(x, Sex, Pop, firstX, ...) {
 #' @param out output of multivariate function
 #' @param ... other arguments that are passed to univariate function
 #' @keywords internal
+#' @noRd
 univariate_pairwise <- function(x, out, padjust, digits, lower.tail, ...) {
   Parms <- NULL
+  no <- NULL
+  Pop <- NULL
   x$R.res <- NULL
-  A <- (ncol(x$M.mu) * nrow(x$M.mu)) / length(x$m)
-  B <- (ncol(x$F.mu) * nrow(x$F.mu)) / length(x$f)
-  m_dat <- cbind.data.frame(m = rep(x$m, A), Pop = factor(rep(rownames(x$M.mu), A),
-    levels = rownames(x$M.mu)
-  ))
-  f_dat <- cbind.data.frame(f = rep(x$f, A), Pop = factor(rep(rownames(x$M.mu), A),
-    levels = rownames(x$M.mu)
-  ))
-  m_dat <- m_dat[order(m_dat$Pop), ]
-  f_dat <- f_dat[order(f_dat$Pop), ]
-  x$m <- NULL
-  x$f <- NULL
+  x$z <- NULL
   rownames(x$M.mu) -> r
   colnames(x$M.mu) -> cl
-  x <- lapply(x[which(names(x) != "z")], function(y) {
-    matrix(y, nrow = nrow(y), ncol = ncol(y), dimnames = list(r, cl))
+  nrow(x$M.mu) -> nr
+  ncol(x$M.mu) -> ncl
+  names(x$m) <- r
+  names(x$f) <- r
+  mf <- x[c("m", "f")]
+  mf <- lapply(mf, function(y) {
+    y <- y %>%
+      unclass() %>%
+      as.data.frame() %>%
+      rown_col(var = "Pop") %>%
+      rename("no" = 2)
+    y <- data.frame(Pop = rep(y$Pop, ncl), no = rep(y$no, ncl))
+    y %>%
+      mutate(
+        Parms = factor(rep(cl, each = nr), levels = cl),
+        Pop = factor(.data$Pop,
+          levels = r
+        )
+      ) %>%
+      select(Parms, Pop, no) %>%
+      arrange(Parms, Pop)
   })
-  m_mean <-
-    x$M.mu %>%
-    as.data.frame() %>%
-    rown_col(var = "Pop") %>%
-    pivot_longer(cols = 2:(ncol(as.data.frame(x$M.mu)) +
-      1), names_to = "Parms", values_to = "M.mu") %>%
-    mutate(Pop = factor(.data$Pop, levels = rownames(x$M.mu)), Parms = factor(
-      .data$Parms,
-      levels = colnames(x$M.mu)
-    ))
-
-  m_mean <- with(m_mean, m_mean[order(Parms, Pop, M.mu), ])
-  f_mean <-
-    x$F.mu %>%
-    as.data.frame() %>%
-    rown_col(var = "Pop") %>%
-    pivot_longer(
-      cols = 2:(ncol(as.data.frame(x$F.mu)) + 1), names_to = "Parms",
-      values_to = "F.mu"
-    ) %>%
-    mutate(Pop = factor(.data$Pop,
-      levels =
-        rownames(x$F.mu)
-    ), Parms = factor(.data$Parms, levels = colnames(x$F.mu)))
-  f_mean <- with(f_mean, f_mean[order(Parms, Pop, F.mu), ])
-  Msd <-
-    x$M.sdev %>%
-    as.data.frame() %>%
-    rown_col(var = "Pop") %>%
-    pivot_longer(cols = 2:(ncol(as.data.frame(x$M.sdev)) + 1), names_to = "Parms", values_to = "M.sdev") %>%
-    mutate(Pop = factor(.data$Pop, levels = rownames(x$M.sdev)), Parms = factor(
-      .data$Parms,
-      levels = colnames(x$M.sdev)
-    ))
-  Msd <- with(Msd, Msd[order(Parms, Pop, M.sdev), ])
-  Fsd <-
-    x$F.sdev %>%
-    as.data.frame() %>%
-    rown_col(var = "Pop") %>%
-    pivot_longer(cols = 2:(ncol(as.data.frame(x$F.sdev)) +
-      1), names_to = "Parms", values_to = "F.sdev") %>%
-    mutate(Pop = factor(.data$Pop, levels = rownames(x$F.sdev)), Parms = factor(
-      .data$Parms,
-      levels = colnames(x$F.sdev)
-    ))
-  Fsd <- with(Fsd, Fsd[order(Parms, Pop, F.sdev), ])
-  my_merge <- function(df1, df2) {
-    merge(df1, df2, by = c("Pop", "Parms"), all.x = TRUE, all.y = TRUE)
+  x$m <- NULL
+  x$f <- NULL
+  x <- lapply(x, function(y) {
+    y <-
+      matrix(
+        y,
+        nrow = nrow(y),
+        ncol = ncol(y),
+        dimnames = list(r, cl)
+      )
+    y %>%
+      as.data.frame() %>%
+      rown_col(var = "Pop") %>%
+      pivot_longer(
+        cols = 2:(ncol(as.data.frame(y)) + 1),
+        names_to = "Parms",
+        values_to = "no"
+      ) %>%
+      mutate(
+        Pop = factor(.data$Pop, levels = r),
+        Parms = factor(.data$Parms,
+          levels = cl
+        )
+      ) %>%
+      arrange(Parms, Pop) %>%
+      relocate(Parms, .before = 1)
+  })
+  x <- c(x, mf)
+  names(x) -> names_x
+  for (i in seq_along(names_x)) {
+    names(x[[i]])[3] <- names_x[i]
   }
-  list_frames <- Reduce(my_merge, list(m_mean, f_mean, Msd, Fsd)) %>%
-    mutate(Pop = factor(.data$Pop, levels = rownames(x$M.mu))) %>%
-    relocate(.data$Parms,
-      .before = 1
-    ) %>%
-    arrange(.data$Pop, .data$Parms)
-  df <- cbind.data.frame(list_frames, m = m_dat$m, f = f_dat$f)
-  if (is.data.frame(x)) {
-    out <- list(
+  my_merge <- function(df1, df2) {
+    merge(
+      df1,
+      df2,
+      by = c("Pop", "Parms"),
+      all.x = TRUE,
+      all.y = TRUE
+    )
+  }
+  df <- Reduce(my_merge, x)
+  out <-
+    list(
       out,
       by(
         df,
         INDICES = df$Parms,
         univariate,
-        N = nlevels(x[, Parms]),
-        padjust = padjust,
         digits = digits,
         lower.tail = lower.tail,
         ...
       )
     )
-  } else {
-    out <-
-      list(
-        out,
-        by(
-          df,
-          df$Parms,
-          TestDimorph::univariate,
-          N = ncol(x[["M.mu"]]),
-          padjust = padjust,
-          digits = digits,
-          lower.tail = lower.tail,
-          ...
-        )
-      )
-  }
   names(out) <- c("multivariate", "univariate")
+  out[[2]] <- lapply(out[[2]], function(x) {
+    length(out[[2]]) -> len
+    x$p.value <- padjust_n(x$p.value, n = len, method = padjust)
+    x$p.value <- round(x$p.value, digits)
+    add_sig(x)
+  })
   out
 }
 
@@ -759,17 +691,18 @@ univariate_pairwise <- function(x, out, padjust, digits, lower.tail, ...) {
 #'
 #' @return markers for significance values
 #' @keywords internal
+#' @noRd
 
 add_sig <- function(x) {
   x %>%
     as.data.frame() %>%
     mutate(p.value = as.numeric(.data$p.value), signif = case_when(
-      .data$p.value > 0.05 ~ "ns",
+      .data$p.value >= 0.05 ~ "ns",
       .data$p.value < 0.05 & p.value > 0.01 ~ "*",
-      .data$p.value < 0.01 & p.value > 0.001 ~ "**",
-      .data$p.value < 0.001 ~ "***"
+      .data$p.value <= 0.01 & p.value > 0.001 ~ "**",
+      .data$p.value <= 0.001 ~ "***"
     )) %>%
-    relocate(.data$signif, .after = .data$p.value) -> x
+    relocate(.data$signif, .after = .data$p.value)
 }
 
 # rown_col -----------------------------------------------------------------
@@ -780,11 +713,12 @@ add_sig <- function(x) {
 #' @param var new column name
 #' @details convert rownames to column
 #' @keywords internal
+#' @noRd
 rown_col <- function(x, var) {
   x <- as.data.frame(x)
   rownames(x) -> var2
   x[, var] <- var2
-  relocate(x, var, .before = 1) -> x
+  relocate(x, all_of(var), .before = 1) -> x
   rownames(x) <- NULL
   as.data.frame(x)
 }

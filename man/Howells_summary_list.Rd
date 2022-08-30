@@ -5,7 +5,8 @@
 \alias{Howells_summary_list}
 \title{List format of \link{Howells_summary} for multivariate analysis}
 \format{
-A list of 7 matrices with structure similar to \link{baboon.parms_list}
+A list of 5 matrices (R.res, M.mu, F.mu, M.sdev, and F.sdev) and
+two vectors (m and f) with structure similar to \link{baboon.parms_list}
 }
 \usage{
 Howells_summary_list

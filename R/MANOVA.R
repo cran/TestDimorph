@@ -3,8 +3,8 @@
 #' MANOVA type I for main effects
 #'
 #' @inheritParams multivariate
-#'
 #' @keywords internal
+#' @noRd
 manova_main_I <- function(x,
                           es_manova,
                           test,
@@ -33,12 +33,16 @@ manova_main_I <- function(x,
   D <- M - F
   w <- (nM * nF) / (nM + nF)
   weighted.D <- as.numeric(t(D) %*% w)
-  T <- diag(sqrt(apply((nM - 1) %o% o.p * M.sd^2 + (nF - 1) %o% o.p * F.sd^2, 2, sum)))
+  T <-
+    diag(sqrt(apply((nM - 1) %o% o.p * M.sd^2 + (nF - 1) %o% o.p * F.sd^
+      2, 2, sum)))
 
   SSCPb <- t(Mc) %*% diag(nM) %*% Mc + t(Fc) %*% diag(nF) %*% Fc
-  SSCPi <- t(D) %*% (w %*% t(o.p) * D) - weighted.D %o% weighted.D / sum(w)
+  SSCPi <-
+    t(D) %*% (w %*% t(o.p) * D) - weighted.D %o% weighted.D / sum(w)
   SSCPe <- T %*% R %*% T
-  SSCPsamp <- t(Xm) %*% M + t(Xf) %*% F - t(Xm) %*% J %*% Xm / sum(nM) - t(Xf) %*% J %*% Xf / sum(nF) - SSCPi
+  SSCPsamp <-
+    t(Xm) %*% M + t(Xf) %*% F - t(Xm) %*% J %*% Xm / sum(nM) - t(Xf) %*% J %*% Xf / sum(nF) - SSCPi
   SSCPsex <- SSCPb - SSCPsamp - SSCPi
 
   vh <- c(1, r - 1)
@@ -65,39 +69,73 @@ manova_main_I <- function(x,
   lower <- rep(0, 2)
 
   for (i in 1:2) {
-    if (test == "W") sto <- Wilks(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
-    if (test == "R") sto <- Roy(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
-    if (test == "P") sto <- Pillai(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
-    if (test == "HL") sto <- HL(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    if (test == "W") {
+      sto <- Wilks(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    }
+    if (test == "R") {
+      sto <- Roy(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    }
+    if (test == "P") {
+      sto <- Pillai(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    }
+    if (test == "HL") {
+      sto <- HL(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    }
     Stats[i] <- sto$Stats
     F.stat[i] <- sto$F.stat
     df1[i] <- sto$df1
     df2[i] <- sto$df2
     prob[i] <- sto$prob
     exact[i] <- sto$exact
-    eta [i] <- sto$eta
+    eta[i] <- sto$eta
     lower[i] <- sto$lower.eta
     upper[i] <- sto$upper.eta
   }
-  if (test == "W") test.type <- "Wilks"
-  if (test == "R") test.type <- "Roy"
-  if (test == "P") test.type <- "Pillai"
-  if (test == "HL") test.type <- "Hotelling-Lawley"
-  term <- c(paste("Sex", exact[1], sep = ""), paste("Pop", exact[2], sep = ""))
+  if (test == "W") {
+    test.type <- "Wilks"
+  }
+  if (test == "R") {
+    test.type <- "Roy"
+  }
+  if (test == "P") {
+    test.type <- "Pillai"
+  }
+  if (test == "HL") {
+    test.type <- "Hotelling-Lawley"
+  }
+  term <-
+    c(paste("Sex", exact[1], sep = ""), paste("Pop", exact[2], sep = ""))
 
 
-  out <- cbind.data.frame(term, vh, round(Stats, digits), round(F.stat, digits), round(df1, 0), round(df2, 3),
-    p.value = round(prob, digits), round(eta, digits),
-    round(lower, digits), round(upper, digits)
-  )
+  out <-
+    cbind.data.frame(
+      term,
+      vh,
+      round(Stats, digits),
+      round(F.stat, digits),
+      round(df1, 0),
+      round(df2, 3),
+      p.value = round(prob, digits),
+      round(eta, digits),
+      round(lower, digits),
+      round(upper, digits)
+    )
 
   out <- add_sig(out)
 
 
   colnames(out) <- c(
-    "term", "df", test.type, "approx.f", "num.df", "den.df", "p.value", "signif",
-
-    "eta", "lower.eta", "upper.eta"
+    "term",
+    "df",
+    test.type,
+    "approx.f",
+    "num.df",
+    "den.df",
+    "p.value",
+    "signif",
+    "eta",
+    "lower.eta",
+    "upper.eta"
   )
 
 
@@ -111,29 +149,55 @@ manova_main_I <- function(x,
   vh <- c(r - 1, 1)
 
   for (i in 1:2) {
-    if (test == "W") sto <- Wilks(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
-    if (test == "R") sto <- Roy(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
-    if (test == "P") sto <- Pillai(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
-    if (test == "HL") sto <- HL(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    if (test == "W") {
+      sto <- Wilks(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    }
+    if (test == "R") {
+      sto <- Roy(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    }
+    if (test == "P") {
+      sto <- Pillai(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    }
+    if (test == "HL") {
+      sto <- HL(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    }
     Stats[i] <- sto$Stats
     F.stat[i] <- sto$F.stat
     df1[i] <- sto$df1
     df2[i] <- sto$df2
     prob[i] <- sto$prob
     exact[i] <- sto$exact
-    eta [i] <- sto$eta
+    eta[i] <- sto$eta
     lower[i] <- sto$lower.eta
     upper[i] <- sto$upper.eta
   }
-  if (test == "W") test.type <- "Wilks"
-  if (test == "R") test.type <- "Roy"
-  if (test == "P") test.type <- "Pillai"
-  if (test == "HL") test.type <- "Hotelling-Lawley"
-  term <- c(paste("Pop", exact[1], sep = ""), paste("Sex", exact[2], sep = ""))
-  out2 <- cbind.data.frame(term, vh, round(Stats, digits), round(F.stat, digits), round(df1, 0), round(df2, 3),
-    p.value = round(prob, digits), round(eta, digits),
-    round(lower, digits), round(upper, digits)
-  )
+  if (test == "W") {
+    test.type <- "Wilks"
+  }
+  if (test == "R") {
+    test.type <- "Roy"
+  }
+  if (test == "P") {
+    test.type <- "Pillai"
+  }
+  if (test == "HL") {
+    test.type <- "Hotelling-Lawley"
+  }
+  term <-
+    c(paste("Pop", exact[1], sep = ""), paste("Sex", exact[2], sep = ""))
+  out2 <-
+    cbind.data.frame(
+      term,
+      vh,
+      round(Stats, digits),
+      round(F.stat, digits),
+      round(df1, 0),
+      round(df2, 3),
+      p.value = round(prob, digits),
+      round(eta, digits),
+      round(lower, digits),
+      round(upper, digits)
+    )
   out2 <- add_sig(out2)
 
   colnames(out2) <- colnames(out)
@@ -150,8 +214,8 @@ manova_main_I <- function(x,
 #' MANOVA type II for main effects
 #'
 #' @inheritParams multivariate
-#'
 #' @keywords internal
+#' @noRd
 manova_main_II <- function(x,
                            es_manova,
                            test,
@@ -175,11 +239,15 @@ manova_main_II <- function(x,
   D <- M - F
   w <- (nM * nF) / (nM + nF)
   weighted.D <- as.numeric(t(D) %*% w)
-  T <- diag(sqrt(apply((nM - 1) %o% o.p * M.sd^2 + (nF - 1) %o% o.p * F.sd^2, 2, sum)))
+  T <-
+    diag(sqrt(apply((nM - 1) %o% o.p * M.sd^2 + (nF - 1) %o% o.p * F.sd^
+      2, 2, sum)))
 
-  SSCPi <- t(D) %*% (w %*% t(o.p) * D) - weighted.D %o% weighted.D / sum(w)
+  SSCPi <-
+    t(D) %*% (w %*% t(o.p) * D) - weighted.D %o% weighted.D / sum(w)
   SSCPe <- T %*% R %*% T
-  SSCPsamp <- t(Xm) %*% M + t(Xf) %*% F - t(Xm) %*% J %*% Xm / sum(nM) - t(Xf) %*% J %*% Xf / sum(nF) - SSCPi
+  SSCPsamp <-
+    t(Xm) %*% M + t(Xf) %*% F - t(Xm) %*% J %*% Xm / sum(nM) - t(Xf) %*% J %*% Xf / sum(nF) - SSCPi
   SSCPsex <- t(D) %*% w %*% t(w) %*% D / as.numeric(t(o.r) %*% w)
 
   H <- array(dim = c(p, p, 2))
@@ -203,38 +271,72 @@ manova_main_II <- function(x,
   exact <- rep("", 2)
 
   for (i in 1:2) {
-    if (test == "W") sto <- Wilks(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
-    if (test == "R") sto <- Roy(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
-    if (test == "P") sto <- Pillai(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
-    if (test == "HL") sto <- HL(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    if (test == "W") {
+      sto <- Wilks(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    }
+    if (test == "R") {
+      sto <- Roy(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    }
+    if (test == "P") {
+      sto <- Pillai(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    }
+    if (test == "HL") {
+      sto <- HL(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    }
     Stats[i] <- sto$Stats
     F.stat[i] <- sto$F.stat
     df1[i] <- sto$df1
     df2[i] <- sto$df2
     prob[i] <- sto$prob
     exact[i] <- sto$exact
-    eta [i] <- sto$eta
+    eta[i] <- sto$eta
     lower[i] <- sto$lower.eta
     upper[i] <- sto$upper.eta
   }
 
 
-  if (test == "W") test.type <- "Wilks"
-  if (test == "R") test.type <- "Roy"
-  if (test == "P") test.type <- "Pillai"
-  if (test == "HL") test.type <- "Hotelling-Lawley"
-  term <- c(paste("Sex", exact[1], sep = ""), paste("Pop", exact[2], sep = ""))
-  out <- cbind.data.frame(term, vh, round(Stats, digits), round(F.stat, digits), round(df1, 0), round(df2, 3),
-    p.value = round(prob, digits), round(eta, digits),
-    round(lower, digits), round(upper, digits)
-  )
+  if (test == "W") {
+    test.type <- "Wilks"
+  }
+  if (test == "R") {
+    test.type <- "Roy"
+  }
+  if (test == "P") {
+    test.type <- "Pillai"
+  }
+  if (test == "HL") {
+    test.type <- "Hotelling-Lawley"
+  }
+  term <-
+    c(paste("Sex", exact[1], sep = ""), paste("Pop", exact[2], sep = ""))
+  out <-
+    cbind.data.frame(
+      term,
+      vh,
+      round(Stats, digits),
+      round(F.stat, digits),
+      round(df1, 0),
+      round(df2, 3),
+      p.value = round(prob, digits),
+      round(eta, digits),
+      round(lower, digits),
+      round(upper, digits)
+    )
   out <- add_sig(out)
 
 
   colnames(out) <- c(
-    "term", "df", test.type, "approx.f", "num.df", "den.df", "p.value", "signif",
-
-    "eta", "lower.eta", "upper.eta"
+    "term",
+    "df",
+    test.type,
+    "approx.f",
+    "num.df",
+    "den.df",
+    "p.value",
+    "signif",
+    "eta",
+    "lower.eta",
+    "upper.eta"
   )
   if (es_manova == "none") {
     out <- out[1:8]
@@ -248,8 +350,8 @@ manova_main_II <- function(x,
 #' MANOVA type I
 #'
 #' @inheritParams multivariate
-#'
 #' @keywords internal
+#' @noRd
 manova_I <- function(x,
                      es_manova,
                      test,
@@ -278,12 +380,16 @@ manova_I <- function(x,
   D <- M - F
   w <- (nM * nF) / (nM + nF)
   weighted.D <- as.numeric(t(D) %*% w)
-  T <- diag(sqrt(apply((nM - 1) %o% o.p * M.sd^2 + (nF - 1) %o% o.p * F.sd^2, 2, sum)))
+  T <-
+    diag(sqrt(apply((nM - 1) %o% o.p * M.sd^2 + (nF - 1) %o% o.p * F.sd^
+      2, 2, sum)))
 
   SSCPb <- t(Mc) %*% diag(nM) %*% Mc + t(Fc) %*% diag(nF) %*% Fc
-  SSCPi <- t(D) %*% (w %*% t(o.p) * D) - weighted.D %o% weighted.D / sum(w)
+  SSCPi <-
+    t(D) %*% (w %*% t(o.p) * D) - weighted.D %o% weighted.D / sum(w)
   SSCPe <- T %*% R %*% T
-  SSCPsamp <- t(Xm) %*% M + t(Xf) %*% F - t(Xm) %*% J %*% Xm / sum(nM) - t(Xf) %*% J %*% Xf / sum(nF) - SSCPi
+  SSCPsamp <-
+    t(Xm) %*% M + t(Xf) %*% F - t(Xm) %*% J %*% Xm / sum(nM) - t(Xf) %*% J %*% Xf / sum(nF) - SSCPi
   SSCPsex <- SSCPb - SSCPsamp - SSCPi
 
   vh <- c(1, r - 1, r - 1)
@@ -311,37 +417,75 @@ manova_I <- function(x,
   lower <- rep(0, 3)
 
   for (i in 1:3) {
-    if (test == "W") sto <- Wilks(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
-    if (test == "R") sto <- Roy(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
-    if (test == "P") sto <- Pillai(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
-    if (test == "HL") sto <- HL(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    if (test == "W") {
+      sto <- Wilks(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    }
+    if (test == "R") {
+      sto <- Roy(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    }
+    if (test == "P") {
+      sto <- Pillai(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    }
+    if (test == "HL") {
+      sto <- HL(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    }
     Stats[i] <- sto$Stats
     F.stat[i] <- sto$F.stat
     df1[i] <- sto$df1
     df2[i] <- sto$df2
     prob[i] <- sto$prob
     exact[i] <- sto$exact
-    eta [i] <- sto$eta
+    eta[i] <- sto$eta
     lower[i] <- sto$lower.eta
     upper[i] <- sto$upper.eta
   }
-  if (test == "W") test.type <- "Wilks"
-  if (test == "R") test.type <- "Roy"
-  if (test == "P") test.type <- "Pillai"
-  if (test == "HL") test.type <- "Hotelling-Lawley"
+  if (test == "W") {
+    test.type <- "Wilks"
+  }
+  if (test == "R") {
+    test.type <- "Roy"
+  }
+  if (test == "P") {
+    test.type <- "Pillai"
+  }
+  if (test == "HL") {
+    test.type <- "Hotelling-Lawley"
+  }
 
-  term <- c(paste("Sex", exact[1], sep = ""), paste("Pop", exact[2], sep = ""), paste("Sex*Pop", exact[3], sep = ""))
-  out <- cbind.data.frame(term, vh, round(Stats, digits), round(F.stat, digits), round(df1, 0), round(df2, 3),
-    p.value = round(prob, digits), round(eta, digits),
-    round(lower, digits), round(upper, digits)
-  )
+  term <-
+    c(
+      paste("Sex", exact[1], sep = ""),
+      paste("Pop", exact[2], sep = ""),
+      paste("Sex*Pop", exact[3], sep = "")
+    )
+  out <-
+    cbind.data.frame(
+      term,
+      vh,
+      round(Stats, digits),
+      round(F.stat, digits),
+      round(df1, 0),
+      round(df2, 3),
+      p.value = round(prob, digits),
+      round(eta, digits),
+      round(lower, digits),
+      round(upper, digits)
+    )
   out <- add_sig(out)
 
 
   colnames(out) <- c(
-    "term", "df", test.type, "approx.f", "num.df", "den.df", "p.value", "signif",
-
-    "eta", "lower.eta", "upper.eta"
+    "term",
+    "df",
+    test.type,
+    "approx.f",
+    "num.df",
+    "den.df",
+    "p.value",
+    "signif",
+    "eta",
+    "lower.eta",
+    "upper.eta"
   )
 
 
@@ -358,32 +502,62 @@ manova_I <- function(x,
   ve <- rep(N - 2 * r, 3)
 
   for (i in 1:3) {
-    if (test == "W") sto <- Wilks(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
-    if (test == "R") sto <- Roy(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
-    if (test == "P") sto <- Pillai(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
-    if (test == "HL") sto <- HL(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    if (test == "W") {
+      sto <- Wilks(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    }
+    if (test == "R") {
+      sto <- Roy(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    }
+    if (test == "P") {
+      sto <- Pillai(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    }
+    if (test == "HL") {
+      sto <- HL(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    }
     Stats[i] <- sto$Stats
     F.stat[i] <- sto$F.stat
     df1[i] <- sto$df1
     df2[i] <- sto$df2
     prob[i] <- sto$prob
     exact[i] <- sto$exact
-    eta [i] <- sto$eta
+    eta[i] <- sto$eta
     lower[i] <- sto$lower.eta
     upper[i] <- sto$upper.eta
   }
 
 
-  if (test == "W") test.type <- "Wilks"
-  if (test == "R") test.type <- "Roy"
-  if (test == "P") test.type <- "Pillai"
-  if (test == "HL") test.type <- "Hotelling-Lawley"
+  if (test == "W") {
+    test.type <- "Wilks"
+  }
+  if (test == "R") {
+    test.type <- "Roy"
+  }
+  if (test == "P") {
+    test.type <- "Pillai"
+  }
+  if (test == "HL") {
+    test.type <- "Hotelling-Lawley"
+  }
 
-  term <- c(paste("Pop", exact[1], sep = ""), paste("Sex", exact[2], sep = ""), paste("Sex*Pop", exact[3], sep = ""))
-  out2 <- cbind.data.frame(term, vh, round(Stats, digits), round(F.stat, digits), round(df1, 0), round(df2, 3),
-    p.value = round(prob, digits), round(eta, digits),
-    round(lower, digits), round(upper, digits)
-  )
+  term <-
+    c(
+      paste("Pop", exact[1], sep = ""),
+      paste("Sex", exact[2], sep = ""),
+      paste("Sex*Pop", exact[3], sep = "")
+    )
+  out2 <-
+    cbind.data.frame(
+      term,
+      vh,
+      round(Stats, digits),
+      round(F.stat, digits),
+      round(df1, 0),
+      round(df2, 3),
+      p.value = round(prob, digits),
+      round(eta, digits),
+      round(lower, digits),
+      round(upper, digits)
+    )
 
   out2 <- add_sig(out2)
 
@@ -401,8 +575,8 @@ manova_I <- function(x,
 #' MANOVA type II
 #'
 #' @inheritParams multivariate
-#'
 #' @keywords internal
+#' @noRd
 manova_II <- function(x,
                       es_manova,
                       test,
@@ -426,11 +600,15 @@ manova_II <- function(x,
   D <- M - F
   w <- (nM * nF) / (nM + nF)
   weighted.D <- as.numeric(t(D) %*% w)
-  T <- diag(sqrt(apply((nM - 1) %o% o.p * M.sd^2 + (nF - 1) %o% o.p * F.sd^2, 2, sum)))
+  T <-
+    diag(sqrt(apply((nM - 1) %o% o.p * M.sd^2 + (nF - 1) %o% o.p * F.sd^
+      2, 2, sum)))
 
-  SSCPi <- t(D) %*% (w %*% t(o.p) * D) - weighted.D %o% weighted.D / sum(w)
+  SSCPi <-
+    t(D) %*% (w %*% t(o.p) * D) - weighted.D %o% weighted.D / sum(w)
   SSCPe <- T %*% R %*% T
-  SSCPsamp <- t(Xm) %*% M + t(Xf) %*% F - t(Xm) %*% J %*% Xm / sum(nM) - t(Xf) %*% J %*% Xf / sum(nF) - SSCPi
+  SSCPsamp <-
+    t(Xm) %*% M + t(Xf) %*% F - t(Xm) %*% J %*% Xm / sum(nM) - t(Xf) %*% J %*% Xf / sum(nF) - SSCPi
   SSCPsex <- t(D) %*% w %*% t(w) %*% D / as.numeric(t(o.r) %*% w)
 
   H <- array(dim = c(p, p, 3))
@@ -455,39 +633,77 @@ manova_II <- function(x,
   upper <- rep(0, 3)
 
   for (i in 1:3) {
-    if (test == "W") sto <- Wilks(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
-    if (test == "R") sto <- Roy(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
-    if (test == "P") sto <- Pillai(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
-    if (test == "HL") sto <- HL(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    if (test == "W") {
+      sto <- Wilks(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    }
+    if (test == "R") {
+      sto <- Roy(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    }
+    if (test == "P") {
+      sto <- Pillai(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    }
+    if (test == "HL") {
+      sto <- HL(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    }
     Stats[i] <- sto$Stats
     F.stat[i] <- sto$F.stat
     df1[i] <- sto$df1
     df2[i] <- sto$df2
     prob[i] <- sto$prob
     exact[i] <- sto$exact
-    eta [i] <- sto$eta
+    eta[i] <- sto$eta
     lower[i] <- sto$lower.eta
     upper[i] <- sto$upper.eta
   }
 
 
-  if (test == "W") test.type <- "Wilks"
-  if (test == "R") test.type <- "Roy"
-  if (test == "P") test.type <- "Pillai"
-  if (test == "HL") test.type <- "Hotelling-Lawley"
-  term <- c(paste("Sex", exact[1], sep = ""), paste("Pop", exact[2], sep = ""), paste("Sex*Pop", exact[3], sep = ""))
-  out <- cbind.data.frame(term, vh, round(Stats, digits), round(F.stat, digits), round(df1, 0), round(df2, 3),
-    p.value = round(prob, digits), round(eta, digits),
-    round(lower, digits), round(upper, digits)
-  )
+  if (test == "W") {
+    test.type <- "Wilks"
+  }
+  if (test == "R") {
+    test.type <- "Roy"
+  }
+  if (test == "P") {
+    test.type <- "Pillai"
+  }
+  if (test == "HL") {
+    test.type <- "Hotelling-Lawley"
+  }
+  term <-
+    c(
+      paste("Sex", exact[1], sep = ""),
+      paste("Pop", exact[2], sep = ""),
+      paste("Sex*Pop", exact[3], sep = "")
+    )
+  out <-
+    cbind.data.frame(
+      term,
+      vh,
+      round(Stats, digits),
+      round(F.stat, digits),
+      round(df1, 0),
+      round(df2, 3),
+      p.value = round(prob, digits),
+      round(eta, digits),
+      round(lower, digits),
+      round(upper, digits)
+    )
 
   out <- add_sig(out)
 
 
   colnames(out) <- c(
-    "term", "df", test.type, "approx.f", "num.df", "den.df", "p.value", "signif",
-
-    "eta", "lower.eta", "upper.eta"
+    "term",
+    "df",
+    test.type,
+    "approx.f",
+    "num.df",
+    "den.df",
+    "p.value",
+    "signif",
+    "eta",
+    "lower.eta",
+    "upper.eta"
   )
   if (es_manova == "none") {
     out <- out[1:8]
@@ -500,8 +716,8 @@ manova_II <- function(x,
 #' MANOVA type III
 #'
 #' @inheritParams multivariate
-#'
 #' @keywords internal
+#' @noRd
 manova_III <- function(x,
                        es_manova,
                        test,
@@ -521,10 +737,13 @@ manova_III <- function(x,
   o.p <- rep(1, p)
   o.r <- rep(1, r)
 
-  T <- diag(sqrt(apply((nM - 1) %o% o.p * M.sd^2 + (nF - 1) %o% o.p * F.sd^2, 2, sum)))
+  T <-
+    diag(sqrt(apply((nM - 1) %o% o.p * M.sd^2 + (nF - 1) %o% o.p * F.sd^
+      2, 2, sum)))
   SSCPe <- T %*% R %*% T
 
-  Pop.Block <- t(stats::contr.sum(r)) %*% diag(nM + nF) %*% stats::contr.sum(r)
+  Pop.Block <-
+    t(stats::contr.sum(r)) %*% diag(nM + nF) %*% stats::contr.sum(r)
 
   contrast <- stats::contr.sum(2) %x% stats::contr.sum(r)
   first <- t(contrast) %*% diag(c(nF, nM))
@@ -546,7 +765,8 @@ manova_III <- function(x,
     XX.1[i] <- nF[i] - nF[r] + nM[r] - nM[i]
     XX.2[i] <- (nF[i] + nM[i]) - (nF[r] + nM[r])
   }
-  XY <- rbind(Female.sum + Male.sum, Female.sum - Male.sum, Pops, XY.interact)
+  XY <-
+    rbind(Female.sum + Male.sum, Female.sum - Male.sum, Pops, XY.interact)
 
   XX <- matrix(NA, ncol = 2 * r, nrow = 2 * r)
   XX[1:2, 1:2] <- diag(rep(N, 2))
@@ -569,17 +789,23 @@ manova_III <- function(x,
   inv.contr <- A %*% inv.XX %*% t(A)
   SSCPsex <- t(AB) %*% solve(inv.contr) %*% AB
 
-  A <- cbind(matrix(0, nrow = r - 1, ncol = 2), diag(r - 1), matrix(0,
-    nrow =
-      r - 1, ncol = r - 1
-  ))
+  A <-
+    cbind(
+      matrix(0, nrow = r - 1, ncol = 2),
+      diag(r - 1),
+      matrix(0,
+        nrow =
+          r - 1, ncol = r - 1
+      )
+    )
   AB <- A %*% B
   inv.contr <- A %*% inv.XX %*% t(A)
   SSCPsamp <- t(AB) %*% solve(inv.contr) %*% AB
 
 
   A <- cbind(
-    matrix(0, nrow = r - 1, ncol = 2), matrix(0, nrow = r - 1, ncol = r - 1),
+    matrix(0, nrow = r - 1, ncol = 2),
+    matrix(0, nrow = r - 1, ncol = r - 1),
     diag(r - 1)
   )
   AB <- A %*% B
@@ -608,38 +834,76 @@ manova_III <- function(x,
   upper <- rep(0, 3)
 
   for (i in 1:3) {
-    if (test == "W") sto <- Wilks(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
-    if (test == "R") sto <- Roy(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
-    if (test == "P") sto <- Pillai(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
-    if (test == "HL") sto <- HL(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    if (test == "W") {
+      sto <- Wilks(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    }
+    if (test == "R") {
+      sto <- Roy(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    }
+    if (test == "P") {
+      sto <- Pillai(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    }
+    if (test == "HL") {
+      sto <- HL(p, H[, , i], E, vh[i], ve[i], CI, lower.tail)
+    }
     Stats[i] <- sto$Stats
     F.stat[i] <- sto$F.stat
     df1[i] <- sto$df1
     df2[i] <- sto$df2
     prob[i] <- sto$prob
     exact[i] <- sto$exact
-    eta [i] <- sto$eta
+    eta[i] <- sto$eta
     lower[i] <- sto$lower.eta
     upper[i] <- sto$upper.eta
   }
 
 
-  if (test == "W") test.type <- "Wilks"
-  if (test == "R") test.type <- "Roy"
-  if (test == "P") test.type <- "Pillai"
-  if (test == "HL") test.type <- "Hotelling-Lawley"
-  term <- c(paste("Sex", exact[1], sep = ""), paste("Pop", exact[2], sep = ""), paste("Sex*Pop", exact[3], sep = ""))
+  if (test == "W") {
+    test.type <- "Wilks"
+  }
+  if (test == "R") {
+    test.type <- "Roy"
+  }
+  if (test == "P") {
+    test.type <- "Pillai"
+  }
+  if (test == "HL") {
+    test.type <- "Hotelling-Lawley"
+  }
+  term <-
+    c(
+      paste("Sex", exact[1], sep = ""),
+      paste("Pop", exact[2], sep = ""),
+      paste("Sex*Pop", exact[3], sep = "")
+    )
 
-  out <- cbind.data.frame(term, vh, round(Stats, digits), round(F.stat, digits), round(df1, 0), round(df2, 3),
-    p.value = round(prob, digits), round(eta, digits),
-    round(lower, digits), round(upper, digits)
-  )
+  out <-
+    cbind.data.frame(
+      term,
+      vh,
+      round(Stats, digits),
+      round(F.stat, digits),
+      round(df1, 0),
+      round(df2, 3),
+      p.value = round(prob, digits),
+      round(eta, digits),
+      round(lower, digits),
+      round(upper, digits)
+    )
 
   out <- add_sig(out)
   colnames(out) <- c(
-    "term", "df", test.type, "approx.f", "num.df", "den.df", "p.value", "signif",
-
-    "eta", "lower.eta", "upper.eta"
+    "term",
+    "df",
+    test.type,
+    "approx.f",
+    "num.df",
+    "den.df",
+    "p.value",
+    "signif",
+    "eta",
+    "lower.eta",
+    "upper.eta"
   )
   if (es_manova == "none") {
     out <- out[1:8]

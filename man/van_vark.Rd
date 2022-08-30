@@ -6,7 +6,7 @@
 \usage{
 van_vark(
   x,
-  W,
+  W = NULL,
   q = 2,
   Trait = 1,
   Pop = 2,
@@ -16,9 +16,12 @@ van_vark(
 )
 }
 \arguments{
-\item{x}{Data frame of means and sample sizes for different populations.}
+\item{x}{A Data frame of means and sample sizes for different populations or
+a list of the summary data frame with Pooled within-group variance-covariance
+matrix.}
 
-\item{W}{Pooled within-group variance-covariance matrix}
+\item{W}{Pooled within-group variance-covariance matrix supplied if x is a
+dataframe , Default:NULL}
 
 \item{q}{Number of canonical variates to retain for chi square test, Default:
 2}
@@ -54,8 +57,10 @@ Input is a data frame of means and sample sizes similar to
   \link{Howells_summary} with the same naming conventions used throughout the
   functions but with the standard deviation columns removed.
 }
+\note{
+For plot labels to be fully visualized, maximizing image size is advised.
+}
 \examples{
-library(TestDimorph)
 # selecting means and sample sizes
 van_vark_data <- Howells_summary[!endsWith(
   x = names(Howells_summary),
@@ -65,7 +70,7 @@ van_vark_data <- Howells_summary[!endsWith(
 van_vark(van_vark_data, Howells_V)
 }
 \references{
-van Vark, G. N., et al. (1989). van Vark, G. N., et al. "Some
-multivariate tests for differences in sexual dimorphism between human
-populations." Annals of human biology 16.4: 301-310.
+Van Vark, G. N., et al. "Some multivariate tests for differences
+in sexual dimorphism between human populations." Annals of human biology
+16.4 (1989): 301-310.
 }

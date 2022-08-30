@@ -2,7 +2,7 @@
 #' @description Multivariate extension of Greene t test \link{t_greene}
 #' @param x Data frame or list containing summary statistics for
 #' multiple parameters measured in both sexes in two or more populations.
-#' @param R.res Pooled within correlational matrix, Default: NULL
+#' @param R.res Pooled within correlation matrix, Default: NULL
 #' @param Trait Number of the column containing names of measured parameters,
 #' Default: 1
 #' @param Pop Number of the column containing populations' names, Default: 2
@@ -16,6 +16,8 @@
 #' not reporting an effect size, Default:"none".
 #' @param univariate Logical; if TRUE conducts multiple univariate analyses on
 #' different parameters separately, Default: FALSE
+#' @param CI confidence interval coverage for the chosen effect size takes value
+#' from 0 to 1, Default: 0.95.
 #' @inheritParams univariate
 
 #' @param ... Additional arguments that could be passed to \link{univariate}
@@ -23,19 +25,16 @@
 #' is calculated.
 #' @details Data can be entered either as a data frame of summary
 #' statistics as in \link{baboon.parms_df}. In that case the pooled within
-#' correlational matrix `R.res` should be entered as a separate argument as in
-#' \link{baboon.parms_R}. Another acceptable format is a named list of
-#' matrices containing different summary statistics as well as the correlational
+#' correlation matrix `R.res` should be entered as a separate argument as in
+#' \link{baboon.parms_R}. Another acceptable format is is a named list of matrices
+#' and vectors containing different summary statistics as well as the correlation
 #' matrix as in \link{baboon.parms_list}. By setting the option `univariate`
-#' to `TRUE`, multiple `ANOVA`s can be run on each parameter independently with
-#' the required p.value correction using \link[stats]{p.adjust.methods}.
+#' to `TRUE`, multiple `ANOVA`s can be run on each parameter independently.
 #' @examples
-#' # x is a data frame with separate correlational matrix
-#' library(TestDimorph)
+#' # x is a data frame with separate correlation matrix
 #' multivariate(baboon.parms_df, R.res = baboon.parms_R)
-#' # x is a list with the correlational matrix included
-#' library(TestDimorph)
-#' multivariate(baboon.parms_list, univariate = TRUE, padjust = "bonferroni")
+#' # x is a list with the correlation matrix included
+#' multivariate(baboon.parms_list, univariate = TRUE)
 #' # reproduces results from Konigsberg (1991)
 #' multivariate(baboon.parms_df, R.res = baboon.parms_R)[3, ]
 #' multivariate(baboon.parms_df, R.res = baboon.parms_R, interact_manova = FALSE)
@@ -43,6 +42,7 @@
 #' @export
 #' @importFrom stats pf
 #' @importFrom tidyr pivot_longer
+#' @seealso \link{baboon.parms_df}
 
 multivariate <- function(x,
                          R.res = NULL,
@@ -58,7 +58,6 @@ multivariate <- function(x,
                          lower.tail = FALSE,
                          CI = 0.95,
                          digits = 4) {
-  padjust <- match.arg(padjust, choices = p.adjust.methods)
   type_manova <- match.arg(type_manova, c("I", "II", "III"))
   manova_test_statistic <- match.arg(manova_test_statistic, c("W", "R", "P", "HL"))
   es_manova <-
@@ -75,6 +74,7 @@ multivariate <- function(x,
   if (isFALSE(interact_manova) && type_manova == "III") {
     stop("main effects MANOVA is only available for types (I) and (II)")
   }
+  padjust <- match.arg(padjust, choices = p.adjust.methods)
   if (is.data.frame(x)) {
     if (!all(c("M.mu", "F.mu", "M.sdev", "F.sdev", "m", "f") %in% names(x))) {
       stop(
@@ -121,7 +121,7 @@ multivariate <- function(x,
             F.sdev=Female sd
             m= Male sample size
             f=Female sample size
-            R.res=Pooled within correlational matrix
+            R.res=Pooled within correlation matrix
             N.B: names are case sensitive"
       )
     }
@@ -176,7 +176,7 @@ multivariate <- function(x,
   if (isTRUE(univariate)) {
     univariate_pairwise(
       x = x, out = out, padjust = padjust, digits = digits,
-      lower.tail = lower.tail, CI = CI, ...
+      lower.tail = lower.tail, ...
     )
   } else {
     out

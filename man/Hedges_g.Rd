@@ -4,7 +4,15 @@
 \alias{Hedges_g}
 \title{Hedges' g}
 \usage{
-Hedges_g(x, Trait = 1, CI = 0.95, B = NULL, rand = TRUE, digits = 4)
+Hedges_g(
+  x,
+  Trait = 1,
+  CI = 0.95,
+  B = NULL,
+  verbose = FALSE,
+  rand = TRUE,
+  digits = 4
+)
 }
 \arguments{
 \item{x}{A data frame containing summary statistics.}
@@ -17,6 +25,9 @@ Default: 1}
 \item{B}{number of bootstrap samples for generating confidence intervals. Higher
 number means greater accuracy but slower execution. If NULL bootstrap confidence
 intervals are not produced, Default:NULL}
+
+\item{verbose}{logical; if TRUE  number of bootstraps is displayed,
+Default: FALSE}
 
 \item{rand}{logical; if TRUE, uses random seed.  If FALSE, then set.seed(42)
 for repeatability, Default: TRUE}

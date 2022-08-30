@@ -19,7 +19,7 @@ deviations for females}
 Howells_summary
 }
 \description{
-Summary statistics of the the Howells' data subset.
+Summary statistics of the Howells' data subset.
 }
 \references{
 \link{Howells}

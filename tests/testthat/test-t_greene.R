@@ -50,15 +50,6 @@ test_that("t_greene", {
       0.1707
   )
   testthat::expect_true(
-    t_greene(baboon.parms_df[1:3, ], Pop = 2, es = "d")[9][[1]][1] == 0.0824
-  )
-  testthat::expect_true(
-    t_greene(baboon.parms_df[1:3, ], Pop = 2, es = "g")[9][[1]][1] == 0.0823
-  )
-  testthat::expect_error(
-    t_greene(baboon.parms_df[1:3, ], Pop = 2, es = "qq")[9][[1]][1] == 0.0181
-  )
-  testthat::expect_true(
     t_greene(data.frame(
       Pop = c("Ireland", "Colombia"),
       m = c(347, 317),

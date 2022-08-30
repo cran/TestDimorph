@@ -4,7 +4,7 @@
 \alias{extract_sum}
 \title{Summary Statistics Extraction}
 \usage{
-extract_sum(x, Sex = 1, Pop = 2, firstX = 3, test = 1, run = TRUE, ...)
+extract_sum(x, Sex = 1, Pop = 2, firstX = 3, test = "tg", run = TRUE, ...)
 }
 \arguments{
 \item{x}{Data frame of raw data.}
@@ -17,9 +17,9 @@ female, Default: 1}
 \item{firstX}{Number of column containing measured parameters (First of
 multiple in case of multivariate analysis), Default: 3}
 
-\item{test}{`1` for Greene t test \link{t_greene}, `2` for
-\link{univariate}, `3` for sex specific ANOVA \link{aov_ss},
-`4` for \link{multivariate}, and `5`  for \link{van_vark},
+\item{test}{`tg` for Greene t test \link{t_greene}, `uni` for
+\link{univariate}, `aov` for sex specific ANOVA \link{aov_ss},
+`multi` for \link{multivariate}, and `van`  for \link{van_vark},
 Default: 1}
 
 \item{run}{Logical; if TRUE runs the corresponding test after data
@@ -42,9 +42,9 @@ parameters are entered each in a separate column.
 }
 \examples{
 # for multivariate test
-library(TestDimorph)
-extract_sum(Howells, test = 4)
+\dontrun{
+extract_sum(Howells, test = "multi")
 # for univariate test on a specific parameter
-library(TestDimorph)
-extract_sum(Howells, test = 2, firstX = 4)
+extract_sum(Howells, test = "uni", firstX = 4)
+}
 }

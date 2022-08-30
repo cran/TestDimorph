@@ -7,8 +7,8 @@
 #' @param E Error SSCP matrix
 #' @param v.h Hypothesis degrees of freedom
 #' @param v.e Error degrees of freedom
-#'
 #' @keywords internal
+#' @noRd
 Wilks <- function(p, H, E, v.h, v.e, CI, lower.tail) {
   r <- min(p, v.h)
   Lamb <- det(E) / det(E + H)
@@ -109,6 +109,7 @@ Wilks <- function(p, H, E, v.h, v.e, CI, lower.tail) {
 #'
 #' @inheritParams Wilks
 #' @keywords internal
+#' @noRd
 Pillai <- function(p, H, E, v.h, v.e, CI, lower.tail) {
   s <- min(p, v.h)
   H.inv.E <- H %*% solve(E)
@@ -153,6 +154,7 @@ Pillai <- function(p, H, E, v.h, v.e, CI, lower.tail) {
 #'
 #' @inheritParams Wilks
 #' @keywords internal
+#' @noRd
 HL <- function(p, H, E, v.h, v.e, CI, lower.tail) {
   df.h <- v.h
   df.e <- v.e
@@ -196,6 +198,7 @@ HL <- function(p, H, E, v.h, v.e, CI, lower.tail) {
 #'
 #' @inheritParams Wilks
 #' @keywords internal
+#' @noRd
 
 Roy <- function(p, H, E, v.h, v.e, CI, lower.tail) {
   H.inv.E <- H %*% solve(E)

@@ -9,6 +9,7 @@ MI_index(
   plot = FALSE,
   Trait = 1,
   B = NULL,
+  verbose = FALSE,
   CI = 0.95,
   p.f = 0,
   index_type = "MI",
@@ -19,7 +20,7 @@ MI_index(
 \arguments{
 \item{x}{A data frame containing summary statistics.}
 
-\item{plot}{logical; if true a plot of densities for both sexes is returned,
+\item{plot}{logical; if TRUE a plot of densities for both sexes is returned,
 Default: FALSE}
 
 \item{Trait}{Number of the column containing names of measured parameters,
@@ -28,6 +29,9 @@ Default: 1}
 \item{B}{number of bootstrap samples for generating confidence intervals. Higher
 number means greater accuracy but slower execution. If NULL bootstrap confidence
 intervals are not produced, Default:NULL}
+
+\item{verbose}{logical; if TRUE  number of bootstraps is displayed,
+Default: FALSE}
 
 \item{CI}{confidence interval coverage takes value from 0 to 1, Default: 0.95.}
 
@@ -50,22 +54,24 @@ for different traits with graphical representation.
 }
 \description{
 Ipina and Durand's (2010) mixture intersection (MI) measure of
-sexual dimorphism.  This measure is an overlap coefficient where the sum of
- the frequency of males and the frequency of females equals 1.0.  Ipina and
- Durand (2010) also define a normal intersection (NI) measure which is the
- overlap coefficient of two normal distributions, equivalent to Inman and
- Bradley's (1989) overlap coefficient
+sexual dimorphism. This measure is an overlap coefficient where the sum of
+the frequency of males and the frequency of females equals 1.0. Ipina and
+Durand (2010) also define a normal intersection (NI) measure which is the
+overlap coefficient of two normal distributions (each integrating to 1.0),
+equivalent to Inman and Bradley's (1989) "overlap coefficient." As a result
+of this rescaling, the "MI" and "NI" plots will appear identical save for
+the scale on the y-axis.
 }
 \details{
 see \link{D_index} for bootstrap method.
 }
 \examples{
-library(TestDimorph)
-data("Cremains_measurements")
-# plot and test of significance
+# plot and calculation of MI
 MI_index(Cremains_measurements[1, ], plot = TRUE)
 #' #NI index
 MI_index(Cremains_measurements[1, ], index_type = "NI")
+1 - D_index(Cremains_measurements[1, ])$D
+
 \dontrun{
 # confidence interval was bootstrapping
 MI_index(Cremains_measurements[1, ], rand = FALSE, B = 1000)

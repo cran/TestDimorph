@@ -7,9 +7,9 @@
 t_greene(
   x,
   Pop = 1,
-  es = "none",
   plot = FALSE,
-  ...,
+  colors = c("#DD5129", "#985F51", "#536D79", "#0F7BA2", "#208D98", "#319F8E", "#43B284",
+    "#7FB274", "#BCB264", "#FAB255"),
   alternative = c("two.sided", "less", "greater"),
   padjust = "none",
   letters = FALSE,
@@ -22,16 +22,12 @@ t_greene(
 
 \item{Pop}{Number of the column containing populations' names, Default: 1}
 
-\item{es}{Type of effect size either "d" for Cohen's d,"g" for Hedge's g
-or "none" , Default:"none".}
-
 \item{plot}{Logical; if TRUE graphical matrix of p values, Default: FALSE}
 
-\item{...}{additional arguments that can be passed to
-[corrplot][corrplot::corrplot] function.}
+\item{colors}{color palette used in the corrplot}
 
 \item{alternative}{a character string specifying the alternative
-hypothesis, must be one of "two.sided", "greater" or "less".}
+hypothesis, must be one of "two.sided", "greater" or "less", Default:"two.sided"}
 
 \item{padjust}{Method of p.value adjustment for multiple comparisons
 following \link[stats]{p.adjust}  Default: "none".}
@@ -56,13 +52,17 @@ input.
 The input is a data frame of summary statistics where the column
 containing population names is chosen by position (first by default), other
 columns of summary data should have specific names (case sensitive) similar
-to \link{baboon.parms_df}
+to \link{baboon.parms_df}.For the visualization of pairwise comparisons using
+the corrplot, the rounder the image in the plot grid the lower the p-value
+(see the color scale for similar information). The default colors used in the
+corrplot are from the "MetBrewer" "Egypt" palette which is listed under the
+"colorblind_palettes". Different colors palettes can be selected from
+"RColorBrewer" package.
 }
 \examples{
 # Comparisons of femur head diameter in four populations
-library(TestDimorph)
 df <- data.frame(
-  Pop = c("Turkish", "Bulgarian", "Greek", "Portuguese "),
+  Pop = c("Turkish", "Bulgarian", "Greek", "Portuguese"),
   m = c(150.00, 82.00, 36.00, 34.00),
   f = c(150.00, 58.00, 34.00, 24.00),
   M.mu = c(49.39, 48.33, 46.99, 45.20),
@@ -73,31 +73,34 @@ df <- data.frame(
 t_greene(
   df,
   plot = TRUE,
-  method = "ellipse",
-  padjust = "none",
-  type = "lower",
-  col = c(
-    "#AEB6E5",
-    "#B1A0DB",
-    "#B788CD",
-    "#BC6EB9",
-    "#BC569E",
-    "#B6407D",
-    "#A93154"
-  ),
-  tl.cex = 0.8,
-  tl.col = "black",
-  insig =
-    "label_sig",
-  tl.srt = 0.1,
-  pch.cex = 2.5,
-  tl.pos = "ld",
-  win.asp = 1,
-  number.cex = 0.5,
-  na.label = "NA"
+  padjust = "none"
 )
 }
-\seealso{
-[multcompView::multcompLetters()]
-[corrplot::corrplot()]
+\references{
+# for the t-test
+
+  Greene, David Lee. "Comparison of t-tests for differences in sexual
+  dimorphism between populations." American Journal of Physical Anthropology
+  79.1 (1989): 121-125.
+
+  Relethford, John H., and Denise C. Hodges. "A statistical test for
+  differences in sexual dimorphism between populations." American Journal of
+  Physical Anthropology 66.1 (1985): 55-61.
+
+  #For the femur head diameter data
+
+  F. Curate, C. Umbelino, A. Perinha, C. Nogueira, A.M. Silva, E.
+  Cunha, Sex determination from the femur in Portuguese populations with
+  classical and machinelearning classifiers, J. Forensic Leg. Med. (2017) ,
+  doi:http://dx.doi.org/10.1016/j. jflm.2017.08.011.
+
+  O. Gulhan, Skeletal Sexing Standards of Human Remains in Turkey (PhD thesis), Cranfield
+  University, 2017 [Dataset].
+
+  P. Timonov, A. Fasova, D. Radoinova, A.Alexandrov, D. Delev, A study of sexual dimorphism
+  in the femur among contemporary Bulgarian population, Euras. J. Anthropol. 5 (2014) 46–53.
+
+  E.F. Kranioti, N. Vorniotakis, C. Galiatsou, M.Y. Iscan , M.
+  Michalodimitrakis, Sex identification and software development using
+  digital femoral head radiographs, Forensic Sci. Int. 189 (2009) 113.e1–7.
 }

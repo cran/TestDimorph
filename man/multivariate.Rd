@@ -25,7 +25,7 @@ multivariate(
 \item{x}{Data frame or list containing summary statistics for
 multiple parameters measured in both sexes in two or more populations.}
 
-\item{R.res}{Pooled within correlational matrix, Default: NULL}
+\item{R.res}{Pooled within correlation matrix, Default: NULL}
 
 \item{Trait}{Number of the column containing names of measured parameters,
 Default: 1}
@@ -55,7 +55,8 @@ following \link[stats]{p.adjust}  Default: "none".}
 \item{lower.tail}{Logical; if TRUE probabilities are `P[X <= x]`,
 otherwise, `P[X > x]`., Default: FALSE}
 
-\item{CI}{confidence interval coverage takes value from 0 to 1, Default: 0.95.}
+\item{CI}{confidence interval coverage for the chosen effect size takes value
+from 0 to 1, Default: 0.95.}
 
 \item{digits}{Number of significant digits, Default: 4}
 }
@@ -69,21 +70,21 @@ Multivariate extension of Greene t test \link{t_greene}
 \details{
 Data can be entered either as a data frame of summary
 statistics as in \link{baboon.parms_df}. In that case the pooled within
-correlational matrix `R.res` should be entered as a separate argument as in
-\link{baboon.parms_R}. Another acceptable format is a named list of
-matrices containing different summary statistics as well as the correlational
+correlation matrix `R.res` should be entered as a separate argument as in
+\link{baboon.parms_R}. Another acceptable format is is a named list of matrices
+and vectors containing different summary statistics as well as the correlation
 matrix as in \link{baboon.parms_list}. By setting the option `univariate`
-to `TRUE`, multiple `ANOVA`s can be run on each parameter independently with
-the required p.value correction using \link[stats]{p.adjust.methods}.
+to `TRUE`, multiple `ANOVA`s can be run on each parameter independently.
 }
 \examples{
-# x is a data frame with separate correlational matrix
-library(TestDimorph)
+# x is a data frame with separate correlation matrix
 multivariate(baboon.parms_df, R.res = baboon.parms_R)
-# x is a list with the correlational matrix included
-library(TestDimorph)
-multivariate(baboon.parms_list, univariate = TRUE, padjust = "bonferroni")
+# x is a list with the correlation matrix included
+multivariate(baboon.parms_list, univariate = TRUE)
 # reproduces results from Konigsberg (1991)
 multivariate(baboon.parms_df, R.res = baboon.parms_R)[3, ]
 multivariate(baboon.parms_df, R.res = baboon.parms_R, interact_manova = FALSE)
+}
+\seealso{
+\link{baboon.parms_df}
 }

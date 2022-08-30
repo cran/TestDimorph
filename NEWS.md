@@ -1,6 +1,11 @@
+# TestDimorph 0.5.5
+
+* Removed function `accu_model`.
+* Various enhancements and bug fixes.
+
 # TestDimorph 0.4.1
 
-* Fixed a bug in multivarite raw data generation.
+* Fixed a bug in multivariate raw data generation.
 
 # TestDimorph 0.4.0
 

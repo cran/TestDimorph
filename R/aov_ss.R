@@ -3,7 +3,7 @@
 #' @inheritParams univariate
 #' @inheritParams t_greene
 #' @param pairwise Logical; if TRUE runs multiple pairwise comparisons on
-#' different populations using Tukey's post hoc test, Default: TRUE
+#' different populations using Tukey-Kramer's post hoc test, Default: TRUE
 #' @return Sex specific ANOVA tables and pairwise comparisons in tidy format.
 #' @details Data is entered as a data frame of summary statistics where
 #' the column containing population names is chosen by position (first by
@@ -11,9 +11,8 @@
 #' sensitive) similar to \link{baboon.parms_df}
 #' @examples
 #' # Comparisons of femur head diameter in four populations
-#' library(TestDimorph)
 #' df <- data.frame(
-#'   Pop = c("Turkish", "Bulgarian", "Greek", "Portuguese "),
+#'   Pop = c("Turkish", "Bulgarian", "Greek", "Portuguese"),
 #'   m = c(150.00, 82.00, 36.00, 34.00),
 #'   f = c(150.00, 58.00, 34.00, 24.00),
 #'   M.mu = c(49.39, 48.33, 46.99, 45.20),
@@ -26,6 +25,24 @@
 #' @export
 #' @importFrom stats rnorm aov TukeyHSD
 #' @importFrom multcompView multcompLetters
+#' @references
+#'   #For the femur head diameter data
+#'
+#'   F. Curate, C. Umbelino, A. Perinha, C. Nogueira, A.M. Silva, E.
+#'   Cunha, Sex determination from the femur in Portuguese populations with
+#'   classical and machinelearning classifiers, J. Forensic Leg. Med. (2017) ,
+#'   doi:http://dx.doi.org/10.1016/j. jflm.2017.08.011.
+#'
+#'   O. Gulhan, Skeletal Sexing Standards of Human Remains in Turkey (PhD thesis), Cranfield
+#'   University, 2017 [Dataset].
+#'
+#'   P. Timonov, A. Fasova, D. Radoinova, A.Alexandrov, D. Delev, A study of sexual dimorphism
+#'   in the femur among contemporary Bulgarian population, Euras. J. Anthropol. 5 (2014) 46–53.
+#'
+#'   E.F. Kranioti, N. Vorniotakis, C. Galiatsou, M.Y. Iscan , M.
+#'   Michalodimitrakis, Sex identification and software development using
+#'   digital femoral head radiographs, Forensic Sci. Int. 189 (2009) 113.e1–7.
+#'
 aov_ss <-
   function(x,
            Pop = 1,
@@ -61,7 +78,7 @@ aov_ss <-
       stop("letters should be either TRUE or FALSE")
     }
     es_anova <-
-      match.arg(es_anova, choices = c("none", "eta", "f"))
+      match.arg(es_anova, choices = c("none", "eta2", "f2", "omega2"))
     if (CI < 0 ||
       CI > 1 || !is.numeric(CI)) {
       stop("CI should be a number between 0 and 1")
@@ -120,17 +137,17 @@ aov_ss <-
     p <- M_post$p.value
     M_post$signif <-
       case_when(
-        p > 0.05 ~ "ns",
+        p >= 0.05 ~ "ns",
         p < 0.05 & p > 0.01 ~ "*",
-        p < 0.01 & p > 0.001 ~ "**",
-        p < 0.001 ~ "***"
+        p <= 0.01 & p > 0.001 ~ "**",
+        p <= 0.001 ~ "***"
       )
 
     M_letters <- M_post$p.value
     names(M_letters) <- M_post$populations
     M_letters <-
       rown_col(data.frame(
-        "letters" = multcompView::multcompLetters(M_letters, threshold = CI)[[1]]
+        "letters" = multcompView::multcompLetters(M_letters, threshold = 1 - CI)[[1]]
       ),
       var = "populations"
       )
@@ -151,17 +168,17 @@ aov_ss <-
     p <- F_post$p.value
     F_post$signif <-
       case_when(
-        p > 0.05 ~ "ns",
+        p >= 0.05 ~ "ns",
         p < 0.05 & p > 0.01 ~ "*",
-        p < 0.01 & p > 0.001 ~ "**",
-        p < 0.001 ~ "***"
+        p <= 0.01 & p > 0.001 ~ "**",
+        p <= 0.001 ~ "***"
       )
 
     F_letters <- F_post$p.value
     names(F_letters) <- F_post$populations
     F_letters <-
       rown_col(data.frame(
-        "letters" = multcompView::multcompLetters(F_letters, threshold = CI)[[1]]
+        "letters" = multcompView::multcompLetters(F_letters, threshold = 1 - CI)[[1]]
       ),
       var = "populations"
       )

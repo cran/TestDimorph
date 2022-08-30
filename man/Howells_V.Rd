@@ -13,4 +13,7 @@ Howells_V
 \description{
 Pooled within-group variance-covariance matrix for Howells' data
 }
+\seealso{
+\link{Howells}
+}
 \keyword{datasets}

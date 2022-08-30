@@ -6,9 +6,9 @@
 \title{data frame format for the baboon.parms_df for multivariate analysis}
 \format{
 A data frame with 12 rows and 8 variables \describe{
-\item{Trait}{Apolipoprotein B and LDL on two diets} \item{Sub}{Type of species}
-\item{M.mu}{Means of lipoproteins in different species for males}
-\item{F.mu}{Means of lipoproteins in different species for females}
+\item{Trait}{Apolipoprotein B and LDL on two diets} \item{Sub}{Sub-species or hybrid}
+\item{M.mu}{Means of LDL and apo B in different sub-species for males}
+\item{F.mu}{Means of LDL and apo B in different sub-species for females}
 \item{m}{Male sample sizes} \item{f}{Female sample sizes}
 \item{M.sdev}{Standard deviations for males} \item{F.sdev}{Standard
 deviations for females}
@@ -21,9 +21,9 @@ baboon.parms_df
 \description{
 A dataset containing summary statistics for low density lipoprotein (LDL) and
 apolipoprotein B (apo B) levels in 604 baboons measured on two different diets:
-a basal diet basal' and a high cholesterol, saturated fat diet (HCSF). The
-baboons were classified into one of three subspecies (Papio hamadryas
-anubis, P.h. cynocephalus, or anubis). Each animal was
+a basal diet and a high cholesterol, saturated fat diet. The baboons were
+classified into one of two subspecies and a hybrid of the two subspecies
+(Papio hamadryas anubis, P.h. cynocephalus, or hybrid). Each animal was
 measured on each of the two diets.
 }
 \note{

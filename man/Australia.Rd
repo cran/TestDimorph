@@ -23,13 +23,14 @@ A data frame with 94 rows and 9 variables:
 Australia
 }
 \description{
-Raw data from Joseph Birdsell's 1938 survey of Australian Aborigines
- The data is from two regions (B1 and B19), see Gilligan and Bulbeck (2007)
- for a map of the regions.
+Raw data from Joseph Birdsell's 1938 survey. The data is from two regions
+(B1 and B19), see Gilligan and Bulbeck (2007) for a map of the regions.
+Data downloaded from Dr. Peter Brown's website:
+\url{https://www.peterbrown-palaeoanthropology.net/resource.html}
 }
 \references{
 Gilligan, I., & Bulbeck, D. (2007). Environment and morphology in Australian
-Aborigines: A re<U+2010>analysis of the Birdsell database. American Journal of Physical
+Aborigines: A re-analysis of the Birdsell database. American Journal of Physical
 Anthropology, 134(1), 75-91.
 }
 \keyword{datasets}

@@ -112,8 +112,7 @@ MI_index <- function(x,
   }
   x <- x %>%
     drop_na() %>%
-    as.data.frame()
-  x$Trait <- x[, Trait]
+    as.data.frame() %>% rename("Trait"=all_of(Trait))
   x$Trait <- factor(x$Trait, levels = unique(x$Trait))
   x$Trait <- droplevels(x$Trait)
   m <- x$m
@@ -269,12 +268,12 @@ MI_index <- function(x,
   scale <- scale_fill_manual(name = "sex", values = col)
   scale2 <- scale_color_manual(name = "sex", values = col2)
   p <- ggplot(data = df, aes(
-    x = .data$z,
-    y = .data$dn,
-    color = .data$sex
+    x = z,
+    y = dn,
+    color = sex
   )) +
     geom_polygon(aes(fill =
-                       .data$sex), size = 1) +
+                       sex), linewidth = 1) +
     scale +
     scale2 +
     geom_density(stat = "identity") +
@@ -287,7 +286,7 @@ MI_index <- function(x,
     theme(legend.position = "none") +
     theme(aspect.ratio = 1)
   IM_df <- rown_col(as.data.frame(IM_df), var = "Trait")
-  IM_df <- IM_df %>% mutate(across(-1, round, digits))
+  IM_df <- IM_df %>% mutate(across(-1, function (x) round(x,digits)))
   if (isTRUE(plot)) {
     plot(p)
     as.data.frame(IM_df)

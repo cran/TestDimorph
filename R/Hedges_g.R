@@ -69,8 +69,7 @@ Hedges_g <-
     }
     x <- x %>%
       drop_na() %>%
-      as.data.frame()
-    x$Trait <- x[, Trait]
+      as.data.frame() %>% rename("Trait"=all_of(Trait))
     hedge <- function(x) {
       m <- x$m[1]
       M.mu <- x$M.mu[1]
@@ -142,10 +141,10 @@ Hedges_g <-
     hedge_df <- do.call(rbind.data.frame, hedge_list)
     rownames(hedge_df) <- name_hedge_list
     rown_col(hedge_df, "Trait") %>%
-      relocate(.data$lower,
+      relocate(lower,
                .before =
-                 .data$g) %>%
-      mutate(across(-1, round, digits)) %>%
+                 g) %>%
+      mutate(across(-1, function(x) round(x,digits))) %>%
       as.data.frame() %>%
       drop_na()
   }

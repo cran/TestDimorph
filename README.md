@@ -33,7 +33,7 @@ The input can be in the form of wide format **raw data** or **summary statistics
 **N.B**
 
 * All non numerical values need to be factors.
-* The list and the data frame formats for the `multivariate` and `RawGen` functions input, can be be found in the attached data sets under the names `baboon.parms_list` and `baboon.parms_df` respectively.
+* The list and the data frame formats for the `multivariate` and `raw_gen` functions input, can be be found in the attached data sets under the names `baboon.parms_list` and `baboon.parms_df` respectively.
 
 ## Examples of data entry
 

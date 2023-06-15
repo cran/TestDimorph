@@ -114,8 +114,7 @@ t_greene <- function(x,
   padjust <- match.arg(padjust, choices = p.adjust.methods)
   x <- x %>%
     drop_na() %>%
-    as.data.frame()
-  x$Pop <- x[, Pop]
+    as.data.frame() %>% rename(Pop=all_of(Pop))
   if (length(dplyr::contains("-", vars = x$Pop)) != 0) {
     x$Pop <-
       gsub(

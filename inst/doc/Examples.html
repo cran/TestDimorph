@@ -10,32 +10,44 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<meta name="author" content="Bassam Ahmed Elsayed Abulnoor, MennattAllah H. Attia, Iain R. Konigsberg, and Lyle W. Konigsberg" />
+<meta name="author" content="Bassam A. Abulnoor, MennattAllah H. Attia, Iain R. Konigsberg, and Lyle W. Konigsberg" />
 
 <meta name="date" content="2022-08-22" />
 
 <title>TestDimorph examples</title>
 
-<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
 
 <style type="text/css">
-  code{white-space: pre-wrap;}
-  span.smallcaps{font-variant: small-caps;}
-  span.underline{text-decoration: underline;}
-  div.column{display: inline-block; vertical-align: top; width: 50%;}
-  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-  ul.task-list{list-style: none;}
-    </style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
 
 
 
 <style type="text/css">
-  code {
-    white-space: pre;
-  }
-  .sourceCode {
-    overflow: visible;
-  }
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
 </style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
@@ -53,55 +65,54 @@ pre > code.sourceCode { white-space: pre-wrap; }
 pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
-  { counter-reset: source-line 0; }
+{ counter-reset: source-line 0; }
 pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
+{ position: relative; left: -4em; counter-increment: source-line; }
 pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
 div.sourceCode
-  {   }
+{ }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
 </style>
 <script>
 // apply pandoc div.sourceCode style to pre.sourceCode instead
@@ -135,29 +146,209 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 <style type="text/css">
-/* for pandoc --citeproc since 2.11 */
+
 div.csl-bib-body { }
 div.csl-entry {
-  clear: both;
+clear: both;
 }
 .hanging div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
+margin-left:2em;
+text-indent:-2em;
 }
 div.csl-left-margin {
-  min-width:2em;
-  float:left;
+min-width:2em;
+float:left;
 }
 div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
+margin-left:2em;
+padding-left:1em;
 }
 div.csl-indent {
-  margin-left: 2em;
+margin-left: 2em;
 }
 </style>
 
-<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
 
 
 
@@ -170,20 +361,21 @@ div.csl-indent {
 
 
 <h1 class="title toc-ignore">TestDimorph examples</h1>
-<h4 class="author">Bassam Ahmed Elsayed Abulnoor, MennattAllah H. Attia, Iain R. Konigsberg, and Lyle W. Konigsberg</h4>
+<h4 class="author">Bassam A. Abulnoor, MennattAllah H. Attia, Iain R.
+Konigsberg, and Lyle W. Konigsberg</h4>
 <h4 class="date">August 22, 2022</h4>
 
 
 
-<br> <br>
+<p><br> <br></p>
 <h4>
 Table 1 Description of the main functions of the TestDimorph R package.
 </h4>
 <table>
 <colgroup>
-<col width="2%" />
-<col width="49%" />
-<col width="47%" />
+<col width="18%" />
+<col width="41%" />
+<col width="40%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -195,58 +387,91 @@ Table 1 Description of the main functions of the TestDimorph R package.
 <tbody>
 <tr class="odd">
 <td>aov_ss</td>
-<td>Calculates sex specific one-way ANOVA from summary statistics and performs pairwise comparisons</td>
+<td>Calculates sex specific one-way ANOVA from summary statistics and
+performs pairwise comparisons</td>
 <td>Uses the summary statistics</td>
 </tr>
 <tr class="even">
 <td>D_index</td>
-<td>Dissimilarity index <span class="citation">(Chakraborty and Majumder 1982)</span> for statistical computation and visualization of the area of non-overlap in the trait distribution between the sexes.</td>
-<td>Provides a table and a graphical representation of the selected traits and their corresponding dissimilarity indices. Also provides confidence intervals via a bias-corrected parametric bootstrap.</td>
+<td>Dissimilarity index <span class="citation">(Chakraborty and Majumder
+1982)</span> for statistical computation and visualization of the area
+of non-overlap in the trait distribution between the sexes.</td>
+<td>Provides a table and a graphical representation of the selected
+traits and their corresponding dissimilarity indices. Also provides
+confidence intervals via a bias-corrected parametric bootstrap.</td>
 </tr>
 <tr class="odd">
 <td>extract_sum</td>
-<td>Extract summary statistics needed for the other functions from uploaded raw data directly without need to go to a third-party package.</td>
-<td>Can also run the aov_ss, multivariate, t_greene, univariate, or van_vark functions after extracting the summary statistics.</td>
+<td>Extract summary statistics needed for the other functions from
+uploaded raw data directly without need to go to a third-party
+package.</td>
+<td>Can also run the aov_ss, multivariate, t_greene, univariate, or
+van_vark functions after extracting the summary statistics.</td>
 </tr>
 <tr class="even">
 <td>Hedges_g</td>
-<td>Calculates Hedges’ <span class="citation">(1981)</span> for effect size between the sexes for a single trait. The confidence interval is found using a method described in <span class="citation">Goulet-Pelletier and Cousineau (2018)</span>.</td>
-<td>Can also find the confidence interval using a bias-corrected parametric bootstrap.</td>
+<td>Calculates Hedges’ <span class="citation">(1981)</span> for effect
+size between the sexes for a single trait. The confidence interval is
+found using a method described in <span class="citation">Goulet-Pelletier and Cousineau (2018)</span>.</td>
+<td>Can also find the confidence interval using a bias-corrected
+parametric bootstrap.</td>
 </tr>
 <tr class="odd">
 <td>MI_index</td>
-<td>Mixture Index is the mixture intersection measure of sexual dimorphism <span class="citation">(Ipiña and Durand 2010)</span>. <span class="citation">Ipiña and Durand (2010)</span> also define a normal intersection NI measure which is the overlap coefficient of two normal distributions, equivalent to Inman and Bradley’s <span class="citation">(1989)</span> overlap coefficient.</td>
-<td>Can produce confidence intervals using a bias-corrected parametric bootstrap.</td>
+<td>Mixture Index is the mixture intersection measure of sexual
+dimorphism <span class="citation">(Ipiña and Durand 2010)</span>. <span class="citation">Ipiña and Durand (2010)</span> also define a normal
+intersection NI measure which is the overlap coefficient of two normal
+distributions, equivalent to Inman and Bradley’s <span class="citation">(1989)</span> overlap coefficient.</td>
+<td>Can produce confidence intervals using a bias-corrected parametric
+bootstrap.</td>
 </tr>
 <tr class="even">
 <td>multivariate</td>
-<td>An extension of the univariate analysis of sexual dimorphism between different samples. MANOVA test is used to analyze the interaction effects and main effects.</td>
-<td>Type of MANOVA test employed can be “I,” “II” or “III” sum of squares and cross products. The test statistics can be Wilks’ lambda, Pillai’s trace, Hotelling-Lawley’s trace or Roy’s largest root. If univariate argument is TRUE, the function conducts ANOVAs on each variable.</td>
+<td>An extension of the univariate analysis of sexual dimorphism between
+different samples. MANOVA test is used to analyze the interaction
+effects and main effects.</td>
+<td>Type of MANOVA test employed can be “I”, “II” or “III” sum of
+squares and cross products. The test statistics can be Wilks’ lambda,
+Pillai’s trace, Hotelling-Lawley’s trace or Roy’s largest root. If
+univariate argument is TRUE, the function conducts ANOVAs on each
+variable.</td>
 </tr>
 <tr class="odd">
 <td>raw_gen</td>
-<td>Raw data generation from summary statistics using univariate or multivariate normal distributions (with truncation as an option).</td>
+<td>Raw data generation from summary statistics using univariate or
+multivariate normal distributions (with truncation as an option).</td>
 <td></td>
 </tr>
 <tr class="even">
 <td>t_greene</td>
-<td>Relethford and Hodges’ (1985) and Greene’s (1989) t-test of sexual dimorphism.</td>
-<td>A plot of p-values for differences in sexual dimorphism across all pairs of samples can be produced with plot=TRUE</td>
+<td>Relethford and Hodges’ (1985) and Greene’s (1989) t-test of sexual
+dimorphism.</td>
+<td>A plot of p-values for differences in sexual dimorphism across all
+pairs of samples can be produced with plot=TRUE</td>
 </tr>
 <tr class="odd">
 <td>univariate</td>
 <td>Univariate analysis of sexual dimorphism using two-way ANOVA.</td>
-<td>Type of sums of squares can type type “I,” “II,” or “III.”</td>
+<td>Type of sums of squares can type type “I”, “II”, or “III.”</td>
 </tr>
 <tr class="even">
 <td>van_vark</td>
-<td>Provides testing for differences in sexual dimorphism between samples using van Vark et al.’s <span class="citation">(1989)</span> method.</td>
+<td>Provides testing for differences in sexual dimorphism between
+samples using van Vark et al.’s <span class="citation">(1989)</span>
+method.</td>
 <td></td>
 </tr>
 </tbody>
 </table>
 <h4>
-This is Table 2. The R script extracts summary statistics for body mass from the 1999-2000 NHANES raw data and stores it in NHANES_univariate. The “populations” are self-reported race, coded as “Black” = Non-Hispanic Black, “Mex.Am” = Mexican American, or “White” = Non-Hispanic White, and the data are restricted to ages 20-40 years (inclusive). The output are an ANOVA (type II sums of squares by default) with eta-squared values and a table of pairwise comparisons. For more information on the NHANES studies see <a href="https://www.cdc.gov/nchs/nhanes/index.htm" class="uri">https://www.cdc.gov/nchs/nhanes/index.htm</a>
+This is Table 2. The R script extracts summary statistics for body mass
+from the 1999-2000 NHANES raw data and stores it in NHANES_univariate.
+The “populations” are self-reported race, coded as “Black” =
+Non-Hispanic Black, “Mex.Am” = Mexican American, or “White” =
+Non-Hispanic White, and the data are restricted to ages 20-40 years
+(inclusive). The output are an ANOVA (type II sums of squares by
+default) with eta-squared values and a table of pairwise comparisons.
+For more information on the NHANES studies see <a href="https://www.cdc.gov/nchs/nhanes/index.htm" class="uri">https://www.cdc.gov/nchs/nhanes/index.htm</a>
 </h4>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Table<span class="fl">.02</span><span class="ot">=</span><span class="cf">function</span> () </span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>{</span>
@@ -270,9 +495,16 @@ $pairwise
 1 Black-Mex.Am  764   -5.9980 -11.8657   -0.1304   -2.0067  0.0451      *
 2  Black-White  965   -8.9769 -14.8397   -3.1142   -3.0048  0.0027     **
 3 Mex.Am-White 1119   -2.9789  -7.4263    1.4685   -1.3142  0.1890     ns</code></pre>
-<br>
+<p><br></p>
 <h4>
-This is Table 3. The R script extracts summary statistics for body mass, standing height, and upper arm length from the 1999-2000 NHANES raw data and stores it in NHANES_multivariate. The “populations” are self-reported race, coded as “Black” = Non-Hispanic Black, “Mex.Am” = Mexican American, or “White” = Non-Hispanic White, and the data are restricted to ages 20-40 years (inclusive). The output is a MANOVA table (type II sums of squares and cross products by default) using Wilk’s lambda (the default).
+This is Table 3. The R script extracts summary statistics for body mass,
+standing height, and upper arm length from the 1999-2000 NHANES raw data
+and stores it in NHANES_multivariate. The “populations” are
+self-reported race, coded as “Black” = Non-Hispanic Black, “Mex.Am” =
+Mexican American, or “White” = Non-Hispanic White, and the data are
+restricted to ages 20-40 years (inclusive). The output is a MANOVA table
+(type II sums of squares and cross products by default) using Wilk’s
+lambda (the default).
 </h4>
 <p><br></p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>Table<span class="fl">.03</span><span class="ot">=</span><span class="cf">function</span>()</span>
@@ -288,9 +520,14 @@ This is Table 3. The R script extracts summary statistics for body mass, standin
 1     Sex(E)  1 0.5223 433.5580      3   1422  0.0000    ***
 2     Pop(E)  2 0.7637  68.4009      6   2844  0.0000    ***
 3 Sex*Pop(E)  2 0.9851   3.5834      6   2844  0.0015     **</code></pre>
-<br>
+<p><br></p>
 <h4>
-This is Table 4. The R script uses NHANES_univariate and does an ANOVA with type III sums of squares. It then applies t_greene to do Relethford and Hodges’ <span class="citation">(1985)</span> and Greene’s <span class="citation">(1989)</span> t-test for all pairs, adjusts the p-values using the false discovery rate, and finally returns a “corrplot” view (<a href="https://cran.r-project.org/package=corrplot" class="uri">https://cran.r-project.org/package=corrplot</a>) of the p-values.
+This is Table 4. The R script uses NHANES_univariate and does an ANOVA
+with type III sums of squares. It then applies t_greene to do Relethford
+and Hodges’ <span class="citation">(1985)</span> and Greene’s <span class="citation">(1989)</span> t-test for all pairs, adjusts the
+p-values using the false discovery rate, and finally returns a
+“corrplot” view (<a href="https://cran.r-project.org/package=corrplot" class="uri">https://cran.r-project.org/package=corrplot</a>) of the
+p-values.
 </h4>
 <p><br></p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>Table<span class="fl">.04</span><span class="ot">=</span><span class="cf">function</span>()</span>
@@ -311,9 +548,12 @@ This is Table 4. The R script uses NHANES_univariate and does an ANOVA with type
 1 Black-Mex.Am  764   -5.9980 -11.8657   -0.1304   -2.0067 0.06765     ns
 2  Black-White  965   -8.9769 -14.8397   -3.1142   -3.0048 0.00810     **
 3 Mex.Am-White 1119   -2.9789  -7.4263    1.4685   -1.3142 0.18900     ns</code></pre>
-<br>
+<p><br></p>
 <h4>
-This is Table 5. The R script extracts summary statistics on eight variables from four samples in the W.W. Howells’<span class="citation">(1973, 1989, 1995, 1996)</span> dataset. The full data set can be found in <a href="https://rdrr.io/github/geanes/bioanth/man/howell.html" class="uri">https://rdrr.io/github/geanes/bioanth/man/howell.html</a>. The script then runs van Vark et al.’s <span class="citation">(1989)</span> analysis.
+This is Table 5. The R script extracts summary statistics on eight
+variables from four samples in the W.W. Howells’<span class="citation">(1973, 1989, 1995, 1996)</span> dataset. The full data
+set can be found in <a href="https://rdrr.io/github/geanes/bioanth/man/howell.html" class="uri">https://rdrr.io/github/geanes/bioanth/man/howell.html</a>.
+The script then runs van Vark et al.’s <span class="citation">(1989)</span> analysis.
 </h4>
 <p><br></p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>Table<span class="fl">.05</span><span class="ot">=</span><span class="cf">function</span>()</span>
@@ -335,9 +575,13 @@ This is Table 5. The R script extracts summary statistics on eight variables fro
 4 EGYPT-TOLAI    5.2097  2  0.0739     ns
 5  EGYPT-PERU    0.7477  2  0.6881     ns
 6  TOLAI-PERU    5.4584  2  0.0653     ns</code></pre>
-<br>
+<p><br></p>
 <h4>
-This is Table 6. The R script writes summary statistics on femur head diameters for males and females from four samples <span class="citation">(Curate et al. 2017; Gulhan 2017; Kranioti et al. 2009; Timonov et al. 2014)</span> to the object df. It then uses aov_ss to do ANOVA within males and within females across the four samples with each ANOVA followed by post-hoc pairwise comparisons.
+This is Table 6. The R script writes summary statistics on femur head
+diameters for males and females from four samples <span class="citation">(Curate et al. 2017; Gulhan 2017; Kranioti et al. 2009;
+Timonov et al. 2014)</span> to the object df. It then uses aov_ss to do
+ANOVA within males and within females across the four samples with each
+ANOVA followed by post-hoc pairwise comparisons.
 </h4>
 <p><br></p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>Table<span class="fl">.06</span><span class="ot">=</span><span class="cf">function</span> () </span>
@@ -384,9 +628,15 @@ $`Female posthoc`
 4     Portuguese-Greek     -1.54  -3.4798    0.3998  0.1716     ns
 5        Turkish-Greek      0.47  -0.9120    1.8520  0.8156     ns
 6   Turkish-Portuguese      2.01   0.4104    3.6096  0.0071     **</code></pre>
-<br>
+<p><br></p>
 <h4>
-This is Table 7. The R script uses the maximum width of the patella from <span class="citation">Cavazzuti et al. (2019)</span>. Calculated values are the mixture index (MI) and normal intersection (NI) <span class="citation">(Ipiña and Durand 2010)</span>, the D index <span class="citation">(Chakraborty and Majumder 1982)</span>, and Hedges’ g <span class="citation">(Hedges 1981)</span>. For each statistic the bias-corrected parametric bootstrap <span class="citation">(Efron 1981; Tibshirani 1984)</span> is run 1,000 starting from a set.seed value of 42.
+This is Table 7. The R script uses the maximum width of the patella from
+<span class="citation">Cavazzuti et al. (2019)</span>. Calculated values
+are the mixture index (MI) and normal intersection (NI) <span class="citation">(Ipiña and Durand 2010)</span>, the D index <span class="citation">(Chakraborty and Majumder 1982)</span>, and Hedges’ g
+<span class="citation">(Hedges 1981)</span>. For each statistic the
+bias-corrected parametric bootstrap <span class="citation">(Efron 1981;
+Tibshirani 1984)</span> is run 1,000 starting from a set.seed value of
+42.
 </h4>
 <p><br></p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>Table<span class="fl">.07</span><span class="ot">=</span><span class="cf">function</span> (<span class="at">i.which=</span><span class="dv">13</span>) </span>
@@ -400,10 +650,10 @@ This is Table 7. The R script uses the maximum width of the patella from <span c
 <span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="fu">Table.07</span>()</span></code></pre></div>
-<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
 <pre><code>   Trait lower     MI upper
 1 PA-MXW 0.025 0.1108 0.231</code></pre>
-<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
 <pre><code>   Trait  lower     NI upper
 1 PA-MXW 0.0544 0.2496 0.521</code></pre>
 <p><img src="data:image/png;base64,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" /><!-- --></p>
@@ -411,67 +661,117 @@ This is Table 7. The R script uses the maximum width of the patella from <span c
 1 PA-MXW 0.4788 0.7504 0.9454
    Trait  lower      g  upper
 1 PA-MXW 1.2094 2.2429 3.7713</code></pre>
-<br> <br>
+<p><br> <br></p>
 <h3>
 References
 </h3>
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-RN11059" class="csl-entry">
-Cavazzuti, Claudio, Benedetta Bresadola, Chiara d’Innocenzo, Stella Interlando, and Alessandra Sperduti. 2019. <span>“Towards a New Osteometric Method for Sexing Ancient Cremated Human Remains. Analysis of Late Bronze Age and Iron Age Samples from Italy with Gendered Grave Goods.”</span> <em>PloS One</em> 14 (1): e0209423.
+Cavazzuti, Claudio, Benedetta Bresadola, Chiara d’Innocenzo, Stella
+Interlando, and Alessandra Sperduti. 2019. <span>“Towards a New
+Osteometric Method for Sexing Ancient Cremated Human Remains. Analysis
+of Late Bronze Age and Iron Age Samples from Italy with Gendered Grave
+Goods.”</span> <em>PloS One</em> 14 (1): e0209423.
 </div>
 <div id="ref-RN7899" class="csl-entry">
-Chakraborty, Ranajit, and Partha P Majumder. 1982. <span>“On Bennett’s Measure of Sex Dimorphism.”</span> <em>American Journal of Physical Anthropology</em> 59 (3): 295–98.
+Chakraborty, Ranajit, and Partha P Majumder. 1982. <span>“On Bennett’s
+Measure of Sex Dimorphism.”</span> <em>American Journal of Physical
+Anthropology</em> 59 (3): 295–98.
 </div>
 <div id="ref-RN11497" class="csl-entry">
-Curate, Francisco, Cláudia Umbelino, Andreia Perinha, Carla Nogueira, Ana Maria Silva, and Eugénia Cunha. 2017. <span>“Sex Determination from the Femur in Portuguese Populations with Classical and Machine-Learning Classifiers.”</span> <em>Journal of Forensic and Legal Medicine</em> 52: 75–81.
+Curate, Francisco, Cláudia Umbelino, Andreia Perinha, Carla Nogueira,
+Ana Maria Silva, and Eugénia Cunha. 2017. <span>“Sex Determination from
+the Femur in Portuguese Populations with Classical and Machine-Learning
+Classifiers.”</span> <em>Journal of Forensic and Legal Medicine</em> 52:
+75–81.
 </div>
 <div id="ref-RN11056" class="csl-entry">
-Efron, Bradley. 1981. <span>“Nonparametric Standard Errors and Confidence Intervals.”</span> <em>Canadian Journal of Statistics</em> 9 (2): 139–58.
+Efron, Bradley. 1981. <span>“Nonparametric Standard Errors and
+Confidence Intervals.”</span> <em>Canadian Journal of Statistics</em> 9
+(2): 139–58.
 </div>
 <div id="ref-RN8020" class="csl-entry">
-Goulet-Pelletier, Jean-Christophe, and Denis Cousineau. 2018. <span>“A Review of Effect Sizes and Their Confidence Intervals, Part i: The Cohen’s d Family.”</span> <em>The Quantitative Methods for Psychology</em> 14 (4): 242–65.
+Goulet-Pelletier, Jean-Christophe, and Denis Cousineau. 2018. <span>“A
+Review of Effect Sizes and Their Confidence Intervals, Part i: The
+Cohen’s d Family.”</span> <em>The Quantitative Methods for
+Psychology</em> 14 (4): 242–65.
 </div>
 <div id="ref-RN8546" class="csl-entry">
-Greene, D. L. 1989. <span>“Comparison of t-Tests for Differences in Sexual Dimorphism Between Populations.”</span> <em>American Journal of Physical Anthropology</em> 79: 121–25.
+Greene, D. L. 1989. <span>“Comparison of t-Tests for Differences in
+Sexual Dimorphism Between Populations.”</span> <em>American Journal of
+Physical Anthropology</em> 79: 121–25.
 </div>
 <div id="ref-RN11494" class="csl-entry">
-Gulhan, Oznur. 2017. <span>“Skeletal Sexing Standards of Human Remains in Turkey.”</span> PhD thesis.
+Gulhan, Oznur. 2017. <span>“Skeletal Sexing Standards of Human Remains
+in Turkey.”</span> PhD thesis.
 </div>
 <div id="ref-RN11055" class="csl-entry">
-Hedges, Larry V. 1981. <span>“Distribution Theory for Glass’s Estimator of Effect Size and Related Estimators.”</span> <em>Journal of Educational Statistics</em> 6 (2): 107–28.
+Hedges, Larry V. 1981. <span>“Distribution Theory for Glass’s Estimator
+of Effect Size and Related Estimators.”</span> <em>Journal of
+Educational Statistics</em> 6 (2): 107–28.
 </div>
 <div id="ref-RN8613" class="csl-entry">
-Howells, William White. 1973. <em>Cranial Variation in Man: A Study by Multivariate Analysis of Patterns of Difference Among Recent Human Populations</em>. Vol. 67. Papers of the Peabody Museum of Archaeology and Ethnology, Harvard University. Cambridge, MA: Peabody Museum of Archaeology and Ethnology.
+Howells, William White. 1973. <em>Cranial Variation in Man: A Study by
+Multivariate Analysis of Patterns of Difference Among Recent Human
+Populations</em>. Vol. 67. Papers of the Peabody Museum of Archaeology
+and Ethnology, Harvard University. Cambridge, MA: Peabody Museum of
+Archaeology and Ethnology.
 </div>
 <div id="ref-RN9221" class="csl-entry">
-———. 1989. <em>Skull Shapes and the Map: Craniometric Analyses in the Dispersion of Modern Homo</em>. Vol. 79. Papers of the Peabody Museum of Archaeology and Ethnology, Harvard University. Cambridge, MA: Papers of the Peabody Museum of Archaeology and Ethnology.
+———. 1989. <em>Skull Shapes and the Map: Craniometric Analyses in the
+Dispersion of Modern Homo</em>. Vol. 79. Papers of the Peabody Museum of
+Archaeology and Ethnology, Harvard University. Cambridge, MA: Papers of
+the Peabody Museum of Archaeology and Ethnology.
 </div>
 <div id="ref-RN11068" class="csl-entry">
-———. 1995. <em>Who’s Who in Skulls: Ethnic Identification of Crania from Measurements</em>. Vol. 82. Papers of the Peabody Museum of Archaeology and Ethnology. Cambridge, MA: Peabody Museum.
+———. 1995. <em>Who’s Who in Skulls: Ethnic Identification of Crania from
+Measurements</em>. Vol. 82. Papers of the Peabody Museum of Archaeology
+and Ethnology. Cambridge, MA: Peabody Museum.
 </div>
 <div id="ref-RN10726" class="csl-entry">
-———. 1996. <span>“Notes and Comments: Howells’ Craniometric Data on the Internet.”</span> <em>American Journal of Physical Anthropology</em> 101 (3): 441–42.
+———. 1996. <span>“Notes and Comments: Howells’ Craniometric Data on the
+Internet.”</span> <em>American Journal of Physical Anthropology</em> 101
+(3): 441–42.
 </div>
 <div id="ref-RN7898" class="csl-entry">
-Inman, Henry F, and Edwin L Bradley. 1989. <span>“The Overlapping Coefficient as a Measure of Agreement Between Probability Distributions and Point Estimation of the Overlap of Two Normal Densities.”</span> <em>Communications in Statistics-Theory and Methods</em> 18 (10): 3851–74.
+Inman, Henry F, and Edwin L Bradley. 1989. <span>“The Overlapping
+Coefficient as a Measure of Agreement Between Probability Distributions
+and Point Estimation of the Overlap of Two Normal Densities.”</span>
+<em>Communications in Statistics-Theory and Methods</em> 18 (10):
+3851–74.
 </div>
 <div id="ref-RN7880" class="csl-entry">
-Ipiña, Santiago L, and Ana I Durand. 2010. <span>“Assessment of Sexual Dimorphism: A Critical Discussion in a (Paleo-) Anthropological Context.”</span> <em>Human Biology</em> 82 (2): 199–220. <a href="https://doi.org/10.1006/bulm.2000.0185">https://doi.org/10.1006/bulm.2000.0185</a>.
+Ipiña, Santiago L, and Ana I Durand. 2010. <span>“Assessment of Sexual
+Dimorphism: A Critical Discussion in a (Paleo-) Anthropological
+Context.”</span> <em>Human Biology</em> 82 (2): 199–220. <a href="https://doi.org/10.1006/bulm.2000.0185">https://doi.org/10.1006/bulm.2000.0185</a>.
 </div>
 <div id="ref-RN11496" class="csl-entry">
-Kranioti, Elena F, Nikolaos Vorniotakis, Christianna Galiatsou, Mehmet Y İşcan, and Manolis Michalodimitrakis. 2009. <span>“Sex Identification and Software Development Using Digital Femoral Head Radiographs.”</span> <em>Forensic Science International</em> 189 (1-3): 113. e1–7.
+Kranioti, Elena F, Nikolaos Vorniotakis, Christianna Galiatsou, Mehmet Y
+İşcan, and Manolis Michalodimitrakis. 2009. <span>“Sex Identification
+and Software Development Using Digital Femoral Head Radiographs.”</span>
+<em>Forensic Science International</em> 189 (1-3): 113. e1–7.
 </div>
 <div id="ref-RN8925" class="csl-entry">
-Relethford, J. H., and D. C. Hodges. 1985. <span>“A Statistical Test for Differences in Sexual Dimorphism Between Populations.”</span> <em>American Journal of Physical Anthropology</em> 66: 55–61.
+Relethford, J. H., and D. C. Hodges. 1985. <span>“A Statistical Test for
+Differences in Sexual Dimorphism Between Populations.”</span>
+<em>American Journal of Physical Anthropology</em> 66: 55–61.
 </div>
 <div id="ref-RN11057" class="csl-entry">
-Tibshirani, Robert J. 1984. <em>Bootstrap Confidence Intervals. Technical Report No. 3, Laboratory for Computational Statistics, Department of Statistics, Stanford University</em>.
+Tibshirani, Robert J. 1984. <em>Bootstrap Confidence Intervals.
+Technical Report No. 3, Laboratory for Computational Statistics,
+Department of Statistics, Stanford University</em>.
 </div>
 <div id="ref-RN11495" class="csl-entry">
-Timonov, Pavel, Antoaneta Fasova, Dobrinka Radoinova, Alexandar Alexandrov, and Delian Delev. 2014. <span>“A Study of Sexual Dimorphism in the Femur Among Contemporary Bulgarian Population.”</span> <em>Eurasian Journal of Anthropology</em> 5 (2): 46–53.
+Timonov, Pavel, Antoaneta Fasova, Dobrinka Radoinova, Alexandar
+Alexandrov, and Delian Delev. 2014. <span>“A Study of Sexual Dimorphism
+in the Femur Among Contemporary Bulgarian Population.”</span>
+<em>Eurasian Journal of Anthropology</em> 5 (2): 46–53.
 </div>
 <div id="ref-RN7879" class="csl-entry">
-Vark, GN van, PGM van der Sman, J Dijkema, and JE Buikstra. 1989. <span>“Some Multivariate Tests for Differences in Sexual Dimorphism Between Human Populations.”</span> <em>Annals of Human Biology</em> 16 (4): 301–10.
+Vark, GN van, PGM van der Sman, J Dijkema, and JE Buikstra. 1989.
+<span>“Some Multivariate Tests for Differences in Sexual Dimorphism
+Between Human Populations.”</span> <em>Annals of Human Biology</em> 16
+(4): 301–10.
 </div>
 </div>
 

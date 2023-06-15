@@ -92,52 +92,44 @@ van_vark <- function(x,
   Sex <- NULL
   x <- x %>%
     drop_na() %>%
-    as.data.frame()
-  x$Trait <- gsub(
-    x = x$Trait,
-    pattern = "[^[:alnum:]]",
-    replacement = "_"
-  )
-  x$Pop <- gsub(
-    x = x$Pop,
-    pattern = "[^[:alnum:]]",
-    replacement = "_"
-  )
+    as.data.frame() %>% rename("Trait" = all_of(Trait), "Pop" = all_of(Pop))
+  x$Trait <- gsub(x = x$Trait,
+                  pattern = "[^[:alnum:]]",
+                  replacement = "_")
+  x$Pop <- gsub(x = x$Pop,
+                pattern = "[^[:alnum:]]",
+                replacement = "_")
 
   x$Pop <- factor(x$Pop, levels = unique(x$Pop))
   x$Trait <- factor(x$Trait, levels = unique(x$Trait))
   x <- x %>%
     rename("Trait" = Trait) %>%
     rename("Pop" = Pop) %>%
-    rename(
-      F =
-        "f"
-    ) %>%
+    rename(F =
+             "f") %>%
     rename(M = "m") %>%
     as.data.frame()
   x <- x %>% select(!contains("dev"))
   means <-
     x %>%
     pivot_longer(
-      cols = c(.data$M.mu, .data$F.mu),
+      cols = c(M.mu, F.mu),
       names_to = "Sex",
       values_to = "no"
     ) %>%
-    select(-c(.data$M, .data$F))
+    select(-c(M, F))
   means$Sex <-
     do.call(rbind.data.frame, strsplit(means$Sex, split = "\\."))[, 1]
   size <-
     x %>%
-    pivot_longer(
-      cols = c(.data$F, .data$M),
-      names_to = "Sex",
-      values_to = "N"
-    ) %>%
+    pivot_longer(cols = c(F, M),
+                 names_to = "Sex",
+                 values_to = "N") %>%
     select(!contains("mu"))
   x <-
     full_join(means, size, by = c("Trait", "Pop", "Sex")) %>%
-    pivot_wider(names_from = Trait, values_from = .data$no) %>%
-    mutate(Sex = factor(.data$Sex, levels = c("F", "M"))) %>%
+    pivot_wider(names_from = Trait, values_from = no) %>%
+    mutate(Sex = factor(Sex, levels = c("F", "M"))) %>%
     as.data.frame()
   p <- NCOL(x) - 3
   g <- NROW(x)
@@ -151,12 +143,12 @@ van_vark <- function(x,
   }
 
   calc.B0 <- function() {
-    y <- x[, -c(1:3)]
+    y <- as.data.frame(x[, -c(1:3)])
     G.mean <- apply(y, 2, mean)
     B0 <- matrix(0, ncol = p, nrow = p)
     for (i in seq_len(g))
     {
-      d <- as.numeric(y[i, ]) - G.mean
+      d <- as.numeric(y[i,]) - G.mean
       B0 <- B0 + (d %*% t(d))
     }
     B0 <- B0 / (g - 1)
@@ -185,14 +177,14 @@ van_vark <- function(x,
   CVs$Sex <- factor(CVs$Sex, levels = c("F", "M"))
   CVs <- arrange(CVs, Pop, Sex)
   means <- CVs %>%
-    select(-.data$Pop) %>%
-    group_by(.data$Sex) %>%
+    select(-Pop) %>%
+    group_by(Sex) %>%
     summarise_all(mean)
   if (means[means$Sex == "F", "x1"] > means[means$Sex == "M", "x1"]) {
     CVs$x1 <- CVs$x1 * -1
   }
   if (q > 1 &&
-    means[means$Sex == "F", "x2"] > means[means$Sex == "M", "x2"]) {
+      means[means$Sex == "F", "x2"] > means[means$Sex == "M", "x2"]) {
     CVs$x2 <- CVs$x2 * -1
   }
   pairs <- utils::combn(levels(x$Pop), 2, simplify = FALSE)
@@ -203,24 +195,24 @@ van_vark <- function(x,
 
   chi <- function(i) {
     q1_M <- as.numeric(subset(CVs, Pop == pairs[1, i] &
-      Sex == "M", seq_len(q))[seq_len(q)])
+                                Sex == "M", seq_len(q))[seq_len(q)])
     q1_F <-
       as.numeric(subset(CVs, Pop == pairs[1, i] &
-        Sex == "F", seq_len(q))[seq_len(q)])
+                          Sex == "F", seq_len(q))[seq_len(q)])
     q2_M <-
       as.numeric(subset(CVs, Pop == pairs[2, i] &
-        Sex == "M", seq_len(q))[seq_len(q)])
+                          Sex == "M", seq_len(q))[seq_len(q)])
     q2_F <-
       as.numeric(subset(CVs, Pop == pairs[2, i] &
-        Sex == "F", seq_len(q))[seq_len(q)])
+                          Sex == "F", seq_len(q))[seq_len(q)])
     N1_M <- as.numeric(subset(x, Pop == pairs[1, i] &
-      Sex == "M", 3)[1])
+                                Sex == "M", 3)[1])
     N1_F <- as.numeric(subset(x, Pop == pairs[1, i] &
-      Sex == "F", 3)[1])
+                                Sex == "F", 3)[1])
     N2_M <- as.numeric(subset(x, Pop == pairs[2, i] &
-      Sex == "M", 3)[1])
+                                Sex == "M", 3)[1])
     N2_F <- as.numeric(subset(x, Pop == pairs[2, i] &
-      Sex == "F", 3)[1])
+                                Sex == "F", 3)[1])
 
     dif <-
       q1_M + q2_F - q1_F - q2_M
@@ -231,11 +223,9 @@ van_vark <- function(x,
     DF <- q
     p <-
       round(pchisq(X2, DF, lower.tail = lower.tail), digits)
-    out <- data.frame(
-      statistic = X2,
-      df = DF,
-      p.value = p
-    )
+    out <- data.frame(statistic = X2,
+                      df = DF,
+                      p.value = p)
     out <- out %>% mutate(signif = with(
       .data,
       case_when(
@@ -249,11 +239,9 @@ van_vark <- function(x,
     out
   }
   chi <-
-    Vectorize(
-      FUN = chi,
-      vectorize.args = "i",
-      SIMPLIFY = FALSE
-    )
+    Vectorize(FUN = chi,
+              vectorize.args = "i",
+              SIMPLIFY = FALSE)
 
   pairs_list <- chi(seq_along(pairs))
   pairs_df <-
@@ -314,55 +302,43 @@ van_vark <- function(x,
       cbind_fill2(CVs, line1, line2, point1, point2, female, male)
 
     names(CVs)[(q + 3):ncol(CVs)] <-
-      c(
-        "line1", "line2", "point1", "point2",
-        "female", "male"
-      )
+      c("line1", "line2", "point1", "point2",
+        "female", "male")
     x_all <- as.numeric(c(CVs$x1, CVs$x2))
     min_a <- min(x_all) - 1
     max_a <- 1 + max(x_all)
-    q_plot <- ggplot(
-      CVs,
-      aes(
-        x = .data$x1,
-        y = .data$x2,
-        color = .data$Sex,
-        fill = .data$Sex
-      )
-    ) +
+    q_plot <- ggplot(CVs,
+                     aes(
+                       x = x1,
+                       y = x2,
+                       color = Sex,
+                       fill = Sex
+                     )) +
       scale_x_continuous(limits = c(min_a, max_a)) +
       scale_y_continuous(limits = c(min_a, max_a)) +
       geom_segment(
         aes(
-          xend = .data$point1,
-          yend = .data$point2,
-          x = .data$line1,
-          y = .data$line2
+          xend = point1,
+          yend = point2,
+          x = line1,
+          y = line2
         ),
         color = "black",
         na.rm = TRUE
       ) +
-      geom_point(aes(
-        x = .data$point1,
-        y = .data$point2
-      ),
-      color = "blue",
-      na.rm = TRUE
-      ) +
-      geom_point(aes(
-        x = .data$line1,
-        y = .data$line2
-      ),
-      color = "red",
-      na.rm = TRUE
-      ) +
+      geom_point(aes(x = point1,
+                     y = point2),
+                 color = "blue",
+                 na.rm = TRUE) +
+      geom_point(aes(x = line1,
+                     y = line2),
+                 color = "red",
+                 na.rm = TRUE) +
       geom_text(
         na.rm = TRUE,
-        aes(
-          x = .data$point1,
-          y = .data$point2,
-          label = .data$male
-        ),
+        aes(x = point1,
+            y = point2,
+            label = male),
         nudge_y = 0.05,
         vjust = "inward",
         hjust = "inward",
@@ -370,11 +346,9 @@ van_vark <- function(x,
         check_overlap = TRUE
       ) +
       geom_text(
-        aes(
-          x = .data$line1,
-          y = .data$line2,
-          label = .data$female
-        ),
+        aes(x = line1,
+            y = line2,
+            label = female),
         check_overlap = TRUE,
         color = "red",
         na.rm = TRUE,
@@ -383,14 +357,10 @@ van_vark <- function(x,
         hjust = "inward"
       ) +
       scale_color_manual(values = c("red", "blue")) +
-      scale_fill_manual(values = c(
-        "red",
-        "blue"
-      )) +
-      guides(fill = guide_legend(override.aes = list(color = c(
-        "red",
-        "blue"
-      )))) +
+      scale_fill_manual(values = c("red",
+                                   "blue")) +
+      guides(fill = guide_legend(override.aes = list(color = c("red",
+                                                               "blue")))) +
       xlab("First Canonical Axis") +
       ylab("Second Canonical Axis") +
       theme_minimal() +

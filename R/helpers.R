@@ -170,10 +170,10 @@ multi_raw <- function(x,
 #' @noRd
 dataframe2list <- function(x, R.res, Trait, Pop) {
   x <- x %>%
-    rename("Pop" = Pop, "Trait" = Trait) %>%
-    mutate(Pop = factor(.data$Pop, levels = unique(.data$Pop)), Trait = factor(
-      .data$Trait,
-      levels = unique(.data$Trait)
+    rename("Pop" = all_of(Pop), "Trait" = all_of(Trait)) %>%
+    mutate(Pop = factor(Pop, levels = unique(Pop)), Trait = factor(
+      Trait,
+      levels = unique(Trait)
     )) %>%
     arrange(Trait, Pop)
   x$Pop <- droplevels(x$Pop)
@@ -568,7 +568,7 @@ Van_vark_raw <- function(x, Sex, Pop, firstX, ...) {
   df <-
     do.call(rbind.data.frame, c(vec_sum(x, firstX:ncol(x))))
   df$Trait <- factor(df$Trait, levels = unique(df$Trait))
-  df <- df %>% relocate(.data$Trait, .before = 1)
+  df <- df %>% relocate(Trait, .before = 1)
   x <- as.data.frame.list(x)
   x <- x %>% arrange(Pop, Sex)
   sex <- as.numeric(x$Sex) - 1
@@ -612,7 +612,7 @@ univariate_pairwise <- function(x, out, padjust, digits, lower.tail, ...) {
     y %>%
       mutate(
         Parms = factor(rep(cl, each = nr), levels = cl),
-        Pop = factor(.data$Pop,
+        Pop = factor(Pop,
           levels = r
         )
       ) %>%
@@ -638,8 +638,8 @@ univariate_pairwise <- function(x, out, padjust, digits, lower.tail, ...) {
         values_to = "no"
       ) %>%
       mutate(
-        Pop = factor(.data$Pop, levels = r),
-        Parms = factor(.data$Parms,
+        Pop = factor(Pop, levels = r),
+        Parms = factor(Parms,
           levels = cl
         )
       ) %>%
@@ -696,13 +696,13 @@ univariate_pairwise <- function(x, out, padjust, digits, lower.tail, ...) {
 add_sig <- function(x) {
   x %>%
     as.data.frame() %>%
-    mutate(p.value = as.numeric(.data$p.value), signif = case_when(
-      .data$p.value >= 0.05 ~ "ns",
-      .data$p.value < 0.05 & p.value > 0.01 ~ "*",
-      .data$p.value <= 0.01 & p.value > 0.001 ~ "**",
-      .data$p.value <= 0.001 ~ "***"
+    mutate(p.value = as.numeric(p.value), signif = case_when(
+      p.value >= 0.05 ~ "ns",
+      p.value < 0.05 & p.value > 0.01 ~ "*",
+      p.value <= 0.01 & p.value > 0.001 ~ "**",
+      p.value <= 0.001 ~ "***"
     )) %>%
-    relocate(.data$signif, .after = .data$p.value)
+    relocate(signif, .after = p.value)
 }
 
 # rown_col -----------------------------------------------------------------

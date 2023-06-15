@@ -65,8 +65,7 @@ extract_sum <-
         stop("The selected parameter should be numeric")
       }
     }
-    x$Pop <- x[, Pop]
-    x$Sex <- x[, Sex]
+    x <- x %>% rename("Pop"=all_of(Pop),"Sex"=all_of(Sex))
     x$Pop <- factor(x$Pop)
     x$Sex <- factor(x$Sex)
     if (length(unique(x$Sex)) != 2) {
@@ -92,7 +91,7 @@ extract_sum <-
       M.mu <-
         x %>%
         filter(Sex == "M") %>%
-        select(Pop, firstX:ncol(x)) %>%
+        select(all_of(Pop), all_of(firstX):ncol(x)) %>%
         group_by(Pop) %>%
         summarise_all(
           .funs =
@@ -104,7 +103,7 @@ extract_sum <-
       F.mu <-
         x %>%
         filter(Sex == "F") %>%
-        select(Pop, firstX:ncol(x)) %>%
+        select(all_of(Pop), all_of(firstX):ncol(x)) %>%
         group_by(Pop) %>%
         summarise_all(
           .funs =
@@ -154,7 +153,7 @@ extract_sum <-
       M <-
         x %>%
         filter(Sex == "M") %>%
-        select(Pop, firstX) %>%
+        select(all_of(Pop), all_of(firstX)) %>%
         group_by(Pop) %>%
         summarise_all(list(
           M.mu = mean,
@@ -164,7 +163,7 @@ extract_sum <-
       F <-
         x %>%
         filter(Sex == "F") %>%
-        select(Pop, firstX) %>%
+        select(all_of(Pop), all_of(firstX)) %>%
         group_by(Pop) %>%
         summarise_all(list(
           F.mu = mean,
@@ -191,7 +190,7 @@ extract_sum <-
       if (test == "tg") {
         message("The parameter used is ", colnames(x)[firstX])
         if (isTRUE(run)) {
-          return(t_greene(x = df, Pop = 1, ...))
+          return(TestDimorph::t_greene(x = df, Pop = 1, ...))
         } else {
           return(df)
         }

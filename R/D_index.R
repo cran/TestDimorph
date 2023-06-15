@@ -120,8 +120,7 @@ D_index <-
     }
     x <- x %>%
       drop_na() %>%
-      as.data.frame()
-    x$Trait <- x[, Trait]
+      as.data.frame() %>% rename("Trait"=all_of(Trait))
     x$Trait <- factor(x$Trait, levels = unique(x$Trait))
     m <- x$m
     M.mu <- x$M.mu
@@ -296,13 +295,13 @@ D_index <-
     scale <- scale_fill_manual(name = "sex", values = col)
     scale2 <- scale_color_manual(name = "sex", values = col2)
     p <- ggplot(data = df, aes(
-      x = .data$z,
-      y = .data$dn,
-      color = .data$sex
+      x = z,
+      y = dn,
+      color = sex
     )) +
       geom_polygon(aes(
         fill =
-          .data$sex
+          sex
       )) +
       scale +
       scale2 +
@@ -315,7 +314,7 @@ D_index <-
       scale_y_continuous(expand = c(0, 0)) +
       theme(aspect.ratio = 1)
     D_df <- rown_col(as.data.frame(D_df), var = "Trait") %>%
-      mutate(across(-1, round, digits)) %>%
+      mutate(across(-1, function (x) round(x,digits))) %>%
       as.data.frame()
     if (isTRUE(plot)) {
       plot(p)

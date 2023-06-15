@@ -19,7 +19,10 @@
 #' raw_gen(baboon.parms_df, lower = 0)
 #'
 #' # another univariate example
-#' raw_gen(Cremains_measurements[1, ])[, -2]
+#' library(dplyr)
+#' data <- Cremains_measurements[1, ] %>% mutate(Pop=c("A")) %>%
+#' relocate(Pop,.after=1)
+#' raw_gen(data)[, -2]
 #'
 #' # Data generation using multivariate distribution
 #' raw_gen(baboon.parms_list, lower = 0)
@@ -71,10 +74,8 @@ raw_gen <- function(x,
     if (is.null(R.res)) {
       x <- x %>%
         drop_na() %>%
-        as.data.frame()
-      x$Pop <- x[, Pop]
+        as.data.frame() %>% rename("Trait"=all_of(Trait),"Pop"=all_of(Pop))
       x$Pop <- factor(x$Pop, levels = unique(x$Pop))
-      x$Trait <- x[, Trait]
       x$Trait <- factor(x$Trait, levels = unique(x$Trait))
 
       # Data generation --------------------------------------------------

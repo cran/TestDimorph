@@ -53,7 +53,10 @@ matrix, data generation is carried out using univariate distribution.
 raw_gen(baboon.parms_df, lower = 0)
 
 # another univariate example
-raw_gen(Cremains_measurements[1, ])[, -2]
+library(dplyr)
+data <- Cremains_measurements[1, ] \%>\% mutate(Pop=c("A")) \%>\%
+relocate(Pop,.after=1)
+raw_gen(data)[, -2]
 
 # Data generation using multivariate distribution
 raw_gen(baboon.parms_list, lower = 0)

@@ -86,8 +86,7 @@ aov_ss <-
     if (isTRUE(pairwise) && nlevels(x$Pop) == 2) {
       warning("Tukey post hoc test was not performed because there are only 2 populations ")
     }
-    x <- data.frame(x)
-    x$Pop <- x[, Pop]
+    x <- data.frame(x) %>% rename("Pop"=all_of(Pop))
     x$Pop <-
       gsub(
         x = x$Pop,
@@ -124,7 +123,7 @@ aov_ss <-
     # Pairwise comparisons ----------------------------------------------------
 
     M_post <- data.frame(TukeyHSD(av_M, conf.level = CI)[[1]])
-    M_post <- M_post %>% mutate(across(1:ncol(M_post), round, digits))
+    M_post <- M_post %>% mutate(across(1:ncol(M_post), function(x) round(x,digits)))
     M_post <- rown_col(M_post, var = "populations")
     colnames(M_post) <-
       c(
@@ -155,7 +154,7 @@ aov_ss <-
       data.frame(
         TukeyHSD(av_F, conf.level = CI)[[1]]
       )
-    F_post <- F_post %>% mutate(across(1:ncol(F_post), round, digits))
+    F_post <- F_post %>% mutate(across(1:ncol(F_post), function (x) round(x,digits)))
     F_post <- rown_col(F_post, var = "populations")
     colnames(F_post) <-
       c(

@@ -1,6 +1,6 @@
 ---
 title: "TestDimorph examples"
-author: "Bassam Ahmed Elsayed Abulnoor, MennattAllah H. Attia, Iain R. Konigsberg, and Lyle W.  Konigsberg"
+author: "Bassam A. Abulnoor, MennattAllah H. Attia, Iain R. Konigsberg, and Lyle W.  Konigsberg"
 date: "August 22, 2022"
 output: rmarkdown::html_vignette
 vignette: >
@@ -14,24 +14,25 @@ bibliography: bibliography.bibtex
 knitr::opts_chunk$set(comment=NULL)
 knitr::opts_chunk$set(fig.width=6, fig.height=4)
 ```
-  <br>
-  <br>
-<h4> Table 1 Description of the main functions of the TestDimorph R package. </h4>
 
-| Function     | Description                                                                                                                                                                                                                                                                                       | Notes                                                                                                                                                                                                                                                                                |
-|--------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| aov_ss       | Calculates sex specific one-way ANOVA from summary statistics and performs pairwise comparisons                                                                                                                                                                                                   | Uses the summary statistics                                                                                                                                                                                                                                                          |
-| D_index      | Dissimilarity index [@RN7899] for statistical computation and visualization of the area of non-overlap in the trait distribution between the sexes.                                                                                                                          | Provides a table and a graphical representation of the selected traits and their corresponding dissimilarity indices.  Also provides confidence intervals via a bias-corrected parametric bootstrap.                                                                                 |
-| extract_sum  | Extract summary statistics needed for the other functions from uploaded raw data directly without need to go to a third-party package.                                                                                                                                                            | Can also run the aov_ss, multivariate, t_greene, univariate, or van_vark functions after extracting the summary statistics.                                                                                                                                                          |
-| Hedges_g     | Calculates Hedges' [-@RN11055] for effect size between the sexes for a single trait.  The confidence interval is found using a method described in @RN8020.                                                                                                              | Can also find the confidence interval using a bias-corrected parametric bootstrap.                                                                                                                                                                                                   |
-| MI_index     | Mixture Index is the mixture intersection measure of sexual dimorphism [@RN7880]. @RN7880 also define a normal intersection NI measure which is the overlap coefficient of two normal distributions, equivalent to Inman and Bradley's [-@RN7898] overlap coefficient. | Can produce confidence intervals using a bias-corrected parametric bootstrap.                                                                                                                                                                                                        |
-| multivariate | An extension of the univariate analysis of sexual dimorphism between different samples. MANOVA test is used to analyze the interaction effects and main effects.                                                                                                                                  | Type of MANOVA test employed can be "I", "II" or "III" sum of squares and cross products. The test statistics can be Wilks' lambda,  Pillai's trace, Hotelling-Lawley's trace or Roy's largest root.  If univariate argument is TRUE, the function conducts ANOVAs on each variable. |
-| raw_gen      | Raw data generation from summary statistics using univariate or multivariate normal distributions (with truncation as an option).                                                                                                                                                                 |                                                                                                                                                                                                                                                                                      |
-| t_greene     | Relethford and Hodges' (1985) and Greene's (1989) t-test of sexual dimorphism.                                                                                                                                                                                                                    | A plot of p-values for differences in sexual dimorphism across all pairs of samples can be produced with plot=TRUE                                                                                                                                                                   |
-| univariate   | Univariate analysis of sexual dimorphism using two-way ANOVA.                                                                                                                                                                                                                                     | Type of sums of squares can type type "I", "II", or "III."                                                                                                                                                                                                                           |
-| van_vark     | Provides testing for differences in sexual dimorphism between samples using van Vark et al.'s [-@RN7879] method.                                                                                                                                                                                      |                                                                                                                                                                                                                                                                                      |
+<br> <br>
 
-<h4> This is Table 2. The R script extracts summary statistics for body mass from the 1999-2000 NHANES raw data and stores it in NHANES_univariate.  The "populations" are self-reported race, coded as "Black" = Non-Hispanic Black, "Mex.Am" = Mexican American, or "White" = Non-Hispanic White, and the data are restricted to ages 20-40 years (inclusive). The output are an ANOVA (type II sums of squares by default) with eta-squared values and a table of pairwise comparisons.  For more information on the NHANES studies see      https://www.cdc.gov/nchs/nhanes/index.htm </h4>
+<h4>Table 1 Description of the main functions of the TestDimorph R package.</h4>
+
+| Function     | Description                                                                                                                                                                                                                                                            | Notes                                                                                                                                                                                                                                                                              |
+|-------------|------------------------------|-----------------------------|
+| aov_ss       | Calculates sex specific one-way ANOVA from summary statistics and performs pairwise comparisons                                                                                                                                                                        | Uses the summary statistics                                                                                                                                                                                                                                                        |
+| D_index      | Dissimilarity index [@RN7899] for statistical computation and visualization of the area of non-overlap in the trait distribution between the sexes.                                                                                                                    | Provides a table and a graphical representation of the selected traits and their corresponding dissimilarity indices. Also provides confidence intervals via a bias-corrected parametric bootstrap.                                                                                |
+| extract_sum  | Extract summary statistics needed for the other functions from uploaded raw data directly without need to go to a third-party package.                                                                                                                                 | Can also run the aov_ss, multivariate, t_greene, univariate, or van_vark functions after extracting the summary statistics.                                                                                                                                                        |
+| Hedges_g     | Calculates Hedges' [-@RN11055] for effect size between the sexes for a single trait. The confidence interval is found using a method described in @RN8020.                                                                                                             | Can also find the confidence interval using a bias-corrected parametric bootstrap.                                                                                                                                                                                                 |
+| MI_index     | Mixture Index is the mixture intersection measure of sexual dimorphism [@RN7880]. @RN7880 also define a normal intersection NI measure which is the overlap coefficient of two normal distributions, equivalent to Inman and Bradley's [-@RN7898] overlap coefficient. | Can produce confidence intervals using a bias-corrected parametric bootstrap.                                                                                                                                                                                                      |
+| multivariate | An extension of the univariate analysis of sexual dimorphism between different samples. MANOVA test is used to analyze the interaction effects and main effects.                                                                                                       | Type of MANOVA test employed can be "I", "II" or "III" sum of squares and cross products. The test statistics can be Wilks' lambda, Pillai's trace, Hotelling-Lawley's trace or Roy's largest root. If univariate argument is TRUE, the function conducts ANOVAs on each variable. |
+| raw_gen      | Raw data generation from summary statistics using univariate or multivariate normal distributions (with truncation as an option).                                                                                                                                      |                                                                                                                                                                                                                                                                                    |
+| t_greene     | Relethford and Hodges' (1985) and Greene's (1989) t-test of sexual dimorphism.                                                                                                                                                                                         | A plot of p-values for differences in sexual dimorphism across all pairs of samples can be produced with plot=TRUE                                                                                                                                                                 |
+| univariate   | Univariate analysis of sexual dimorphism using two-way ANOVA.                                                                                                                                                                                                          | Type of sums of squares can type type "I", "II", or "III."                                                                                                                                                                                                                         |
+| van_vark     | Provides testing for differences in sexual dimorphism between samples using van Vark et al.'s [-@RN7879] method.                                                                                                                                                       |                                                                                                                                                                                                                                                                                    |
+
+<h4>This is Table 2. The R script extracts summary statistics for body mass from the 1999-2000 NHANES raw data and stores it in NHANES_univariate. The "populations" are self-reported race, coded as "Black" = Non-Hispanic Black, "Mex.Am" = Mexican American, or "White" = Non-Hispanic White, and the data are restricted to ages 20-40 years (inclusive). The output are an ANOVA (type II sums of squares by default) with eta-squared values and a table of pairwise comparisons. For more information on the NHANES studies see <https://www.cdc.gov/nchs/nhanes/index.htm></h4>
 
 ```{r Table 2}
 Table.02=function () 
@@ -44,8 +45,13 @@ univariate(NHANES_univariate,es_anova = "eta2",pairwise = TRUE)
 
 Table.02()
 ```
-  <br>
-<h4> This is Table 3. The R script extracts summary statistics for body mass, standing height, and upper arm length from the 1999-2000 NHANES raw data and stores it in NHANES_multivariate.  The "populations" are self-reported race, coded as "Black" = Non-Hispanic Black, "Mex.Am" = Mexican American, or "White" = Non-Hispanic White, and the data are restricted to ages 20-40 years (inclusive). The output is a MANOVA table (type II sums of squares and cross products by default) using Wilk's lambda (the default).</h4><br>
+
+<br>
+
+<h4>This is Table 3. The R script extracts summary statistics for body mass, standing height, and upper arm length from the 1999-2000 NHANES raw data and stores it in NHANES_multivariate. The "populations" are self-reported race, coded as "Black" = Non-Hispanic Black, "Mex.Am" = Mexican American, or "White" = Non-Hispanic White, and the data are restricted to ages 20-40 years (inclusive). The output is a MANOVA table (type II sums of squares and cross products by default) using Wilk's lambda (the default).</h4>
+
+<br>
+
 ```{r Table 3}
 Table.03=function()
 {
@@ -56,8 +62,12 @@ multivariate(NHANES_multivariate)
 
 Table.03()
 ```
-  <br>
-<h4> This is Table 4. The R script uses NHANES_univariate and does an ANOVA with type III sums of squares.  It then applies t_greene to do Relethford and Hodges' [-@RN8925] and Greene's [-@RN8546] t-test for all pairs, adjusts the p-values using the false discovery rate, and finally returns a "corrplot" view (https://cran.r-project.org/package=corrplot) of the p-values.</h4><br>
+
+<br>
+
+<h4>This is Table 4. The R script uses NHANES_univariate and does an ANOVA with type III sums of squares. It then applies t_greene to do Relethford and Hodges' [-@RN8925] and Greene's [-@RN8546] t-test for all pairs, adjusts the p-values using the false discovery rate, and finally returns a "corrplot" view (<https://cran.r-project.org/package=corrplot>) of the p-values.</h4>
+
+<br>
 
 ```{r Table 4}
 Table.04=function()
@@ -69,8 +79,12 @@ t_greene(NHANES_univariate,plot = TRUE,padjust ="fdr")
 
 Table.04()
 ```
- <br>
-<h4> This is Table 5. The R script extracts summary statistics on eight variables from four samples in the W.W. Howells'[-@RN8613;-@RN9221;-@RN11068;-@RN10726] dataset. The full data set can be found in https://rdrr.io/github/geanes/bioanth/man/howell.html. The script then runs van Vark et al.'s [-@RN7879] analysis.</h4><br>
+
+<br>
+
+<h4>This is Table 5. The R script extracts summary statistics on eight variables from four samples in the W.W. Howells'[-@RN8613; -@RN9221; -@RN11068; -@RN10726] dataset. The full data set can be found in <https://rdrr.io/github/geanes/bioanth/man/howell.html>. The script then runs van Vark et al.'s [-@RN7879] analysis.</h4>
+
+<br>
 
 ```{r Table 5}
 Table.05=function()
@@ -82,8 +96,12 @@ van_vark(to_van_Vark)
 
 Table.05()
 ```
- <br>
-<h4> This is Table 6. The R script writes summary statistics on femur head diameters for males and females from four samples [@RN11497; @RN11494; @RN11496;@RN11495] to the object df. It then uses aov_ss to do ANOVA within males and within females across the four samples with each ANOVA followed by post-hoc pairwise comparisons.</h4><br>
+
+<br>
+
+<h4>This is Table 6. The R script writes summary statistics on femur head diameters for males and females from four samples [@RN11497; @RN11494; @RN11496; @RN11495] to the object df. It then uses aov_ss to do ANOVA within males and within females across the four samples with each ANOVA followed by post-hoc pairwise comparisons.</h4>
+
+<br>
 
 ```{r Table 6}
 Table.06=function () 
@@ -104,8 +122,13 @@ print(aov_ss(x = df, CI=0.95),digits=6)
 
 Table.06()
 ```
- <br>
-<h4> This is Table 7. The R script uses the maximum width of the patella from @RN11059.  Calculated values are the mixture index (MI) and normal intersection (NI) [@RN7880], the D index [@RN7899], and Hedges' g [@RN11055].  For each statistic the bias-corrected parametric bootstrap [@RN11056; @RN11057] is run 1,000 starting from a set.seed value of 42. </h4><br>
+
+<br>
+
+<h4>This is Table 7. The R script uses the maximum width of the patella from @RN11059. Calculated values are the mixture index (MI) and normal intersection (NI) [@RN7880], the D index [@RN7899], and Hedges' g [@RN11055]. For each statistic the bias-corrected parametric bootstrap [@RN11056; @RN11057] is run 1,000 starting from a set.seed value of 42.</h4>
+
+<br>
+
 ```{r Table 7,fig.width=6, fig.height=3}
 Table.07=function (i.which=13) 
 {
@@ -119,6 +142,7 @@ print(Hedges_g(Cremains_measurements[i.which,],B=1000,rand=F,verbose=F))
 
 Table.07()
 ```
-  <br>
-  <br>
+
+<br> <br>
+
 <h3>References</h3>

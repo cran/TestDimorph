@@ -106,8 +106,7 @@ univariate <- function(x,
 
   x <- x %>%
     drop_na() %>%
-    as.data.frame()
-  x$Pop <- x[, Pop]
+    as.data.frame() %>% rename("Pop"=all_of(Pop))
   x$Pop <- factor(x$Pop)
 
   if (isFALSE(interact_anova)) {

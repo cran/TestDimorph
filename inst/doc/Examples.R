@@ -1,6 +1,7 @@
 ## ----global-options, include=FALSE--------------------------------------------
 knitr::opts_chunk$set(comment=NULL)
 knitr::opts_chunk$set(fig.width=6, fig.height=4)
+suppressPackageStartupMessages(library(TestDimorph))
 
 ## ----Table 2--------------------------------------------------------------------------------------
 Table.02=function () 

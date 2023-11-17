@@ -73,7 +73,7 @@ MI_index(Cremains_measurements[1, ], index_type = "NI")
 1 - D_index(Cremains_measurements[1, ])$D
 
 \dontrun{
-# confidence interval was bootstrapping
+# confidence interval with bootstrapping
 MI_index(Cremains_measurements[1, ], rand = FALSE, B = 1000)
 }
 }

@@ -225,6 +225,7 @@ cbind_fill <- function(...) {
 #' @description cbind columns with unequal length without naming
 #' @param ... columns with unequal length
 #' @keywords internal
+#' @noRd
 cbind_fill2 <- function(...) {
   nm <- list(...)
   nm <- lapply(nm, as.matrix)

@@ -1,0 +1,15 @@
+bibentry(
+bibtype  = "Article",
+textVersion = " Abulnoor, B. A., Attia, M. H., Konigsberg, I. R., & Konigsberg, L. W. (2023). TestDimorph: An R package for analysis of interpopulation sexual dimorphism differences using summary statistics. American Journal of Biological Anthropology, 182(3), 487–498. https://doi.org/10.1002/ajpa.24842",
+header = "To cite TestDimorph in publications, please use",
+author = "Abulnoor, Bassam A. and Attia, MennattAllah Hassan and Konigsberg, Iain R. and Konigsberg, Lyle W.",
+title = "TestDimorph: An R package for analysis of interpopulation sexual dimorphism differences using summary statistics",
+journal = "American Journal of Biological Anthropology",
+volume = "182",
+number = "3",
+pages = "487-498",
+doi = "10.1002/ajpa.24842",
+url = "https://onlinelibrary.wiley.com/doi/abs/10.1002/ajpa.24842",
+eprint = "https://onlinelibrary.wiley.com/doi/pdf/10.1002/ajpa.24842",
+year = "2023"
+)

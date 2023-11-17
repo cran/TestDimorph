@@ -1,3 +1,7 @@
+# TestDimorph 0.5.8
+
+-   Updated citation info.
+
 # TestDimorph 0.5.7
 
 -   Minor corrections.

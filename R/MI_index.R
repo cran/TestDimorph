@@ -25,7 +25,7 @@
 #' 1 - D_index(Cremains_measurements[1, ])$D
 #'
 #' \dontrun{
-#' # confidence interval was bootstrapping
+#' # confidence interval with bootstrapping
 #' MI_index(Cremains_measurements[1, ], rand = FALSE, B = 1000)
 #' }
 #' @references Inman, H. F., & Bradley Jr, E. L. (1989). The overlapping
@@ -48,7 +48,7 @@ MI_index <- function(x,
                      plot = FALSE,
                      Trait = 1,
                      B = NULL,
-                     verbose=FALSE,
+                     verbose = FALSE,
                      CI = 0.95,
                      p.f = 0,
                      index_type = "MI",
@@ -112,7 +112,7 @@ MI_index <- function(x,
   }
   x <- x %>%
     drop_na() %>%
-    as.data.frame() %>% rename("Trait"=all_of(Trait))
+    as.data.frame() %>% rename("Trait" = all_of(Trait))
   x$Trait <- factor(x$Trait, levels = unique(x$Trait))
   x$Trait <- droplevels(x$Trait)
   m <- x$m
@@ -267,17 +267,15 @@ MI_index <- function(x,
   names(col2) <- levels(df$sex)
   scale <- scale_fill_manual(name = "sex", values = col)
   scale2 <- scale_color_manual(name = "sex", values = col2)
-  p <- ggplot(data = df, aes(
-    x = z,
-    y = dn,
-    color = sex
-  )) +
+  p <- ggplot(data = df, aes(x = z,
+                             y = dn,
+                             color = sex)) +
     geom_polygon(aes(fill =
                        sex), linewidth = 1) +
     scale +
     scale2 +
     geom_density(stat = "identity") +
-    facet_wrap( ~ trait, scales = "free") +
+    facet_wrap(~ trait, scales = "free") +
     ylab("Density") +
     xlab("x") +
     theme(legend.title = element_blank()) +
@@ -286,7 +284,9 @@ MI_index <- function(x,
     theme(legend.position = "none") +
     theme(aspect.ratio = 1)
   IM_df <- rown_col(as.data.frame(IM_df), var = "Trait")
-  IM_df <- IM_df %>% mutate(across(-1, function (x) round(x,digits)))
+  IM_df <-
+    IM_df %>% mutate(across(-1, function (x)
+      round(x, digits)))
   if (isTRUE(plot)) {
     plot(p)
     as.data.frame(IM_df)

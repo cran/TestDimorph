@@ -2,7 +2,7 @@ Type: Package
 Package: TestDimorph
 Title: Analysis of the Interpopulation Difference in Degree of Sexual
         Dimorphism Using Summary Statistics
-Version: 0.5.7
+Version: 0.5.8
 Authors@R: 
     c(person(given = "Bassam A.",
              family = "Abulnoor",
@@ -36,12 +36,12 @@ LazyData: true
 RoxygenNote: 7.2.3
 Imports: corrplot, dplyr, ggplot2, Morpho, multcompView, stats,
         tidyr,tmvtnorm ,truncnorm ,utils
-Date: 2023-06-15
+Date: 2023-11-17
 NeedsCompilation: no
-Packaged: 2023-06-15 17:11:49 UTC; Bassam
+Packaged: 2023-11-17 20:01:10 UTC; dell
 Author: Bassam A. Abulnoor [aut, cre] (<https://orcid.org/0000-0003-4351-2754>),
   MennattAllah H. Attia [aut] (<https://orcid.org/0000-0002-2304-532X>),
   Iain R. Konigsberg [aut] (<https://orcid.org/0000-0001-7356-100X>),
   Lyle W. Konigsberg [aut] (<https://orcid.org/0000-0003-4052-1575>)
 Repository: CRAN
-Date/Publication: 2023-06-15 17:30:08 UTC
+Date/Publication: 2023-11-17 20:20:08 UTC
